@@ -7,7 +7,7 @@
 **Scope:** Shared deployment scaffold and consolidated plans for twelve 2D games, including an approved detailed visual direction for every game.
 
 **Deployment target:** One Next.js application, one Vercel project, one domain.  
-**Implementation status:** Application scaffold implemented; all game engines and online services remain planned.
+**Implementation status:** Shared application and Tic Tac Toe local gameplay implemented. The other eleven engines and all online services remain planned; room UI is prepared for later Firebase integration.
 
 ## 1. Project boundary
 
@@ -19,7 +19,7 @@ The rule specifications remain the source of truth for gameplay. This consolidat
 
 ### Current scaffold
 
-The shared homepage, twelve overviews, coming-soon play/rules pages, public catalog API, launch redirects, and metadata APIs are implemented. The registry is an explicit twelve-game allowlist. No game is playable yet. Authentication, Firebase, gameplay, rules JSON, room APIs, persistence, workers, and cleanup are added during later game implementation. The scaffold builds and deploys with no required environment variables.
+The shared homepage, twelve overviews, public catalog API, launch redirects, and metadata APIs are implemented. Tic Tac Toe adds a full-screen notebook hero, computer/pass-and-play setup and gameplay, local persistence, a computer worker, and published rules/JSON. The other eleven games retain their placeholders. The registry remains an explicit twelve-game allowlist. Firebase authentication, rooms, and cleanup are deferred until the user supplies backend details. Local play builds and runs with no required environment variables.
 
 ## 2. Shared page contract
 
@@ -113,7 +113,7 @@ Deploy only the `Vihar Games` directory as the root of one Vercel project. Attac
 
 Acceptance requires all catalog paths and launch endpoints to resolve, unsupported modes to be rejected, and every game to complete its defined flows inside the same build. Validate same-origin save isolation, cross-game room isolation, concurrent commands, reconnects, and hidden-state permissions in addition to each game's rules.
 
-The current phase delivers a deployable application scaffold with pinned dependencies, local fonts, lint/type/build scripts, metadata, and Vercel configuration. Gameplay acceptance checks apply as each game is implemented. The initial sitemap contains the homepage and twelve overviews; coming-soon rules pages remain `noindex` until their real rules are published. No remote deployment or backend resources are created by scaffolding.
+The current application includes pinned dependencies, local fonts, lint/type/test/build scripts, metadata, Vercel configuration, and Tic Tac Toe's local module. Its sitemap contains the homepage, twelve overviews, and Tic Tac Toe's rules page; other rules placeholders remain `noindex`. Gameplay acceptance checks apply as modules are implemented. Remote backend resources are not provisioned by this work.
 
 ## 9. Mandatory 2D presentation and approved visual styles
 
@@ -151,4 +151,4 @@ Each game's detailed visual guidance lives in section 7 of its own `GAME_SPEC.md
 
 Keep decorative animation brief and separate from rule resolution, accepted state, and computer computation. Respect reduced-motion preferences while preserving required physics resolution and Memory Match observation timing. Decoration must not obscure gameplay targets, numbers, or state, and large boards need readable, navigable mobile layouts.
 
-Shared style tokens and local Hind/Yatra One fonts now live inside Vihar Games. The handoffs define future artwork and game presentation; detailed assets and game engines remain future work, with no runtime dependency on Gulam Chor.
+Shared style tokens and local Hind/Yatra One fonts live inside Vihar Games. Tic Tac Toe adds a locally bundled Caveat font and implemented notebook graphics. The other handoffs define future artwork and game presentation, with no runtime dependency on Gulam Chor.

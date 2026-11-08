@@ -2,7 +2,7 @@
 
 # Vihar Games — Single-project deployment plan
 
-**Status:** Application scaffold ready for Vercel. Gameplay and online backend setup remain future work; no remote deployment has been performed.
+**Status:** The shared application and Tic Tac Toe's computer/pass-and-play modes are ready for Vercel. Private-room UI is prepared; Firebase/backend setup is deferred until the user supplies details. This work does not provision remote backend resources.
 
 **Project name:** Vihar Games  
 **Suggested Vercel project slug:** `vihar-games`  
@@ -100,7 +100,7 @@ Per-room turn deadlines and Memory Match's mismatch deadlines are evaluated on r
 
 Set the site canonical to `https://games.vihar.online` and each game canonical to its path, including `https://games.vihar.online/chess` and `https://games.vihar.online/carrom`. Rules pages have separate canonical URLs ending in `/how-to-play`.
 
-The initial sitemap contains the homepage and twelve game overviews. Coming-soon rules pages are `noindex` and join the sitemap when real rules are published. The completed production sitemap will then contain the homepage, twelve overviews, and twelve rules pages. Exclude play and room URLs, API endpoints, private state, and participant names. Mark play pages `noindex`; send `X-Robots-Tag: noindex` on API responses. Keep metadata and links on the shared production domain.
+The current sitemap contains the homepage, twelve game overviews, and Tic Tac Toe's published rules page. Other rules placeholders are `noindex` and join the sitemap when real rules are published. The completed production sitemap will contain the homepage, twelve overviews, and twelve rules pages. Exclude play and room URLs, API endpoints, private state, and participant names. Mark play pages `noindex`; send `X-Robots-Tag: noindex` on API responses. Keep metadata and links on the shared production domain.
 
 ## 8. Release verification
 

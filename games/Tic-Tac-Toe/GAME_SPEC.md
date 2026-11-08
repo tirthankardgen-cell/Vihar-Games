@@ -6,11 +6,12 @@
 
 # Tic-Tac-Toe — Game specification
 
-**Status:** Documentation for a planned Vihar Games module; implementation has not started.  
+**Status:** Computer play, pass-and-play, the notebook hero, setup, and rules are implemented. Create/Join Room screens are prepared; Firebase and room backend integration are deferred until the user supplies backend details.  
 **Platform:** Browser on mobile, tablet, and desktop.  
 **Access:** No account, visible sign-in, or download.  
 **Players:** One human against the computer, or exactly two humans.  
 **Required modes:** Computer opponent, pass-and-play, and private online room.  
+**Currently available:** Computer opponent and pass-and-play. Private rooms remain an explicit later integration.  
 **Match format:** Standard 3 × 3 Tic-Tac-Toe, one round at a time.  
 **Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
@@ -33,11 +34,11 @@ Two players alternate placing X and O in empty cells. The first to make three of
 
 ## 3. Player process and flow
 
-1. Open Vihar Games at `https://games.vihar.online` and select Tic-Tac-Toe, or visit `/tic-tac-toe` directly. Choose Play or How to Play.
+1. Open Vihar Games at `https://games.vihar.online` and select Tic-Tac-Toe, or visit `/tic-tac-toe` directly. The landing page is one full-screen Notebook Doodles hero with a **Let's Play** button and a How to Play link. Let's Play opens `/tic-tac-toe/play`.
 2. Choose Play Computer, Pass-and-Play, Create Room, or Join Room.
 3. Computer mode: choose difficulty and X, O, or Random; start a local round. If the human is O, the computer moves first.
 4. Pass-and-play: enter optional names and assign the first X player. One person makes a move, then the other accepts the handover and plays on the same device.
-5. Online: enter a nickname, create a room, and share the six-character code or `https://games.vihar.online/tic-tac-toe/play?room=ABC234`. A friend joins from their own device; the host starts once both seats are present.
+5. Planned online integration: enter a nickname, create a room, and share the six-character code or `https://games.vihar.online/tic-tac-toe/play?room=ABC234`. A friend joins from their own device; the host starts once both seats are present. For now, Create/Join Room screens clearly show that private rooms are coming soon and offer pass-and-play; they do not create pretend rooms or contact a backend.
 6. Choose one empty cell on your turn. Commit the mark, check the result, and advance the turn only when the round remains active.
 7. Show the win, draw, or forfeit reason and session score. Play Again starts another local round; online Rematch requires both players to accept before the host starts. Return to Lobby allows player or setting changes.
 
@@ -124,3 +125,13 @@ The experience should feel like opening an empty notebook, drawing a Tic-Tac-Toe
 ### 7.6. Artwork approach
 
 Use lightweight flat SVG or equivalent 2D drawing paths for the grid, X/O marks, winning line, and subtle control accents. Keep stroke styling consistent across these elements. The notebook identity should come from the paper, spacing, typography, and hand-drawn strokes; elaborate background artwork or character assets are unnecessary.
+
+## 8. Current implementation and backend deferral
+
+- The landing hero occupies the viewport on desktop and phone layouts. The play flow explicitly shows Choose, Set up, and Play steps.
+- The pure TypeScript engine, local computer worker, and optional browser persistence live in `src/games/tic-tac-toe/`. Notebook screens and reusable SVG strokes live in `src/components/tic-tac-toe/`.
+- Local modes support all difficulty/mark choices, optional names, handover confirmation, wins/draws, resignation, identity-based scores, alternating-X rematches, and saved-round recovery.
+- Caveat is bundled locally with its SIL Open Font License for handwritten headings. Grid, marks, winning lines, and controls use flat SVG/HTML, with reduced-motion alternatives.
+- Public metadata lists only the two implemented modes and rules version `1.0.0`. The rules page and public rules JSON share the same source. The rules page is indexed; play and invite URLs are not.
+- On 9 November 2026, the user explicitly requested that Firebase/backend work remain unchanged until they provide Firebase details. The online requirements in sections 4–6 remain the future contract; current room screens are interface preparation, not an operational online service.
+- Run `npm run check` for lint, types, meaningful engine/persistence tests, and a production build. Browser verification covers the hero, setup steps, local games, handover, rematches, reload, blocked storage, keyboard input, reduced motion, and prepared room forms.

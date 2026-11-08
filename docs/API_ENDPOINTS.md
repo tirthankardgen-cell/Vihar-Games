@@ -2,7 +2,7 @@
 
 # Vihar Games — Page and API contract
 
-**Status:** Catalog, launch, and info handlers are implemented in the deployment scaffold. Rules and online room endpoints remain planned.
+**Status:** Catalog, launch, and info handlers are implemented, along with Tic Tac Toe's public rules endpoint. Firebase authentication and all online room endpoints are deferred until backend details are supplied.
 
 **Application:** One Vihar Games website and one Vercel project.  
 **API origin:** `https://games.vihar.online`  
@@ -17,8 +17,8 @@
 - `GET /api/games/<game-id>` returns a same-site 307 redirect.
 - `GET /api/games/<game-id>/info` returns public metadata.
 - Unknown IDs on these endpoints return `404 UNKNOWN_GAME` with a request ID.
-- All entries report `availability: "planned"`, `availableModes: []`, `roomActions: []`, and `rulesVersion: null`. `plannedModes` and `playerLimits` describe future play.
-- `/rules`, all room/action paths, and internal cleanup have no handlers yet and return 404. The detailed gameplay contracts below apply when those APIs are implemented.
+- Tic Tac Toe reports `availability: "playable"`, `availableModes: ["computer", "pass-and-play"]`, and `rulesVersion: "1.0.0"`. Other entries report `planned` availability, empty available modes, and a null rules version. All `roomActions` remain empty.
+- Tic Tac Toe's `/rules` returns its published rules. Other registered games return `404 RULES_NOT_AVAILABLE`; unknown games return `404 UNKNOWN_GAME`. All room/action paths and internal cleanup remain unimplemented. Their contracts below apply to the later backend phase.
 
 These routes run within the same Next.js application and require no Firebase configuration in this phase.
 
@@ -54,7 +54,7 @@ Each game also has `/<game-id>/how-to-play`. A private invite uses `/<game-id>/p
 
 Public `GET` endpoints do not create rooms, roll dice, start matches, change settings, or submit moves. JSON consumers use `/info` instead of the redirect endpoint. Unknown IDs return 404 rather than redirecting to arbitrary destinations. API responses send `X-Robots-Tag: noindex`.
 
-Metadata exposes an `availability` field. During incremental implementation, an unfinished game remains a catalog entry with `planned` availability and a truthful page; only `playable` games accept live match creation. The catalog, launch, and info handlers are scaffolded; the remaining endpoints are future requirements.
+Metadata exposes an `availability` field and a separate `availableModes` list. An unfinished game remains a catalog entry with `planned` availability and a truthful page. Tic Tac Toe is playable locally while online stays planned; live room creation requires an implemented online mode. The room/lifecycle endpoints below remain future requirements.
 
 When Chess is implemented, its metadata also exposes its local computer persona: `id: "acharya-dev"`, English/Hindi display names, a planned avatar reference, and difficulty IDs `easy`, `medium`, and `hard`. This is public presentation information; solo search and moves stay in the browser. It does not introduce a computer room member or require online authentication for solo play.
 

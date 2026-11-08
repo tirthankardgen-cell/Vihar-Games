@@ -15,7 +15,7 @@ export default function HomePage() {
           <p>Board games, friendly rivalries, and quiet puzzles. A new place for the games you grew up with.</p>
           <div className="hero-actions">
             <a className="button button-paper" href="#collection">Explore the collection <span aria-hidden="true">↓</span></a>
-            <span className="hero-note">{games.length} games on the way</span>
+            <span className="hero-note">A growing collection of {games.length} games</span>
           </div>
         </div>
         <div className="hero-art"><PlayMark /><p>Gather. Think. Play.</p></div>
@@ -24,7 +24,7 @@ export default function HomePage() {
       <section id="collection" className="collection" aria-labelledby="collection-title">
         <div className="section-heading">
           <div><p className="eyebrow">A seat for everyone</p><h2 id="collection-title">Find your favourite.</h2></div>
-          <p>Our tables are being set.{" "}<br />Every game below is coming soon.</p>
+          <p>Tic Tac Toe is ready to play.{" "}<br />More familiar favourites are on the way.</p>
         </div>
         <ul className="game-grid">
           {games.map((game, index) => (
@@ -38,7 +38,7 @@ export default function HomePage() {
                 <h3>{game.name}</h3>
                 <p className="card-description">{game.description}</p>
                 <p className="players-label">{game.playersLabel}</p>
-                <div className="card-bottom"><span className="status-badge">Coming soon</span><span aria-hidden="true">↗</span></div>
+                <div className="card-bottom"><span className="status-badge">{game.availability === "playable" ? "Play now" : "Coming soon"}</span><span aria-hidden="true">↗</span></div>
               </Link>
             </li>
           ))}

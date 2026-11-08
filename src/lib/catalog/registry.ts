@@ -1,3 +1,5 @@
+import { RULES_VERSION, ticTacToeModes } from "@/games/tic-tac-toe/rules";
+
 export type PlayMode =
   | "computer"
   | "practice"
@@ -49,7 +51,7 @@ const soloLimits = { solo: 1 as const, passAndPlay: null, online: null };
 const computerModes = ["computer", "pass-and-play", "online"] as const;
 
 // This explicit registry is the allowlist for pages and APIs.
-// Planned modes describe future games; no gameplay is available in this scaffold.
+// Planned modes describe the full design; public metadata lists implemented modes separately.
 export const games: readonly Game[] = [
   {
     id: "chess",
@@ -98,7 +100,7 @@ export const games: readonly Game[] = [
     playersLabel: "Solo or 2 players",
     plannedModes: computerModes,
     playerLimits: twoPlayerLimits,
-    availability: "planned",
+    availability: "playable",
     presentation: "2d",
   },
   {
@@ -217,9 +219,9 @@ export function getGameInfo(game: Game) {
     availability: game.availability,
     presentation: game.presentation,
     plannedModes: game.plannedModes,
-    availableModes: [],
+    availableModes: game.id === "tic-tac-toe" ? ticTacToeModes : [],
     playerLimits: game.playerLimits,
-    rulesVersion: null,
+    rulesVersion: game.id === "tic-tac-toe" ? RULES_VERSION : null,
     roomActions: [],
   };
 }
