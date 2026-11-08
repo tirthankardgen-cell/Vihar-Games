@@ -23,21 +23,23 @@ export function Board({ match, locked, lastMove, onMove }: { match: Match; locke
   }
 
   return <div className={styles.board}>
-    <div className={styles.boardRows} role="grid" aria-label="Tic Tac Toe board" aria-describedby="turn-status">
-      {[0, 1, 2].map((row) => <div key={row} className={styles.boardRow} role="row">
-        {[0, 1, 2].map((column) => {
-          const cell = row * 3 + column;
-          const mark = match.board[cell];
-          return <button key={cell} ref={(element) => { buttons.current[cell] = element; }} type="button" role="gridcell"
-            className={styles.cell} aria-label={`Row ${row + 1}, column ${column + 1}, ${mark ?? "empty"}`}
-            disabled={locked || mark !== null} tabIndex={cell === tabbable && !locked ? 0 : -1}
-            onFocus={() => setFocused(cell)} onKeyDown={(event) => navigate(event, cell)} onClick={() => onMove(cell)}>
-            {mark && <DoodleMark mark={mark} variation={cell + match.round} animate={lastMove === cell} />}
-          </button>;
-        })}
-      </div>)}
+    <div className={styles.boardSketch}>
+      <div className={styles.boardRows} role="grid" aria-label="Tic Tac Toe board" aria-describedby="turn-status">
+        {[0, 1, 2].map((row) => <div key={row} className={styles.boardRow} role="row">
+          {[0, 1, 2].map((column) => {
+            const cell = row * 3 + column;
+            const mark = match.board[cell];
+            return <button key={cell} ref={(element) => { buttons.current[cell] = element; }} type="button" role="gridcell"
+              className={styles.cell} aria-label={`Row ${row + 1}, column ${column + 1}, ${mark ?? "empty"}`}
+              disabled={locked || mark !== null} tabIndex={cell === tabbable && !locked ? 0 : -1}
+              onFocus={() => setFocused(cell)} onKeyDown={(event) => navigate(event, cell)} onClick={() => onMove(cell)}>
+              {mark && <DoodleMark mark={mark} variation={cell + match.round} animate={lastMove === cell} />}
+            </button>;
+          })}
+        </div>)}
+      </div>
+      <GridLines animate={animateGrid} />
+      {match.winner !== null && match.reason === "three-in-a-row" && <WinningLine line={match.line} mark={markForSeat(match, match.winner)} />}
     </div>
-    <GridLines animate={animateGrid} />
-    {match.winner !== null && match.reason === "three-in-a-row" && <WinningLine line={match.line} mark={markForSeat(match, match.winner)} />}
   </div>;
 }

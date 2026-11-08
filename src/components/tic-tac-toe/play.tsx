@@ -60,7 +60,7 @@ export default function TicTacToePlay({ initialRoomCode }: { initialRoomCode?: s
 
   return <main id="main-content" className={styles.page}>
     <NotebookNav />
-    {screen === "choose" && <section className={styles.content}>
+    {screen === "choose" && <section className={`${styles.content} ${styles.chooseContent}`}>
       <Steps step={1} />
       <h1 className={styles.screenTitle}>Who&apos;s on the other side?</h1>
       <p className={styles.screenCopy}>Pick your company. We&apos;ll bring the notebook.</p>

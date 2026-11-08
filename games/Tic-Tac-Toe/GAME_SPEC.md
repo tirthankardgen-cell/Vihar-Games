@@ -85,7 +85,7 @@ Two players alternate placing X and O in empty cells. The first to make three of
 
 The experience should feel like opening an empty notebook, drawing a Tic-Tac-Toe grid, and playing with a friend. Keep the aesthetic minimal, quiet, informal, and personal. The doodles are the board and the moves themselves; the page does not need a collection of decorative sketches.
 
-- Use a warm white or pale cream paper background with generous empty space around the board. Any paper grain or notebook ruling should be very faint, so the page still looks mostly blank.
+- Use a warm white or pale cream paper background with generous empty space around the board. Keep paper grain faint and make the horizontal notebook ruling clearly visible with restrained blue-grey lines, so the background reads as a real notebook without competing with the game.
 - Keep the entire scene flat and 2D. The board is drawn directly on the page, with no raised tiles, perspective, heavy shadows, or surrounding desk scene.
 - Use a restrained palette: charcoal or graphite for the grid and text, with muted blue and muted red ink available for the two players. Keep X and O recognizable by shape as well as colour.
 - Avoid busy borders, stickers, large illustrations, dense textures, neon effects, and confetti. Small purposeful strokes are enough to establish the notebook identity.
@@ -93,8 +93,8 @@ The experience should feel like opening an empty notebook, drawing a Tic-Tac-Toe
 ### 7.2. Hand-drawn board and player marks
 
 - Draw the 3 × 3 board with exactly two horizontal and two vertical pencil or pen lines. Leave the outside edges open, as on a casually sketched paper grid.
-- Give strokes slight natural irregularity in curvature, endpoints, and thickness. The result should look drawn by hand while keeping all nine cells clear and evenly usable.
-- Draw each X as two diagonal pen strokes and each O as one slightly imperfect loop. Keep marks centred, similarly sized, and clearly separated from the grid lines.
+- Give grid strokes visible natural irregularity in curvature, endpoints, and thickness. Lean the sketch slightly to the left or right with a flat 2D rotation; rotate the marks, winning line, and cell targets together so every square remains correctly usable.
+- Draw each X as two uneven diagonal pen strokes and each O as an irregular loop with a small pen overlap. Vary curvature, lengths, and endpoints so the marks feel drawn by hand. Keep them centred, similarly sized, and clearly separated from the grid lines.
 - Use controlled variations between marks without changing their identity or making the board appear untidy. A placed mark stays still for the rest of the round.
 - On a three-in-a-row win, draw a single hand-drawn line through the winning marks. A draw leaves the completed board visible with a short text result.
 
@@ -104,6 +104,7 @@ The experience should feel like opening an empty notebook, drawing a Tic-Tac-Toe
 - Keep the board as the visual focus. Place a compact player/turn row above it and a small score row and essential actions nearby, leaving the rest of the page open.
 - Controls should feel like simple notebook annotations: quiet text, light hand-drawn outlines, or underlines. Keep touch targets comfortable even when their visible styling is minimal.
 - On mobile, use one centred page with the board, turn label, and primary actions within easy reach. On larger screens, preserve the same spacious composition rather than filling the margins with panels.
+- Fit the overview, mode selection, computer/friend setup, room forms, gameplay, handover, and results into one viewport. Adapt spacing and board size to both width and height, including shorter laptop windows and phone landscape. Keep all essential controls visible and usable. Present rules in short notebook pages with Previous/Next controls; adjust the number of rules per page to the available space.
 - Carry the same paper, ink, and handwritten accents through the overview, mode selection, difficulty setup, rules, and result states.
 
 ### 7.4. Computer and friend presentation
@@ -128,10 +129,10 @@ Use lightweight flat SVG or equivalent 2D drawing paths for the grid, X/O marks,
 
 ## 8. Current implementation and backend deferral
 
-- The landing hero occupies the viewport on desktop and phone layouts. The play flow explicitly shows Choose, Set up, and Play steps.
+- Every notebook screen occupies one dynamic viewport on desktop and phone layouts. The play flow explicitly shows Choose, Set up, and Play steps. The board uses the remaining game area; the handover button shares the action row to keep the layout stable. Rules use short notebook pages.
 - The pure TypeScript engine, local computer worker, and optional browser persistence live in `src/games/tic-tac-toe/`. Notebook screens and reusable SVG strokes live in `src/components/tic-tac-toe/`.
 - Local modes support all difficulty/mark choices, optional names, handover confirmation, wins/draws, resignation, identity-based scores, alternating-X rematches, and saved-round recovery.
-- Caveat is bundled locally with its SIL Open Font License for handwritten headings. Grid, marks, winning lines, and controls use flat SVG/HTML, with reduced-motion alternatives.
+- Caveat is bundled locally with its SIL Open Font License for handwritten headings. Visible horizontal ruling, wavy grid paths with a slight left lean, and irregular X/O pen strokes establish the notebook style. Grid, marks, winning lines, and controls use flat SVG/HTML, with reduced-motion alternatives.
 - Public metadata lists only the two implemented modes and rules version `1.0.0`. The rules page and public rules JSON share the same source. The rules page is indexed; play and invite URLs are not.
 - On 9 November 2026, the user explicitly requested that Firebase/backend work remain unchanged until they provide Firebase details. The online requirements in sections 4–6 remain the future contract; current room screens are interface preparation, not an operational online service.
 - Run `npm run check` for lint, types, meaningful engine/persistence tests, and a production build. Browser verification covers the hero, setup steps, local games, handover, rematches, reload, blocked storage, keyboard input, reduced motion, and prepared room forms.

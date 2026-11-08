@@ -6,7 +6,7 @@ import styles from "./notebook.module.css";
 const drawing = ["X", "O", null, null, "X", null, "O", null, "X"] as const;
 
 export default function TicTacToeLanding() {
-  return <main id="main-content" className={`${styles.page} ${styles.hero}`}>
+  return <main id="main-content" className={styles.page}>
     <NotebookNav />
     <section className={styles.heroBody} aria-labelledby="tic-tac-toe-title">
       <div>
@@ -21,10 +21,12 @@ export default function TicTacToeLanding() {
       </div>
       <div className={styles.heroArt} aria-hidden="true">
         <div className={styles.board}>
-          <div className={styles.boardRows}>{[0, 1, 2].map((row) => <div key={row} className={styles.boardRow}>
-            {drawing.slice(row * 3, row * 3 + 3).map((mark, column) => <div key={column} className={styles.staticCell}>{mark && <DoodleMark mark={mark} variation={row + column} animate />}</div>)}
-          </div>)}</div>
-          <GridLines animate /><WinningLine line={[0, 4, 8]} mark="X" />
+          <div className={styles.boardSketch}>
+            <div className={styles.boardRows}>{[0, 1, 2].map((row) => <div key={row} className={styles.boardRow}>
+              {drawing.slice(row * 3, row * 3 + 3).map((mark, column) => <div key={column} className={styles.staticCell}>{mark && <DoodleMark mark={mark} variation={row + column} animate />}</div>)}
+            </div>)}</div>
+            <GridLines animate /><WinningLine line={[0, 4, 8]} mark="X" />
+          </div>
         </div>
         <p className={styles.artCaption}>a little friendly competition <Arrow /></p>
       </div>

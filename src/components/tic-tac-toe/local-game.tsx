@@ -77,21 +77,24 @@ export function LocalGame({ session, onChange, onBack, saved }: Props) {
       </div>)}
       <span className={styles.versus} style={{ gridColumn: 2, gridRow: 1 }} aria-hidden="true">vs</span>
     </div>
-    <div id="turn-status" className={styles.status} role="status" aria-live="polite" aria-atomic="true"><h1>{title}</h1><p>{explanation}</p></div>
-    <Board key={`${session.id}:${match.round}`} match={match} locked={thinking || session.handover || finished} lastMove={lastMove} onMove={move} />
-    {session.handover && <div className={styles.handover}>
-      <button className={styles.button} type="button" onClick={() => onChange({ ...session, handover: false }, match.revision)}>
-        I&apos;m ready <Arrow /><ButtonOutline />
-      </button>
-    </div>}
+    <div id="turn-status" className={styles.status} role="status" aria-live="polite" aria-atomic="true">
+      <h1 title={title}>{finished && match.reason !== "draw"
+        ? <><span className={styles.statusName}>{winnerName}</span> {winnerName === "You" ? "win" : "wins"}!</>
+        : !finished && !thinking && actorName !== "You"
+          ? <><span className={styles.statusName}>{actorName}</span>&apos;s turn.</>
+          : title}</h1>
+      <p title={explanation}>{explanation}</p>
+    </div>
+    <div className={styles.boardSlot}><Board key={`${session.id}:${match.round}`} match={match} locked={thinking || session.handover || finished} lastMove={lastMove} onMove={move} /></div>
     <div className={styles.scoreRow} aria-label="Session score">
       <div aria-label={`${session.players[0]}: ${match.wins[0]} wins`}><span className={styles.scoreNumber}>{match.wins[0]}</span><span className={styles.scoreLabel}>{session.players[0]}</span></div>
       <div aria-label={`${match.draws} draws`}><span className={styles.scoreNumber}>{match.draws}</span><span className={styles.scoreLabel}>Draws</span></div>
       <div aria-label={`${session.players[1]}: ${match.wins[1]} wins`}><span className={styles.scoreNumber}>{match.wins[1]}</span><span className={styles.scoreLabel}>{session.players[1]}</span></div>
     </div>
     <div className={styles.gameActions}>
-      {finished ? <button className={styles.button} type="button" onClick={rematch}>Play Again <Arrow /><ButtonOutline /></button>
-        : <button className={styles.textButton} type="button" disabled={session.handover} onClick={() => {
+      {session.handover ? <button className={styles.button} type="button" onClick={() => onChange({ ...session, handover: false }, match.revision)}>I&apos;m ready <Arrow /><ButtonOutline /></button>
+        : finished ? <button className={styles.button} type="button" onClick={rematch}>Play Again <Arrow /><ButtonOutline /></button>
+        : <button className={styles.textButton} type="button" onClick={() => {
           const seat: Seat = session.mode === "computer" ? 0 : match.actor;
           onChange({ ...session, match: resignMatch(match, seat), handover: false }, match.revision);
         }}>Give up round</button>}

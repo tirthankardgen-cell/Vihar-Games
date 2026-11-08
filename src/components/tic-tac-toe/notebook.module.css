@@ -6,9 +6,10 @@
   --note-red: #b75f51;
   --note-line: #cfcec3;
   min-height: 100svh;
+  min-height: 100dvh;
   color: var(--note-ink);
   background-color: var(--note-paper);
-  background-image: repeating-linear-gradient(transparent 0 35px, #587aa607 35px 36px);
+  background-image: repeating-linear-gradient(transparent 0 35px, #587aa62c 35px 36px);
   font-family: var(--font-hind), sans-serif;
 }
 :global(body):has(.shell) { background: #faf9f4; }
@@ -20,9 +21,9 @@
 .shell button:disabled { cursor: default; }
 .shell :is(a, button, input):focus-visible { outline: 2px solid var(--note-blue); outline-offset: 5px; }
 .shell ::selection { background: #dce7ec; color: var(--note-ink); }
-.page { width: min(1120px, calc(100% - 96px)); margin-inline: auto; min-height: 100svh; display: flex; flex-direction: column; }
-.nav { display: flex; justify-content: space-between; align-items: center; min-height: 88px; gap: 24px; }
-.navLink { display: inline-flex; align-items: center; min-height: 44px; gap: 10px; font-size: 15px; }
+.page { width: min(1120px, calc(100% - 96px)); margin-inline: auto; height: 100svh; height: 100dvh; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; }
+.nav { display: flex; justify-content: space-between; align-items: center; min-height: clamp(48px, 10dvh, 88px); gap: 24px; }
+.navLink { display: inline-flex; align-items: center; min-height: 44px; gap: 10px; font-size: 15px; line-height: 1.3; }
 .navLink:hover, .textButton:hover { color: var(--note-blue); }
 .navBrand { display: flex; align-items: center; gap: 14px; }
 .navBrand span { font-family: var(--font-notebook), cursive; font-size: 27px; font-weight: 600; }
@@ -30,10 +31,9 @@
 .tinyMarks .mark { width: 23px; height: 23px; }
 .arrow { width: 29px; height: 21px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .backArrow { transform: rotate(180deg); }
-.footer { display: flex; justify-content: space-between; align-items: center; gap: 20px; min-height: 64px; color: var(--note-muted); font-size: 13px; }
+.footer { display: flex; justify-content: space-between; align-items: center; gap: 20px; min-height: clamp(32px, 7dvh, 64px); color: var(--note-muted); font-size: 13px; }
 .footer span:last-child { font-family: var(--font-notebook), cursive; font-size: 22px; }
-.hero { justify-content: space-between; }
-.heroBody { display: grid; grid-template-columns: 1.15fr 1fr; align-items: center; gap: 80px; flex: 1; width: 100%; max-width: 990px; margin-inline: auto; padding-block: 36px; }
+.heroBody { display: grid; grid-template-columns: 1.15fr 1fr; align-items: center; gap: 80px; min-height: 0; width: 100%; max-width: 990px; margin-inline: auto; padding-block: clamp(8px, 4dvh, 36px); }
 .eyebrow { color: var(--note-muted); font-size: 11px; text-transform: uppercase; letter-spacing: .2em; }
 .heroTitle { margin-block: 22px 24px; font-size: clamp(76px, 9vw, 120px); letter-spacing: -.035em; line-height: .86 !important; }
 .heroTitle span { color: var(--note-blue); }
@@ -53,7 +53,7 @@
 .textButton { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 6px 0; background: transparent; border: 0; color: var(--note-muted) !important; font-size: 15px; }
 .textButton:hover { color: var(--note-blue) !important; }
 .textButton:disabled { opacity: .45; }
-.content { flex: 1; width: min(640px, 100%); margin-inline: auto; padding-block: 26px 36px; }
+.content { min-height: 0; align-self: center; width: min(640px, 100%); margin-inline: auto; padding-block: clamp(4px, 2.5dvh, 26px); }
 .steps { display: flex; justify-content: center; align-items: center; gap: 23px; padding: 0; margin: 0 0 29px; color: var(--note-muted); font-size: 13px; }
 .steps li { display: flex; align-items: center; gap: 7px; }
 .stepNumber { font-family: var(--font-notebook), cursive; font-size: 22px; line-height: 1; }
@@ -84,21 +84,33 @@
 .choice input:checked + .choiceLabel { border-color: var(--note-blue); background: #3b6d9805; color: var(--note-blue); }
 .choice input:focus-visible + .choiceLabel { outline: 2px solid var(--note-blue); outline-offset: 4px; }
 .choiceLabel strong { font-family: var(--font-notebook), cursive; font-size: 26px; font-weight: 600; overflow-wrap: anywhere; }
+.nameChoice strong { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .choiceLabel small { font-size: 12px; color: var(--note-muted); }
 .choiceLabel .mark { width: 30px; height: 30px; }
-.input { display: block; width: 100%; min-height: 45px; padding: 9px 2px 8px; border: 0; border-bottom: 1px solid var(--note-line); background: transparent; border-radius: 0; outline-offset: 4px !important; }
+.input { display: block; min-width: 0; width: 100%; min-height: 45px; padding: 9px 2px 8px; border: 0; border-bottom: 1px solid var(--note-line); background: transparent; border-radius: 0; outline-offset: 4px !important; }
 .input::placeholder { color: var(--note-muted); }
-.nameFields { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 28px; }
+.nameFields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 25px; margin-bottom: 28px; }
+.nameFields > div { min-width: 0; }
 .formActions { display: flex; justify-content: center; align-items: center; gap: 24px; margin-top: 30px; }
 .formHint { font-size: 13px; color: var(--note-muted); margin-top: 9px; }
 .onlineNote { padding-block: 22px; border-top: 1px dashed var(--note-line); margin-top: 26px; text-align: center; }
 .onlineNote h3 { font-size: 29px; margin-bottom: 7px; }
 .onlineNote p { color: var(--note-muted); font-size: 15px; }
 .roomCode { text-transform: uppercase; font-size: 24px !important; letter-spacing: .2em; }
-.gameContent { width: min(510px, 100%); padding-block: 8px 15px; }
-.gameContent .steps { margin-bottom: 18px; }
+.roomFields { margin-top: 25px; }
+.gameContent { align-self: stretch; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "steps" "round" "players" "status" "board" "score" "actions" "error" "save"; grid-template-rows: auto auto auto auto minmax(0, 1fr) auto auto auto auto; width: min(510px, 100%); padding-block: 8px 12px; }
+.gameContent .steps { grid-area: steps; margin-bottom: 12px; }
+.gameContent .roundLabel { grid-area: round; }
+.gameContent .playerRow { grid-area: players; width: 100%; }
+.gameContent .status { grid-area: status; }
+.gameContent .scoreRow { grid-area: score; width: 100%; }
+.gameContent .gameActions { grid-area: actions; }
+.gameContent .error { grid-area: error; }
+.gameContent .storageNote { grid-area: save; }
+.boardSlot { grid-area: board; min-height: 0; container-type: size; display: grid; place-items: center; }
+.boardSlot .board { width: min(350px, 100cqi, 100cqb); }
 .roundLabel { text-align: center; color: var(--note-muted); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
-.playerRow { display: grid; grid-template-columns: 1fr 30px 1fr; align-items: center; gap: 10px; margin: 18px auto 12px; max-width: 410px; }
+.playerRow { display: grid; grid-template-columns: 1fr 30px 1fr; align-items: center; gap: 10px; margin: 12px auto 8px; max-width: 410px; }
 .player { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 8px 6px 9px; border-bottom: 2px solid transparent; min-width: 0; }
 .player .mark { flex-shrink: 0; width: 29px; height: 29px; }
 .playerName { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 18px; }
@@ -109,6 +121,7 @@
 .status h1 { font-size: clamp(36px, 5vw, 43px); line-height: 1.15; overflow-wrap: anywhere; }
 .status p { margin-top: 3px; font-size: 15px; color: var(--note-muted); }
 .board { position: relative; width: min(350px, 100%); aspect-ratio: 1; margin-inline: auto; }
+.boardSketch { position: absolute; inset: 4%; transform: rotate(-3.5deg); }
 .boardRows { display: grid; grid-template-rows: repeat(3, 1fr); width: 100%; height: 100%; }
 .boardRow { display: grid; grid-template-columns: repeat(3, 1fr); min-height: 0; }
 .cell { display: flex; justify-content: center; align-items: center; min-width: 0; padding: 13%; border: 0; border-radius: 8px; background: transparent; }
@@ -130,22 +143,26 @@
 .drawMark path { stroke-dasharray: 1; animation: drawStroke .2s ease-out both; }
 .drawMark path + path { animation-delay: .075s; }
 .drawWin path { stroke-dasharray: 1; animation: drawStroke .35s ease-out both; }
-.handover { display: flex; justify-content: center; align-items: center; min-height: 57px; margin-top: 14px; }
 .scoreRow { display: grid; grid-template-columns: 1fr 1fr 1fr; margin: 18px auto 0; max-width: 380px; text-align: center; }
 .scoreRow > div + div { border-left: 1px solid var(--note-line); }
 .scoreNumber { display: block; font-family: var(--font-notebook), cursive; font-size: 32px; font-weight: 600; line-height: 1; }
 .scoreLabel { display: block; max-width: 110px; margin: 6px auto 0; font-size: 12px; color: var(--note-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.gameActions { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 25px; margin-top: 18px; }
+.gameActions { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 25px; min-height: 49px; margin-top: 12px; }
 .gameActions .button { min-width: 155px; }
 .gameActions .textButton { font-size: 14px; }
 .storageNote { text-align: center; color: var(--note-muted); font-size: 12px; margin-top: 10px; }
-.rulesContent { width: min(680px, 100%); padding-block: 35px 48px; }
-.rulesList { margin-top: 35px; display: grid; gap: 25px; }
+.rulesContent { width: min(680px, 100%); }
+.rulesEyebrow { text-align: center; margin-bottom: 13px; }
+.rulesList { margin-top: 24px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 25px; }
+.rulesList[data-page-size="1"] { grid-template-columns: 1fr; }
 .rule { display: grid; grid-template-columns: 40px 1fr; gap: 15px; }
+.rule[hidden] { display: none; }
 .ruleNumber { font-family: var(--font-notebook), cursive; color: var(--note-blue); font-size: 31px; line-height: 1.2; }
 .rule h2 { font-size: 30px; margin-bottom: 5px; }
 .rule p { color: var(--note-muted); font-size: 16px; }
-.rulesActions { display: flex; justify-content: center; margin-top: 35px; }
+.rulesPagination { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 16px; }
+.rulesPagination > span { color: var(--note-muted); font-size: 12px; }
+.rulesActions { display: flex; justify-content: center; margin-top: 20px; }
 .error { color: var(--note-red); font-size: 14px; text-align: center; margin-top: 15px; }
 @keyframes drawStroke { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 @media (min-width: 1400px) { .heroBody { gap: 110px; } }
@@ -158,7 +175,7 @@
 }
 @media (max-width: 600px) {
   .page { width: calc(100% - 40px); }
-  .nav { min-height: 69px; gap: 15px; }
+  .nav { min-height: clamp(48px, 9dvh, 69px); gap: 15px; }
   .navBrand { gap: 8px; }
   .navBrand span { font-size: 24px; }
   .navLink { font-size: 13px; }
@@ -174,7 +191,7 @@
   .heroSmall { margin-top: 12px; font-size: 12px; }
   .heroArt { width: min(225px, 65vw); }
   .artCaption { margin-top: 6px; font-size: 22px; gap: 8px; }
-  .footer { min-height: 47px; gap: 10px; font-size: 11px; }
+  .footer { min-height: clamp(30px, 6dvh, 47px); gap: 10px; font-size: 11px; }
   .footer span:last-child { font-size: 19px; }
   .content { padding-top: 15px; padding-bottom: 25px; }
   .steps { gap: 9px; font-size: 12px; margin-bottom: 24px; }
@@ -202,6 +219,9 @@
   .scoreRow { margin-top: 16px; }
   .gameActions { gap: 21px; margin-top: 16px; }
   .rulesContent { padding-top: 20px; }
+  .rulesList { grid-template-columns: 1fr; gap: 16px; margin-top: 18px; }
+  .rule { grid-template-columns: 30px 1fr; gap: 10px; }
+  .rule p { font-size: 15px; }
 }
 @media (max-width: 600px) and (max-height: 740px) {
   .heroBody { gap: 10px; padding-block: 8px; }
@@ -217,4 +237,118 @@
 @media (max-width: 600px) and (max-height: 620px) {
   .heroArt { width: 145px; }
   .artCaption { display: none; }
+}
+
+@media (max-height: 800px) {
+  .content { padding-block: 8px; }
+  .steps { margin-bottom: 10px; }
+  .screenTitle { font-size: 36px; }
+  .screenCopy { font-size: 14px; margin-top: 5px; }
+  .modeGrid { margin-top: 18px; gap: 12px; }
+  .modeOption { min-height: 114px; padding: 12px 14px; }
+  .modeIcon { height: 24px; margin-bottom: 5px; }
+  .modeIcon .mark { width: 24px; height: 24px; }
+  .modeTitle { font-size: 26px; }
+  .modeDescription { margin-top: 4px; font-size: 13px; line-height: 1.35; }
+  .soon { font-size: 9px; top: 12px; right: 11px; }
+  .resume { margin-top: 12px; padding-block: 6px; font-size: 14px; }
+  .resume p { font-size: 12px; }
+  .resume > div { min-width: 0; }
+  .resume p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .smallNote { margin-top: 12px; font-size: 12px; }
+  .form { margin-top: 12px; }
+  .fieldset { margin-bottom: 12px; }
+  .legend, .fieldLabel { margin-bottom: 6px; font-size: 14px; }
+  .choiceLabel { min-height: 56px; padding-block: 6px; }
+  .choiceLabel strong { font-size: 23px; }
+  .choiceLabel small { font-size: 11px; line-height: 1.3; }
+  .choiceLabel .mark { width: 26px; height: 26px; }
+  .input { min-height: 44px; }
+  .nameFields { margin-bottom: 18px; }
+  .formActions { margin-top: 14px; }
+  .roomFields { margin-top: 16px; }
+  .onlineNote { margin-top: 16px; padding-block: 12px; }
+  .onlineNote h3 { font-size: 25px; }
+  .onlineNote p { font-size: 14px; }
+  .roomContent .onlineNote { margin-top: 12px; padding-block: 8px; }
+  .roomContent .formActions { margin-top: 12px; }
+  .gameContent { padding-block: 4px 6px; }
+  .gameContent .steps { margin-bottom: 6px; }
+  .playerRow { margin-block: 6px 4px; }
+  .player { padding-block: 4px; }
+  .status { min-height: 0; margin-bottom: 6px; }
+  .status h1 { font-size: 32px; }
+  .status p { font-size: 13px; }
+  .scoreRow { margin-top: 8px; }
+  .scoreNumber { font-size: 28px; }
+  .scoreLabel { margin-top: 3px; }
+  .gameActions { margin-top: 6px; gap: 18px; }
+  .storageNote { margin-top: 4px; font-size: 11px; }
+  .rulesList { margin-top: 16px; gap: 16px; }
+  .rule h2 { font-size: 27px; }
+  .rule p { font-size: 14px; }
+  .rulesPagination { margin-top: 10px; }
+  .rulesContent .notice { margin-top: 10px; font-size: 12px; }
+  .rulesActions { margin-top: 10px; }
+}
+
+@media (max-width: 600px) and (max-height: 620px) {
+  .screenTitle { font-size: 32px; }
+  .chooseContent .screenCopy, .setupContent .screenCopy, .roomContent .screenCopy { display: none; }
+  .chooseContent .modeDescription { display: none; }
+  .modeOption { min-height: 88px; padding: 10px 12px; }
+  .modeTitle { font-size: 23px; }
+  .chooseContent .smallNote { margin-top: 8px; }
+  .choiceLabel { min-height: 52px; }
+  .choiceLabel strong { font-size: 21px; }
+  .choiceLabel .mark { width: 24px; height: 24px; }
+  .roomFields { margin-top: 12px; }
+  .onlineNote { padding-block: 8px; margin-top: 12px; }
+  .onlineNote h3 { font-size: 23px; }
+  .onlineNote p { display: none; }
+  .gameContent .status h1, .gameContent .status p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .statusName { display: inline-block; max-width: calc(100% - 88px); overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; }
+  .gameActions { gap: 12px; }
+  .gameActions .button { min-width: 0; padding-inline: 12px; gap: 10px; font-size: 15px; }
+  .rulesEyebrow { display: none; }
+  .rulesContent .screenTitle { font-size: 30px; }
+}
+
+@media (min-width: 601px) and (max-height: 540px) {
+  .content { padding-block: 4px; }
+  .screenCopy { display: none; }
+  .heroBody { gap: 30px; padding-block: 6px; }
+  .heroTitle { margin-block: 10px; font-size: clamp(40px, 12dvh, 66px); }
+  .heroLead { font-size: 17px; }
+  .heroCopy { font-size: 14px; margin-top: 6px; }
+  .heroActions { margin-top: 14px; }
+  .heroSmall { margin-top: 8px; font-size: 11px; }
+  .heroArt { width: min(230px, 55dvh); }
+  .artCaption { margin-top: 4px; font-size: 20px; }
+  .chooseContent { width: min(900px, 100%); }
+  .modeGrid { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 12px; }
+  .modeDescription { display: none; }
+  .modeOption { min-height: 92px; padding-block: 10px; }
+  .modeTitle { font-size: 24px; }
+  .smallNote { margin-top: 6px; }
+  .setupContent, .roomContent { width: min(800px, 100%); }
+  .setupContent .form, .roomContent .form { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 24px; }
+  .form .fieldset, .form .nameFields, .roomFields { margin: 0; }
+  .formActions { margin: 0; align-self: end; }
+  .onlineNote { margin: 0; padding: 0; border: 0; }
+  .roomContent .onlineNote { margin: 0; padding: 0; }
+  .roomContent .formActions { margin-top: 0; }
+  .onlineNote h3 { font-size: 23px; margin-bottom: 2px; }
+  .onlineNote p { font-size: 12px; }
+  .gameContent { width: min(900px, 100%); column-gap: 28px; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "steps steps" "round board" "players board" "status board" "score board" "actions board" "error board" "save board"; grid-template-rows: auto auto auto auto auto auto auto auto; align-content: center; }
+  .boardSlot { height: 100%; }
+  .gameContent .playerRow { margin-block: 4px; }
+  .status h1 { font-size: 30px; }
+  .status p { margin-top: 0; }
+  .scoreRow { margin-top: 4px; }
+  .gameActions { margin-top: 4px; gap: 14px; }
+  .gameActions .button { min-width: 0; padding-inline: 15px; }
+  .rulesEyebrow { display: none; }
+  .rulesContent .screenTitle { font-size: 30px; }
+  .rulesList { margin-top: 10px; }
 }
