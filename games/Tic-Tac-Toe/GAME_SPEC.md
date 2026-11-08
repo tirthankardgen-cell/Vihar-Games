@@ -11,7 +11,8 @@
 **Access:** No account, visible sign-in, or download.  
 **Players:** One human against the computer, or exactly two humans.  
 **Required modes:** Computer opponent, pass-and-play, and private online room.  
-**Match format:** Standard 3 × 3 Tic-Tac-Toe, one round at a time.
+**Match format:** Standard 3 × 3 Tic-Tac-Toe, one round at a time.  
+**Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
 ## 1. Game and objective
 
@@ -49,6 +50,7 @@ Two players alternate placing X and O in empty cells. The first to make three of
 ## 5. Implementation requirements
 
 - Use the Vihar Games shared stack: latest stable compatible Next.js App Router, React, TypeScript, and Tailwind CSS, plus the newest stable Node.js supported by Vercel. One root package, lockfile, environment configuration, and Vercel project serve every game. This folder contains this game's specification; it is not a separate application.
+- Render this game entirely in 2D using HTML/SVG grid with flat X/O marks. Do not use WebGL, Three.js, React Three Fiber, 3D models, CSS perspective, or 3D transforms; texture and planar motion must not imply raised or tilted game objects.
 - Implement a pure TypeScript engine for legal moves, all eight winning lines, draws, turn changes, and scoring. Use the same engine for local, computer, and online modes.
 - Online follows Gulam Chor: Firebase anonymous identity, Realtime Database listeners, and Vihar Games Node.js API route handlers at `/api/games/tic-tac-toe/rooms/<code>/actions`. Atomically validate room membership, current actor, cell, round ID, action ID, and expected revision.
 - State contains the nine cells, seat-to-symbol assignment, current actor, round number, status, winner or draw reason, session scores, rematch acceptance, and revision. Duplicate requests must not place extra marks or count the result twice.
@@ -71,3 +73,4 @@ Two players alternate placing X and O in empty cells. The first to make three of
 - The game works within the single Vihar Games build and deployment on Vercel; its page and API paths resolve under `games.vihar.online`.
 - The catalog entry opens `/tic-tac-toe`; the launch endpoint redirects there; info and rules endpoints identify this game, and another game's room code or local save cannot affect it.
 - Room commands use the documented `/api/games/tic-tac-toe` namespace, retain guest access without a sign-in form, and reject unsupported game actions.
+- All gameplay graphics and transitions remain 2D; verify flat boards/pieces on desktop and mobile, with no raised, extruded, perspective, or semi-3D presentation.

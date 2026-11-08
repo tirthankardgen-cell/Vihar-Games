@@ -6,6 +6,8 @@
 
 **Status:** Documentation only, updated 8 November 2026. No game code, package scaffold, API handlers, or deployment configuration has been created.
 
+**Presentation:** All twelve games are 2D only. Boards, pieces, cards, dice, and transitions use flat graphics; 3D, semi-3D, raised or tilted boards, and perspective effects are excluded.
+
 ## Included games
 
 Chess, Carrom, Billiards, Tic-Tac-Toe, Ludo, Snakes and Ladders, Connect Four, Checkers, Reversi, Sudoku, Minesweeper, and Memory Match.
@@ -72,6 +74,20 @@ Each game folder contains one Markdown specification. Application source directo
 - Each `GAME_SPEC.md`: that game's exact rules and acceptance criteria.
 
 The current instructions and these consolidated documents supersede the earlier per-game-subdomain and per-game-deployment plan. Preserve the game rules when implementing the shared application.
+
+## Approved 2D artwork direction
+
+Chess, Carrom, and Ludo adapt the Indian courtyard artwork style inspected in Gulam Chor: terracotta and ochre architecture, neem greens, cream Hindi lettering, block-print details, quiet paper controls, and painterly 2D texture.
+
+| Game | Required presentation | Detailed handoff |
+| --- | --- | --- |
+| Chess | Flat top-down 2D board with recognizable illustrated chess symbols | [Chess visual direction](./games/Chess/GAME_SPEC.md#7-detailed-2d-visual-direction--indian-courtyard-chess) |
+| Carrom | Flat top-down 2D board, discs, striker, aiming, and planar shot motion | [Carrom visual direction](./games/Carrom/GAME_SPEC.md#7-detailed-2d-visual-direction--indian-courtyard-carrom) |
+| Ludo | Flat 2D board, tokens, and die faces with planar movement | [Ludo visual direction](./games/Ludo/GAME_SPEC.md#7-detailed-2d-visual-direction--indian-courtyard-ludo) |
+
+Each handoff covers palette, artwork, text, board/piece treatment, pages, interaction states, animation, responsive layout, accessibility, and planned asset requirements. The other nine games also carry the mandatory 2D presentation requirement in their own specifications. The earlier 3D/semi-3D request is superseded by the latest 2D-only direction.
+
+Chess solo mode offers **Easy, Medium, and Hard** against **Acharya Dev (आचार्य देव)**, Vihar's fictional Indian chess mentor. He has a dedicated flat 2D portrait and a consistent identity at all levels. The [Chess computer-opponent handoff](./games/Chess/GAME_SPEC.md#8-solo-computer-opponent--acharya-dev) defines his avatar, level behavior, and local play flow.
 
 ## Projects kept outside
 

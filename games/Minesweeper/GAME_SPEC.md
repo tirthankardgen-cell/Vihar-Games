@@ -11,7 +11,8 @@
 **Access:** No account, visible sign-in, or download.  
 **Players:** One.  
 **Required mode:** Local single-player puzzle.  
-**Match format:** Classic mine-clearing puzzle with a guaranteed safe first reveal.
+**Match format:** Classic mine-clearing puzzle with a guaranteed safe first reveal.  
+**Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
 ## 1. Game and objective
 
@@ -54,6 +55,7 @@ Reveal all cells that do not contain mines, using neighboring mine counts to rea
 ## 5. Implementation requirements
 
 - Use the Vihar Games shared stack: latest stable compatible Next.js App Router, React, TypeScript, and Tailwind CSS, plus the newest stable Node.js supported by Vercel. One root package, lockfile, environment configuration, and Vercel project serve every game. This folder contains this game's specification; it is not a separate application.
+- Render this game entirely in 2D using HTML grid, flat flags/mines, and text counts. Do not use WebGL, Three.js, React Three Fiber, 3D models, CSS perspective, or 3D transforms; texture and planar motion must not imply raised or tilted game objects.
 - Use a pure TypeScript engine for mine placement, neighborhood counts, reveal expansion, flags, chording, and terminal states. Random placement is local and never requires an external service.
 - Use an iterative queue for flood fill to avoid recursive stack overflow. Treat chord reveals atomically so a mine hit cannot coexist with a win result.
 - Validate imported local saves against grid dimensions, mine count, indices, and save version. Fall back to a new run when data is invalid, with a clear explanation.
@@ -73,3 +75,4 @@ Reveal all cells that do not contain mines, using neighboring mine counts to rea
 - Background time is excluded, replay attempts do not replace first-attempt best times, and unavailable storage does not block play.
 - The game works within the single Vihar Games build and deployment on Vercel; its page and API paths resolve under `games.vihar.online`.
 - The catalog entry opens `/minesweeper`; the launch endpoint redirects there; info and rules endpoints identify this game, and another game's room code or local save cannot affect it.
+- All gameplay graphics and transitions remain 2D; verify flat boards/pieces on desktop and mobile, with no raised, extruded, perspective, or semi-3D presentation.

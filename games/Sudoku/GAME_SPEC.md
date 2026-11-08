@@ -11,7 +11,8 @@
 **Access:** No account, visible sign-in, or download.  
 **Players:** One.  
 **Required mode:** Local single-player puzzle.  
-**Match format:** Standard 9 × 9 Sudoku with Easy, Medium, and Hard difficulty.
+**Match format:** Standard 9 × 9 Sudoku with Easy, Medium, and Hard difficulty.  
+**Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
 ## 1. Game and objective
 
@@ -52,6 +53,7 @@ Complete a partially filled grid with digits 1–9 so that every row, column, an
 ## 5. Implementation requirements
 
 - Use the Vihar Games shared stack: latest stable compatible Next.js App Router, React, TypeScript, and Tailwind CSS, plus the newest stable Node.js supported by Vercel. One root package, lockfile, environment configuration, and Vercel project serve every game. This folder contains this game's specification; it is not a separate application.
+- Render this game entirely in 2D using HTML grid, text digits, and notes. Do not use WebGL, Three.js, React Three Fiber, 3D models, CSS perspective, or 3D transforms; texture and planar motion must not imply raised or tilted game objects.
 - Keep puzzle validation, solution checking, notes, undo history, and completion in pure TypeScript modules. Use a tested solver to validate puzzle-bank uniqueness during preparation.
 - Run generation and expensive solver work in a browser worker; bound attempts and cancel abandoned requests when switching puzzles.
 - Package a valid solution for each bank puzzle, or compute and cache it locally. Browser users can inspect local data, so local records are personal records, not a tamper-proof global leaderboard.
@@ -71,3 +73,4 @@ Complete a partially filled grid with digits 1–9 so that every row, column, an
 - Same-browser refresh restores the correct puzzle and entries; background time is excluded; blocked storage still permits play.
 - The game works within the single Vihar Games build and deployment on Vercel; its page and API paths resolve under `games.vihar.online`.
 - The catalog entry opens `/sudoku`; the launch endpoint redirects there; info and rules endpoints identify this game, and another game's room code or local save cannot affect it.
+- All gameplay graphics and transitions remain 2D; verify flat boards/pieces on desktop and mobile, with no raised, extruded, perspective, or semi-3D presentation.

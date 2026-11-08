@@ -11,7 +11,8 @@
 **Access:** No account, visible sign-in, or download.  
 **Players:** One human against the computer, two humans, or one-person practice.  
 **Required modes:** Computer opponent, practice, pass-and-play, and private online room.  
-**Match format:** One rack of casual 8-ball pool, with the exact house rules below.
+**Match format:** One rack of casual 8-ball pool, with the exact house rules below.  
+**Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
 ## 1. Game and objective
 
@@ -56,6 +57,7 @@ This project uses pocket billiards, specifically 8-ball pool. One player clears 
 ## 5. Implementation requirements
 
 - Use the Vihar Games shared stack: latest stable compatible Next.js App Router, React, TypeScript, and Tailwind CSS, plus the newest stable Node.js supported by Vercel. One root package, lockfile, environment configuration, and Vercel project serve every game. This folder contains this game's specification; it is not a separate application.
+- Render this game entirely in 2D using Canvas 2D top-down table, flat ball circles, cue/aim lines, and x/y physics. Do not use WebGL, Three.js, React Three Fiber, 3D models, CSS perspective, or 3D transforms; texture and planar motion must not imply raised or tilted game objects.
 - Separate pool rules, deterministic fixed-timestep physics, computer shot search, local persistence, and online authority. Use browser workers for expensive physics and computer search.
 - Record ball positions and pocketed status, group assignment, first-contact and cushion events, breaker, turn, ball-in-hand entitlement, declared pocket, revision, and result reason.
 - Use Firebase anonymous identity, Realtime Database subscriptions, and Vihar Games Node.js API route handlers at `/api/games/billiards/rooms/<code>/actions` for online play. The server validates cue placement, aim, power, declared pocket, actor, action ID, and expected revision, then simulates and commits the shot atomically.
@@ -79,3 +81,4 @@ This project uses pocket billiards, specifically 8-ball pool. One player clears 
 - The game works within the single Vihar Games build and deployment on Vercel; its page and API paths resolve under `games.vihar.online`.
 - The catalog entry opens `/billiards`; the launch endpoint redirects there; info and rules endpoints identify this game, and another game's room code or local save cannot affect it.
 - Room commands use the documented `/api/games/billiards` namespace, retain guest access without a sign-in form, and reject unsupported game actions.
+- All gameplay graphics and transitions remain 2D; verify flat boards/pieces on desktop and mobile, with no raised, extruded, perspective, or semi-3D presentation.

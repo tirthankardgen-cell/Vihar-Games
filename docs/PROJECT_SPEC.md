@@ -4,7 +4,7 @@
 
 **Project:** Vihar Games  
 **Updated:** 8 November 2026  
-**Scope:** Consolidated documentation and organization for twelve planned games.  
+**Scope:** Consolidated documentation for twelve 2D games, including detailed Indian artwork guidance for Chess, Carrom, and Ludo.  
 **Deployment target:** One Next.js application, one Vercel project, one domain.  
 **Implementation status:** Not started.
 
@@ -36,12 +36,13 @@ A catalog entry opens its page directly. The launch API also opens the page thro
 ## 3. Shared player flow
 
 - **Local solo and practice:** Select a game, choose a supported mode and settings, and start immediately. Use that game's pure engine in the browser. Computer opponents belong to the local solo mode. No room or anonymous-auth network request is required.
+- **Chess computer:** Solo Chess offers Easy, Medium, and Hard against Acharya Dev (आचार्य देव), the fictional Vihar chess mentor with a dedicated flat 2D portrait. Keep his identity consistent across levels and keep computer search local in a worker; private online rooms remain human-only.
 - **Pass-and-play:** Set optional nicknames and start the local game. Complete the game's whole turn, including extra shots, extra rolls, or forced jumps, before the next person accepts handover. All participants use the same device.
 - **Online:** Choose Create Room or Join Room, enter a nickname, and automatically obtain a persistent anonymous guest identity. The host shares a six-character code or the full game-specific invite URL. Friends use separate devices or browser profiles. Start with the exact supported human seat count.
 - **Finishing:** Explain the result, retain the relevant session score, and offer a rematch or return to the lobby. Every continuing player accepts before an online rematch starts; a roster or settings change invalidates old rematch acceptance.
 - **Switching games:** A local save remains under its game ID. Leaving an online game explicitly uses the game's leave or resignation flow; simply closing or navigating away starts the disconnect grace period. Stop old listeners and pending workers/timers before activating another game.
 
-No email address, password, visible sign-in, or installation is required. Touch, mouse, and keyboard must support setup and gameplay. Documentation covers rules and behavior without prescribing visual design.
+No email address, password, visible sign-in, or installation is required. Touch, mouse, and keyboard must support setup and gameplay. All twelve games use 2D graphics. Chess, Carrom, and Ludo additionally have detailed Indian courtyard artwork requirements in their game documents, as requested.
 
 ## 4. One application with separate game modules
 
@@ -58,7 +59,7 @@ The future source structure should include:
 
 These are documented future paths, not source files to create in this phase. Dynamic App Router parameters and framework APIs must follow the documentation of the version installed when coding starts.
 
-The registry maps public IDs such as `tic-tac-toe` to explicit modules. Lazy-load the selected game's browser bundle; opening Chess must not load every game's engine or physics dependencies. Share infrastructure without sharing mutable match state.
+The registry maps public IDs such as `tic-tac-toe` to explicit modules and declares `presentation: "2d"` for every entry. Lazy-load the selected game's browser bundle; opening Chess must not load every game's engine or physics dependencies. Share infrastructure without sharing mutable match state.
 
 ## 5. Shared APIs and durable online state
 
@@ -108,3 +109,23 @@ Deploy only the `Vihar Games` directory as the root of one Vercel project. Attac
 Acceptance requires all catalog paths and launch endpoints to resolve, unsupported modes to be rejected, and every game to complete its defined flows inside the same build. Validate same-origin save isolation, cross-game room isolation, concurrent commands, reconnects, and hidden-state permissions in addition to each game's rules.
 
 This phase delivers these documents and the relocated specifications. It does not install dependencies, initialize an application, implement games or APIs, or deploy a site.
+
+## 9. Mandatory 2D presentation and approved Indian artwork
+
+Every game is 2D only, including Chess, Carrom, Ludo, and Billiards. Use flat HTML/SVG graphics or Canvas 2D and ordinary 2D position/opacity transitions. Do not use WebGL, Three.js, React Three Fiber, 3D models, isometric boards, extruded pieces, raised rims, modeled dice, CSS perspective, or 3D transforms. Painted texture is allowed as flat artwork; it cannot imply raised or tilted gameplay objects. The prior 3D and semi-3D directions are superseded.
+
+Carrom and Billiards still use deterministic collisions and shot simulation, but coordinates, movement, cushions, and pockets stay in the x/y plane. Render the games from above with flat discs/balls. Chess uses a flat square board and identifiable piece symbols; Ludo uses a flat track, token symbols, and die faces. Memory Match changes card faces through a flat state change or 2D opacity transition, without a 3D card-flip effect.
+
+The three approved Indian artwork adaptations are:
+
+| Game | Visual requirements |
+| --- | --- |
+| [Chess](../games/Chess/GAME_SPEC.md) | Flat cream/teal grid, recognizable illustrated symbols, quiet courtyard framing, and paper-based controls |
+| [Carrom](../games/Carrom/GAME_SPEC.md) | Flat illustrated household board, clearly outlined coins/queen/striker, and readable 2D aiming and pocket events |
+| [Ludo](../games/Ludo/GAME_SPEC.md) | Flat cream/cotton board, earthy player colors plus symbols, flat tokens/die, and readable safe/home paths |
+
+Adapt the [Gulam Chor artwork handoff](https://github.com/tirthankardgen-cell/Gulam-Chor/blob/76bd85b24ea7edce32c0be2f33e89c1a1d481923/art-direction/README.md), [desktop courtyard preview](https://github.com/tirthankardgen-cell/Gulam-Chor/blob/76bd85b24ea7edce32c0be2f33e89c1a1d481923/docs/preview/landing.webp), and [table preview](https://github.com/tirthankardgen-cell/Gulam-Chor/blob/76bd85b24ea7edce32c0be2f33e89c1a1d481923/docs/preview/table.webp). The inspected implementation currently uses original SVG studies; the handoff's gouache and paper-grain direction guides future 2D asset preparation. Do not describe those ungenerated paintings as existing assets.
+
+Keep Yatra One/Hind typography, the neem-green/terracotta/ochre/cream palette, block-print accents, and the warm everyday courtyard mood coherent across the three games. Titles, scores, labels, room codes, and rules stay accessible live text. Decoration stays outside active board areas and cannot resemble extra game pieces or safe cells.
+
+Each game's detailed visual guidance lives in its own `GAME_SPEC.md`; the global 2D requirement applies to all twelve. Future assets and shared style tokens live inside Vihar Games, with no runtime dependency on Gulam Chor. This update creates documentation only, not artwork or game source.

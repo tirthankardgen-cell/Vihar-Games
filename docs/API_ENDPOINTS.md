@@ -8,6 +8,8 @@
 **Game page pattern:** `/<game-id>`  
 **Game API pattern:** `/api/games/<game-id>`
 
+**Presentation:** All game pages are 2D only. API metadata declares `presentation: "2d"`; API behavior, game rules, and room authority remain independent of decorative artwork.
+
 ## 1. Game pages and endpoint namespaces
 
 All twelve games are separate pages within the same website. Their API namespaces are also within that website. Selecting a catalog entry opens the page directly; opening the launch API redirects to that page.
@@ -33,7 +35,7 @@ Each game also has `/<game-id>/how-to-play`. A private invite uses `/<game-id>/p
 
 | Method and path | Behavior | Authentication |
 | --- | --- | --- |
-| `GET /api/games` | Return the twelve registered games, page URLs, rules URLs, API bases, supported modes, player limits, rules versions, and implementation availability | None |
+| `GET /api/games` | Return the twelve registered games, page URLs, rules URLs, API bases, supported modes, player limits, rules versions, 2D presentation, and implementation availability | None |
 | `GET /api/games/<game-id>` | Return HTTP 307 with `Location: /<game-id>` so the clicked endpoint opens the game page | None |
 | `GET /api/games/<game-id>/info` | Return metadata for this game, including its available room actions | None |
 | `GET /api/games/<game-id>/rules` | Return this game's exact rules text and `rulesVersion`, consistent with its rules page | None |
@@ -41,6 +43,8 @@ Each game also has `/<game-id>/how-to-play`. A private invite uses `/<game-id>/p
 Public `GET` endpoints do not create rooms, roll dice, start matches, change settings, or submit moves. JSON consumers use `/info` instead of the redirect endpoint. Unknown IDs return 404 rather than redirecting to arbitrary destinations. API responses send `X-Robots-Tag: noindex`.
 
 Metadata exposes an `availability` field. During incremental implementation, an unfinished game remains a catalog entry with `planned` availability and a truthful page; only `playable` games accept live match creation. This document's routes are future requirements and are not currently live.
+
+Chess metadata also exposes its local computer persona: `id: "acharya-dev"`, English/Hindi display names, a planned avatar reference, and difficulty IDs `easy`, `medium`, and `hard`. This is public presentation information; solo search and moves stay in the browser. It does not introduce a computer room member or require online authentication for solo play.
 
 ## 3. Online room endpoints
 

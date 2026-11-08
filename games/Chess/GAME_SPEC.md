@@ -10,8 +10,10 @@
 **Platform:** Browser on mobile, tablet, and desktop.  
 **Access:** No account, visible sign-in, or download.  
 **Players:** One human against the computer, or exactly two humans.  
+**Vihar computer:** Acharya Dev (आचार्य देव), a fictional Indian chess mentor with a dedicated flat 2D avatar.  
 **Required modes:** Computer opponent, pass-and-play, and private online room.  
-**Match format:** Standard chess; untimed in the first release.
+**Match format:** Standard chess; untimed in the first release.  
+**Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
 ## 1. Game and objective
 
@@ -38,7 +40,7 @@ Two players alternate moves, trying to checkmate the opposing king. A checkmate 
 
 1. Open Vihar Games at `https://games.vihar.online` and select Chess, or visit `/chess` directly. Choose Play or How to Play.
 2. Choose Play Computer, Pass-and-Play, Create Room, or Join Room.
-3. Computer mode: choose Easy, Medium, or Hard and White, Black, or Random. Start a local game; the computer acts only for its assigned side.
+3. Computer mode: meet Acharya Dev (आचार्य देव), choose Easy, Medium, or Hard and White, Black, or Random, then start a local game. His dedicated 2D avatar identifies the Vihar computer; it acts only for its assigned side.
 4. Pass-and-play: enter optional names, assign sides, and start. After each completed move, the other person accepts the handover. Both people share the same device and game state.
 5. Online: enter a nickname, create a room, and share its six-character code or `https://games.vihar.online/chess/play?room=ABC234`. The second person joins on their own device. The host selects fixed or random sides and starts when both players are present.
 6. Submit a legal move, including a promotion choice when necessary. Resolve check, draw conditions, and the next turn from the accepted position.
@@ -56,8 +58,10 @@ Two players alternate moves, trying to checkmate the opposing king. A checkmate 
 ## 5. Implementation requirements
 
 - Use the Vihar Games shared stack: latest stable compatible Next.js App Router, React, TypeScript, and Tailwind CSS, plus the newest stable Node.js supported by Vercel. One root package, lockfile, environment configuration, and Vercel project serve every game. This folder contains this game's specification; it is not a separate application.
+- Render this game entirely in 2D using HTML/SVG board and flat piece glyphs. Do not use WebGL, Three.js, React Three Fiber, 3D models, CSS perspective, or 3D transforms; texture and planar motion must not imply raised or tilted game objects.
 - Separate the chess engine, computer search, local session, room commands, and React interaction. Use a maintained rules engine that correctly supports the special moves and draw conditions; verify claims rather than relying on an incomplete custom move generator.
 - Run computer search in a browser worker. Bound difficulty by search depth or thinking time, and cancel work when a game is reset or left.
+- Keep the same Acharya Dev identity/avatar at all three difficulty levels. Persist selected difficulty, human side, and opponent ID with a local save; changing difficulty for a new game resets the position rather than silently changing an active opponent. Computer play requires no room, account, external AI API, or online bot seat.
 - For online play, use Firebase anonymous identities, Realtime Database subscriptions, and Vihar Games Node.js API route handlers at `/api/games/chess/rooms/<code>/actions`. The server validates seat, active side, room revision, move legality, promotion, and result atomically.
 - Persist position, castling rights, en passant state, move history, repetition keys, half-move count, side assignment, draw offers, status, result reason, and revision. Deduplicate retried move requests.
 - Mount the game overview at `/chess`, mode selection and play at `/chess/play`, and rules at `/chess/how-to-play`. Selecting the game in the shared catalog opens `/chess`.
@@ -71,6 +75,7 @@ Two players alternate moves, trying to checkmate the opposing king. A checkmate 
 ## 6. Acceptance criteria
 
 - All three modes complete a real game without a sign-in step; local modes do not initialize online services.
+- Solo setup offers Easy, Medium, and Hard, identifies the opponent as Acharya Dev with his own 2D avatar, and preserves the chosen level and human side after a local resume. Each level plays legal moves and stronger search remains responsive.
 - Validate castling through check, en passant exposing the king, underpromotion, checkmate, stalemate, and repetition with different castling rights.
 - Verify draw claims, automatic draws, resignation, and forfeit. A finished game accepts no further moves.
 - Two independent browser profiles stay synchronized; refresh preserves the side; duplicate and out-of-turn commands cannot move a piece.
@@ -78,3 +83,98 @@ Two players alternate moves, trying to checkmate the opposing king. A checkmate 
 - The game works within the single Vihar Games build and deployment on Vercel; its page and API paths resolve under `games.vihar.online`.
 - The catalog entry opens `/chess`; the launch endpoint redirects there; info and rules endpoints identify this game, and another game's room code or local save cannot affect it.
 - Room commands use the documented `/api/games/chess` namespace, retain guest access without a sign-in form, and reject unsupported game actions.
+- All gameplay graphics and transitions remain 2D; verify flat boards/pieces on desktop and mobile, with no raised, extruded, perspective, or semi-3D presentation.
+
+## 7. Detailed 2D visual direction — Indian courtyard chess
+
+**Approved presentation:** 2D only. Use a flat top-down board and flat illustrated chess-piece symbols. The earlier request for 3D chess is superseded by the user's latest instruction that every game is 2D.
+
+### 7.1 Reference and shared Indian artwork style
+
+Use Gulam Chor's Indian neighborhood courtyard style as the visual reference: ochre and terracotta plaster, neem foliage, muted teal shutters, cotton/block-print details, cream lettering, and the warmth of an evening family gathering. Keep the familiar everyday setting and quiet interface.
+
+The inspected repository currently renders original SVG color studies; its preview screenshots show that artwork. The art handoff describes gouache, dry-brush edges, and paper grain as the intended painted finish. Adopt the observed composition and palette, with those textures in future 2D illustrations; do not claim generated paintings already exist.
+
+| Color | Value | Role |
+| --- | --- | --- |
+| Neem/shadow green | `#293D35` | Dark text, outlines, shaded courtyard areas |
+| Deep cotton teal | `#2B4A42` | Secondary surfaces and restrained accents |
+| Terracotta | `#AF6443` | Walls and warm decorative accents |
+| Ochre | `#C99558` | Wood-colored details and small emphasis marks |
+| Cream | `#F5E6C5` | Paper surfaces, light pieces, and primary lettering |
+| Muted brass | `#DFB36D` | Thin borders and active-state accents |
+| Dusty sky blue | `#7A929A` | Small background and secondary accents |
+
+Use a static illustrated courtyard backdrop with warm upper-right light painted into the artwork. Place neem leaves, plaster walls, shutters, a charpoy, and chai details near the edges; keep the playing area calm. Gouache texture and block-print motifs are decorative, never encoded game state. The board and every interactive object remain flat and un-tilted.
+
+Use locally bundled Yatra One for Hindi display lettering and Hind for readable Hindi/English interface text, matching Gulam Chor. Render titles, names, room codes, scores, coordinates, and rule messages as accessible text rather than baking them into images. Use flat cream buttons with dark ink, restrained borders, and visible focus; omit raised-button shadows and perspective effects.
+
+Keep the style affectionate and familiar. Avoid neon, glass panels, casino styling, photorealistic stock imagery, palaces, deity-themed pieces, or caricatures. Use this project's own game titles and symbols rather than copying Gulam Chor's Jack, card backs, or branding.
+
+### 7.2 Board and pieces
+
+- Present the complete 8 × 8 board as a flat square with cream and deep-teal cells, a thin ochre frame, and sparse block-print decoration outside the playable grid. Use subtle paper or wood-grain illustration as a flat texture; do not add a raised rim, bevel, tilt, or cast shadow suggesting physical height.
+- Use recognizable flat chess silhouettes for king, queen, rook, bishop, knight, and pawn. The knight reads as a horse-head symbol, the bishop has its familiar split-head marker, and the king/queen differ clearly. The Indian influence belongs in linework, texture, colors, and framing, while piece types remain immediately identifiable.
+- White uses cream fills with dark outlines; Black uses deep-ink/teal fills with cream line details. Maintain contrast against both cell colors. Labels and accessible piece names remain White/Black even if the artwork uses these warm tones.
+- Coordinates stay readable outside the cells. Each piece occupies its canonical square and has a large enough selection target; ornamental patterns cannot resemble pieces or legal-move markers.
+- If the local handover flips the board, use a flat 180-degree board orientation change, keep glyphs and text upright, and preserve canonical square names. Online orientation is local to each player and never changes server coordinates.
+
+### 7.3 Pages, controls, and game states
+
+- On `/chess`, reuse the calm courtyard composition, a cream Hindi title such as शतरंज, and the existing Play/How to Play flow. Carry the same colors into computer setup, pass-and-play setup, Create/Join Room, and the lobby.
+- On `/chess/play`, make the board the main readable area. Player names, side assignment, current turn, move history, draw/resignation controls, and connection status use quiet flat paper panels around it.
+- In solo mode, the opposing player panel shows Acharya Dev's dedicated flat illustrated portrait, his English/Hindi name, the label Vihar Computer, and the chosen difficulty. Human multiplayer seats keep their own names and do not inherit the computer persona.
+- Selection uses a thin outline; legal moves use distinct dots/rings, with capture targets differentiated from empty destinations. Last-move and check states use both a marker and text, not color alone.
+- Promotion uses an accessible flat choice panel with queen, rook, bishop, and knight symbols; do not finish the move before the player chooses.
+- Results use the same paper-and-ink language, state the precise win/draw/forfeit reason, and provide the documented rematch/lobby actions. Decorative celebration must not cover the final position.
+
+### 7.4 Motion, responsive layout, and accessibility
+
+- Animate moves with short 2D translations between cells; captures remove the captured glyph after the accepted move, and castling translates king and rook together. Never rotate a piece in 3D, lift it into depth, or run a camera orbit.
+- Respect reduced motion by showing the accepted final squares immediately. Animation cannot delay authoritative turn changes or override a newer room revision.
+- On desktop, keep the board square with compact supporting panels. On phones, fit all eight files without horizontal clipping, place controls below, and keep labels readable at 360–390 CSS-pixel widths. Permit page scrolling when necessary.
+- Support tap/click selection and keyboard square navigation. Announce selected pieces, legal destinations, check, promotion, and the result. Flat illustration must not remove focus indicators or accessible text.
+
+### 7.5 Planned asset and implementation handoff
+
+- Prepare a matching flat courtyard illustration/crop, a flat board border/texture, six clear piece silhouettes with two side treatments, Acharya Dev's dedicated flat portrait, and flat state/control icons. All assets use the same palette and line quality.
+- Use HTML/SVG for the board and pieces; optional Canvas 2D effects may remain cosmetic. No WebGL, Three.js, React Three Fiber, 3D models, CSS perspective, or 3D transforms are needed.
+- Keep every piece, cell, coordinate, and rule state separate from the background image. The renderer reads the existing pure chess engine and shared API state without changing chess rules.
+- Before implementation is accepted, compare desktop/mobile pages with the inspected Gulam Chor references, verify 2D-only rendering, piece recognition, selection contrast, reduced motion, and identical rules across all modes.
+
+### 7.6 Inspected references
+
+- [Gulam Chor artwork style bible](https://github.com/tirthankardgen-cell/Gulam-Chor/blob/76bd85b24ea7edce32c0be2f33e89c1a1d481923/art-direction/README.md)
+- [Desktop courtyard preview](https://github.com/tirthankardgen-cell/Gulam-Chor/blob/76bd85b24ea7edce32c0be2f33e89c1a1d481923/docs/preview/landing.webp)
+- [Desktop table preview](https://github.com/tirthankardgen-cell/Gulam-Chor/blob/76bd85b24ea7edce32c0be2f33e89c1a1d481923/docs/preview/table.webp)
+- [Mobile table preview](https://github.com/tirthankardgen-cell/Gulam-Chor/blob/76bd85b24ea7edce32c0be2f33e89c1a1d481923/docs/preview/table-mobile.webp)
+- [Current palette and interface styles](https://github.com/tirthankardgen-cell/Gulam-Chor/blob/76bd85b24ea7edce32c0be2f33e89c1a1d481923/src/app/globals.css)
+- [Current artwork resolver](https://github.com/tirthankardgen-cell/Gulam-Chor/blob/76bd85b24ea7edce32c0be2f33e89c1a1d481923/src/lib/art.ts)
+
+These links point to the inspected revision of the separate Gulam Chor repository. Future Vihar Games assets and style tokens must live within this shared application; do not introduce runtime imports from the sibling project.
+
+## 8. Solo computer opponent — Acharya Dev
+
+**Display name:** Acharya Dev  
+**Hindi name:** आचार्य देव  
+**Role:** Vihar Computer / Vihar's chess mentor  
+**Stable local opponent ID:** `acharya-dev`  
+**Required difficulty choices:** Easy, Medium, Hard.
+
+Acharya Dev is an original fictional Indian chess teacher/master persona, not an impersonation of a real player. Give him a calm, thoughtful face and a simple cotton kurta in the cream, neem-green, and ochre palette. Use the same affectionate illustrated portrait language as Gulam Chor's family avatars, with subtle paper/gouache texture. His avatar is a flat 2D portrait in a simple outlined badge, without a 3D bust, raised frame, perspective lighting, or animated talking head.
+
+His identity stays the same at every difficulty. The opposing-player label can read `Acharya Dev · Medium` with `Vihar Computer` as supporting text. Do not invent a verified rating or official chess title. The portrait is cosmetic: the local rules engine and computer search determine legal moves.
+
+| Level | Intended behavior |
+| --- | --- |
+| Easy | Beginner-friendly bounded search with occasional legal mistakes; never break move legality or special-move rules |
+| Medium | More consistent tactical choices, protecting material and finding immediate threats through a deeper bounded search |
+| Hard | Strongest available local search within a responsive thinking-time budget; no promise of perfect or unbeatable chess |
+
+Choose difficulty before starting, along with White, Black, or Random. If the human is Black, Acharya Dev makes the first White move. Changing difficulty during an unfinished match requests confirmation before starting a fresh position. Rematching can keep the selected level or return to setup to change it.
+
+Run searches in a browser worker, cancel obsolete work on restart/navigation, and show a readable computer-thinking state. Accept a computer move only for its assigned side and the current position. Preserve the opponent ID, selected level, and human side when restoring a local game.
+
+The planned portrait asset is `/art/chess/acharya-dev.svg` or an equivalently optimized flat image within Vihar Games. Keep the name in live text and show an accessible initials/name fallback while an asset is unavailable. This document defines the avatar handoff; it does not generate the portrait now.
+
+The public Chess metadata may identify the persona and supported levels. Solo moves remain browser-local; Acharya Dev never occupies a private online-room seat in this release. Verify all levels, both human sides, first-move behavior, save/resume, avatar fallback, and worker cancellation alongside the existing chess rules checks.

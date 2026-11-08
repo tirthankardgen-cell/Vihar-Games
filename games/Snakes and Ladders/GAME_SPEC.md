@@ -11,7 +11,8 @@
 **Access:** No account, visible sign-in, or download.  
 **Players:** 2–4 seats; solo uses one human and 1–3 computer players.  
 **Required modes:** Computer opponents, pass-and-play, and private online room.  
-**Match format:** Race to square 100 on one fixed board.
+**Match format:** Race to square 100 on one fixed board.  
+**Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
 ## 1. Game and objective
 
@@ -52,6 +53,7 @@ Players roll a die and move along numbered squares. Landing on a ladder moves a 
 ## 5. Implementation requirements
 
 - Use the Vihar Games shared stack: latest stable compatible Next.js App Router, React, TypeScript, and Tailwind CSS, plus the newest stable Node.js supported by Vercel. One root package, lockfile, environment configuration, and Vercel project serve every game. This folder contains this game's specification; it is not a separate application.
+- Render this game entirely in 2D using SVG or Canvas 2D numbered board and flat tokens. Do not use WebGL, Three.js, React Three Fiber, 3D models, CSS perspective, or 3D transforms; texture and planar motion must not imply raised or tilted game objects.
 - Implement a pure TypeScript turn resolver with the exact numbered path, endpoint maps, overshoot policy, seat order, and result. Use it in local and online modes.
 - Store positions, active seats, actor, most recent accepted die, traversal reason, turn number, board-rules version, result, action IDs, and revision.
 - Online uses Firebase anonymous identity, Realtime Database subscriptions, and Vihar Games Node.js API route handlers at `/api/games/snakes-and-ladders/rooms/<code>/actions`. The server generates uniform dice and atomically resolves the whole turn, validating actor and expected revision.
@@ -74,3 +76,4 @@ Players roll a die and move along numbered squares. Landing on a ladder moves a 
 - The game works within the single Vihar Games build and deployment on Vercel; its page and API paths resolve under `games.vihar.online`.
 - The catalog entry opens `/snakes-and-ladders`; the launch endpoint redirects there; info and rules endpoints identify this game, and another game's room code or local save cannot affect it.
 - Room commands use the documented `/api/games/snakes-and-ladders` namespace, retain guest access without a sign-in form, and reject unsupported game actions.
+- All gameplay graphics and transitions remain 2D; verify flat boards/pieces on desktop and mobile, with no raised, extruded, perspective, or semi-3D presentation.

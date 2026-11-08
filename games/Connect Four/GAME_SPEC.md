@@ -11,7 +11,8 @@
 **Access:** No account, visible sign-in, or download.  
 **Players:** One human against the computer, or exactly two humans.  
 **Required modes:** Computer opponent, pass-and-play, and private online room.  
-**Match format:** Standard seven-column, six-row Connect Four.
+**Match format:** Standard seven-column, six-row Connect Four.  
+**Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
 ## 1. Game and objective
 
@@ -49,6 +50,7 @@ Two players alternate dropping one token into a column. Tokens occupy the lowest
 ## 5. Implementation requirements
 
 - Use the Vihar Games shared stack: latest stable compatible Next.js App Router, React, TypeScript, and Tailwind CSS, plus the newest stable Node.js supported by Vercel. One root package, lockfile, environment configuration, and Vercel project serve every game. This folder contains this game's specification; it is not a separate application.
+- Render this game entirely in 2D using HTML/SVG grid and flat token circles. Do not use WebGL, Three.js, React Three Fiber, 3D models, CSS perspective, or 3D transforms; texture and planar motion must not imply raised or tilted game objects.
 - Keep column legality, gravity placement, winning-line detection, turn order, and score updates in a pure TypeScript engine shared by all modes.
 - Store cell ownership, column heights, seat order, actor, opening seat, round, score, result reason, revision, and action IDs. Check winning lines from the last placement.
 - Run deeper computer search in a browser worker with bounded thinking time; cancel a pending search on reset, finish, or navigation.
@@ -71,3 +73,4 @@ Two players alternate dropping one token into a column. Tokens occupy the lowest
 - The game works within the single Vihar Games build and deployment on Vercel; its page and API paths resolve under `games.vihar.online`.
 - The catalog entry opens `/connect-four`; the launch endpoint redirects there; info and rules endpoints identify this game, and another game's room code or local save cannot affect it.
 - Room commands use the documented `/api/games/connect-four` namespace, retain guest access without a sign-in form, and reject unsupported game actions.
+- All gameplay graphics and transitions remain 2D; verify flat boards/pieces on desktop and mobile, with no raised, extruded, perspective, or semi-3D presentation.

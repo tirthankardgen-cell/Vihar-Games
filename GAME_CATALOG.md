@@ -7,13 +7,15 @@
 **Hosting:** One Next.js application in one Vercel project.  
 **Status:** Documentation only; the games and endpoints are planned, not implemented.
 
+**Presentation:** Every game is 2D only, using flat boards, pieces, cards, dice, and planar transitions.
+
 ## Included games and endpoints
 
 All paths below use `https://games.vihar.online`. A game page opens the game overview and its play options. A browser visit to that game's `GET` launch API redirects to the same page. Every game also has `/play` and `/how-to-play` beneath its game path, plus `/info` and `/rules` beneath its API base.
 
 | Game specification | Game page | Launch API / API base | Solo | Pass-and-play people | Online room people |
 | --- | --- | --- | --- | --- | --- |
-| [Chess](./games/Chess/GAME_SPEC.md) | `/chess` | `/api/games/chess` | Computer opponent | 2 | 2 |
+| [Chess](./games/Chess/GAME_SPEC.md) | `/chess` | `/api/games/chess` | Acharya Dev: Easy / Medium / Hard | 2 | 2 |
 | [Carrom](./games/Carrom/GAME_SPEC.md) | `/carrom` | `/api/games/carrom` | Computer opponent or practice | 2 | 2 |
 | [Billiards](./games/Billiards/GAME_SPEC.md) | `/billiards` | `/api/games/billiards` | Computer opponent or practice | 2 | 2 |
 | [Tic-Tac-Toe](./games/Tic-Tac-Toe/GAME_SPEC.md) | `/tic-tac-toe` | `/api/games/tic-tac-toe` | Computer opponent | 2 | 2 |
@@ -48,6 +50,9 @@ Accounts, email addresses, passwords, visible sign-in, and downloads are not req
 - Firebase Realtime Database provides durable online room state, and Firebase anonymous authentication identifies guests. The game's Node.js API handlers on Vercel perform authoritative mutations.
 - Namespace room state and local saves by game ID. The same room code in two different games never identifies the same match.
 - Preserve the exact rules in each specification. This reorganization changes project structure, routes, and API delivery.
+- Render all twelve games with HTML, SVG, or Canvas 2D. Do not use 3D or semi-3D presentation, modeled objects, raised/tilted boards, CSS perspective, or 3D transforms. Physics for Carrom and Billiards remains a 2D x/y simulation.
+- Chess, Carrom, and Ludo use the detailed Gulam Chor-inspired Indian courtyard artwork direction in section 7 of their specifications. This includes the warm palette, cream Hindi titles, block-print/paper textures, and quiet flat controls.
+- Chess retains local solo play against Acharya Dev (आचार्य देव), a fictional Indian chess mentor with his own 2D avatar and selectable Easy, Medium, or Hard difficulty. His identity is distinct from human multiplayer seats.
 
 ## Planning documents
 

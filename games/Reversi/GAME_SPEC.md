@@ -11,7 +11,8 @@
 **Access:** No account, visible sign-in, or download.  
 **Players:** One human against the computer, or exactly two humans.  
 **Required modes:** Computer opponent, pass-and-play, and private online room.  
-**Match format:** Standard 8 × 8 Reversi starting position.
+**Match format:** Standard 8 × 8 Reversi starting position.  
+**Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
 ## 1. Game and objective
 
@@ -52,6 +53,7 @@ Players place discs to surround straight lines of the opponent's discs, converti
 ## 5. Implementation requirements
 
 - Use the Vihar Games shared stack: latest stable compatible Next.js App Router, React, TypeScript, and Tailwind CSS, plus the newest stable Node.js supported by Vercel. One root package, lockfile, environment configuration, and Vercel project serve every game. This folder contains this game's specification; it is not a separate application.
+- Render this game entirely in 2D using HTML/SVG board and flat two-sided disc treatments. Do not use WebGL, Three.js, React Three Fiber, 3D models, CSS perspective, or 3D transforms; texture and planar motion must not imply raised or tilted game objects.
 - Use a pure TypeScript engine for legal placements, eight-direction scanning, flips, forced passes, counts, and terminal detection. The same engine drives all modes.
 - State contains 64 cell owners, player-to-side assignment, actor, most recent move and flipped cells, forced-pass information, round, score, result reason, action IDs, and revision.
 - Use browser workers for stronger computer search, with bounded thinking time. Evaluate actual legal placements and forced passes; cancel search after reset or navigation.
@@ -74,3 +76,4 @@ Players place discs to surround straight lines of the opponent's discs, converti
 - The game works within the single Vihar Games build and deployment on Vercel; its page and API paths resolve under `games.vihar.online`.
 - The catalog entry opens `/reversi`; the launch endpoint redirects there; info and rules endpoints identify this game, and another game's room code or local save cannot affect it.
 - Room commands use the documented `/api/games/reversi` namespace, retain guest access without a sign-in form, and reject unsupported game actions.
+- All gameplay graphics and transitions remain 2D; verify flat boards/pieces on desktop and mobile, with no raised, extruded, perspective, or semi-3D presentation.

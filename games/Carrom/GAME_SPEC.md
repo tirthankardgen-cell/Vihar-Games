@@ -11,7 +11,8 @@
 **Access:** No account, visible sign-in, or download.  
 **Players:** One human against the computer, two humans, or one-person practice.  
 **Required modes:** Computer opponent, practice, pass-and-play, and private online room.  
-**Match format:** Singles, one board, with the explicit casual rules below.
+**Match format:** Singles, one board, with the explicit casual rules below.  
+**Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
 ## 1. Game and objective
 
@@ -56,6 +57,7 @@ Players take turns striking coins into pockets. Each player owns nine coins of o
 ## 5. Implementation requirements
 
 - Use the Vihar Games shared stack: latest stable compatible Next.js App Router, React, TypeScript, and Tailwind CSS, plus the newest stable Node.js supported by Vercel. One root package, lockfile, environment configuration, and Vercel project serve every game. This folder contains this game's specification; it is not a separate application.
+- Render this game entirely in 2D using Canvas 2D board and flat discs with x/y physics. Do not use WebGL, Three.js, React Three Fiber, 3D models, CSS perspective, or 3D transforms; texture and planar motion must not imply raised or tilted game objects.
 - Separate a pure rules engine from a deterministic physics engine. Store settled positions, coin ownership, pocketed sets, queen status, cover claimant, penalty debts, actor, round, revision, and result.
 - Physics uses a fixed timestep and the same parameters for collisions, cushions, friction, and pocket detection in every mode. Bound each simulation. If a shot cannot settle within the defined simulation limit, restore its prior state and reject it without consuming the turn.
 - For online play use Firebase anonymous identity, Realtime Database, and Vihar Games Node.js API route handlers at `/api/games/carrom/rooms/<code>/actions`. Submit striker placement, direction, power, action ID, and expected revision; the server validates and simulates the complete shot and atomically commits the final result. Client-submitted pocket lists are not authoritative.
@@ -79,3 +81,73 @@ Players take turns striking coins into pockets. Each player owns nine coins of o
 - The game works within the single Vihar Games build and deployment on Vercel; its page and API paths resolve under `games.vihar.online`.
 - The catalog entry opens `/carrom`; the launch endpoint redirects there; info and rules endpoints identify this game, and another game's room code or local save cannot affect it.
 - Room commands use the documented `/api/games/carrom` namespace, retain guest access without a sign-in form, and reject unsupported game actions.
+- All gameplay graphics and transitions remain 2D; verify flat boards/pieces on desktop and mobile, with no raised, extruded, perspective, or semi-3D presentation.
+
+## 7. Detailed 2D visual direction — Indian courtyard carrom
+
+**Approved presentation:** 2D only. Use a flat top-down carrom board, flat coins, and planar shot motion. The earlier semi-3D direction is superseded by the user's latest instruction that every game is 2D.
+
+### 7.1 Reference and shared Indian artwork style
+
+Use Gulam Chor's Indian neighborhood courtyard style as the visual reference: ochre and terracotta plaster, neem foliage, muted teal shutters, cotton/block-print details, cream lettering, and the warmth of an evening family gathering. Keep the familiar everyday setting and quiet interface.
+
+The inspected repository currently renders original SVG color studies; its preview screenshots show that artwork. The art handoff describes gouache, dry-brush edges, and paper grain as the intended painted finish. Adopt the observed composition and palette, with those textures in future 2D illustrations; do not claim generated paintings already exist.
+
+| Color | Value | Role |
+| --- | --- | --- |
+| Neem/shadow green | `#293D35` | Dark text, outlines, shaded courtyard areas |
+| Deep cotton teal | `#2B4A42` | Secondary surfaces and restrained accents |
+| Terracotta | `#AF6443` | Walls and warm decorative accents |
+| Ochre | `#C99558` | Wood-colored details and small emphasis marks |
+| Cream | `#F5E6C5` | Paper surfaces, light pieces, and primary lettering |
+| Muted brass | `#DFB36D` | Thin borders and active-state accents |
+| Dusty sky blue | `#7A929A` | Small background and secondary accents |
+
+Use a static illustrated courtyard backdrop with warm upper-right light painted into the artwork. Place neem leaves, plaster walls, shutters, a charpoy, and chai details near the edges; keep the playing area calm. Gouache texture and block-print motifs are decorative, never encoded game state. The board and every interactive object remain flat and un-tilted.
+
+Use locally bundled Yatra One for Hindi display lettering and Hind for readable Hindi/English interface text, matching Gulam Chor. Render titles, names, room codes, scores, coordinates, and rule messages as accessible text rather than baking them into images. Use flat cream buttons with dark ink, restrained borders, and visible focus; omit raised-button shadows and perspective effects.
+
+Keep the style affectionate and familiar. Avoid neon, glass panels, casino styling, photorealistic stock imagery, palaces, deity-themed pieces, or caricatures. Use this project's own game titles and symbols rather than copying Gulam Chor's Jack, card backs, or branding.
+
+### 7.2 Board, coins, and striker
+
+- Show the whole square carrom board from directly above. A light cream/wood-colored playing surface, dark ink outlines, and a flat ochre border suggest a familiar household board through illustration only. Do not add frame thickness, angled sides, bevels, perspective, or shadows that make the board appear raised.
+- Draw the four pocket openings as clearly defined flat dark circles, and keep the standard baselines, end circles, diagonal marks, and center arrangement legible. These marks follow the engine's legal placement coordinates exactly.
+- Own/opponent coin sets use flat cream and deep-ink circles with contrasting outlines. The queen uses a distinct terracotta-red treatment and a recognizable center mark. Add accessible names and counts so ownership and queen status do not rely only on color.
+- The striker is a larger flat disc with a restrained circular/block-print motif. It must be visually distinct from every coin; decorative texture cannot obscure its center or boundary.
+- Keep chai, cotton cloth, courtyard furniture, and foliage outside the square playing area. Nothing painted into the backdrop may look like an extra coin, pocket, striker, or valid baseline location.
+
+### 7.3 Pages, aiming, and result states
+
+- On `/carrom`, use the same illustrated courtyard, large cream कैरम lettering, and warm paper-and-ink controls. Continue that style across practice, computer setup, pass-and-play, and the online room lobby.
+- On `/carrom/play`, prioritize the complete board, current player, own-coin counts, queen/cover status, penalty debt, and the documented actions. Keep room code, connection state, and foul explanations in flat supporting panels.
+- Baseline placement uses a flat valid-position marker. Aiming uses a thin 2D direction line and a flat power control with an explicit Confirm Shot action; do not introduce a perspective cue or a generated perfect-shot preview.
+- During a shot, show only the accepted planar disc movement and pocket events. After settlement, communicate extra turns, pending queen cover, failed cover, returned coins, and foul penalties with clear text and restrained markers.
+- At handover, wait for the shot to settle and the actual next player to accept. An optional flat 180-degree board orientation change keeps labels upright and canonical physics coordinates unchanged.
+- Results preserve the last accepted board state and show the winning player or forfeit reason with the existing new-board/rematch/lobby choices.
+
+### 7.4 Motion, responsive layout, and accessibility
+
+- Coins and striker move as flat circles in the board's x/y plane. A pocket event may fade or shrink the disc in 2D; never drop it into a modeled hole, tilt the board, or give it a raised edge.
+- Use the existing bounded deterministic 2D physics for collisions, cushions, friction, and pockets. Visual motion cannot change pocket detection, queen cover, penalty debts, or the accepted turn.
+- On phones, fit the full square board, keep every pocket visible, and place power/confirmation controls below it. Striker adjustment supports touch and keyboard controls without making essential actions depend on fine dragging.
+- Reduced motion removes decorative fades and handover movement while retaining essential real-time 2D shot feedback. A completed accepted shot can jump to its settled state if necessary; extra animation never blocks a new server snapshot.
+- Maintain focus and accessible labels for placement, aim, power, confirmation, counts, cover attempts, and foul messages. Patterns and outlines distinguish coins and striker at small sizes.
+
+### 7.5 Planned asset and implementation handoff
+
+- Prepare flat courtyard artwork/crops, a flat board surface and border, flat coin/queen/striker treatments, and flat markers for placement, turn, and cover state. Pocket and baseline geometry remain procedural and aligned with the engine.
+- Canvas 2D is the preferred board/shot renderer, with SVG or DOM overlays for readable controls and labels. Use a worker for bounded 2D simulation where useful; no 3D rendering dependency is required.
+- Keep illustration coordinates separate from authoritative game coordinates. Cosmetics read accepted state and settled results from the existing local engine or shared API; do not infer collisions from artwork pixels.
+- Acceptance includes comparison with Gulam Chor's palette and quiet courtyard composition, a strictly flat board, readable coins at phone widths, correct touch aiming, reduced motion, and unchanged rules in all modes.
+
+### 7.6 Inspected references
+
+- [Gulam Chor artwork style bible](https://github.com/tirthankardgen-cell/Gulam-Chor/blob/76bd85b24ea7edce32c0be2f33e89c1a1d481923/art-direction/README.md)
+- [Desktop courtyard preview](https://github.com/tirthankardgen-cell/Gulam-Chor/blob/76bd85b24ea7edce32c0be2f33e89c1a1d481923/docs/preview/landing.webp)
+- [Desktop table preview](https://github.com/tirthankardgen-cell/Gulam-Chor/blob/76bd85b24ea7edce32c0be2f33e89c1a1d481923/docs/preview/table.webp)
+- [Mobile table preview](https://github.com/tirthankardgen-cell/Gulam-Chor/blob/76bd85b24ea7edce32c0be2f33e89c1a1d481923/docs/preview/table-mobile.webp)
+- [Current palette and interface styles](https://github.com/tirthankardgen-cell/Gulam-Chor/blob/76bd85b24ea7edce32c0be2f33e89c1a1d481923/src/app/globals.css)
+- [Current artwork resolver](https://github.com/tirthankardgen-cell/Gulam-Chor/blob/76bd85b24ea7edce32c0be2f33e89c1a1d481923/src/lib/art.ts)
+
+These links point to the inspected revision of the separate Gulam Chor repository. Future Vihar Games assets and style tokens must live within this shared application; do not introduce runtime imports from the sibling project.

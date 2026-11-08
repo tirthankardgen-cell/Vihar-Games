@@ -7,6 +7,8 @@
 **Suggested Vercel project slug:** `vihar-games`  
 **Production custom domain:** `games.vihar.online`
 
+**Presentation:** All twelve games are 2D only; the single website does not require a 3D rendering engine or modeled gameplay assets.
+
 ## 1. Vercel project boundary
 
 Create one Vercel project for the entire website when implementation is requested. In a repository containing the whole workspace, set the project root to `Vihar Games`. If that directory is the repository root, use the repository root directly.
@@ -40,7 +42,7 @@ Planned Vercel settings after implementation:
 | API runtime | Node.js for room APIs using Firebase Admin and physics calculations |
 | Production custom domain | `games.vihar.online` |
 
-Use shared lint, type-check, rules tests, and build checks before release. Configure bounded function durations after measuring Carrom and Billiards simulations. Lazy-load game bundles, keep computer searches in browser workers, and avoid loading physics engines on unrelated pages.
+Use shared lint, type-check, rules tests, and build checks before release. Configure bounded function durations after measuring Carrom and Billiards 2D simulations. Use HTML, SVG, or Canvas 2D renderers without WebGL/3D dependencies. Lazy-load game bundles, keep computer searches in browser workers, and avoid loading physics engines on unrelated pages.
 
 ## 4. Shared environment configuration
 
@@ -98,5 +100,6 @@ The production sitemap contains the homepage, twelve game overviews, and twelve 
 7. Verify cross-game room and action isolation, duplicate requests, stale revisions, deterministic settled shots, and private Memory Match identities.
 8. Verify the protected cleanup endpoint, expiry rejection, deep-link routing, canonical URLs, and the sitemap.
 9. Confirm the only user-facing deployment domain is `games.vihar.online` and no game requires a separate Vercel project.
+10. Verify every game is flat 2D, with no 3D/semi-3D board, token, die, or card effect. Compare Chess, Carrom, and Ludo with their Gulam Chor-inspired artwork handoffs and check phone readability, focus, and reduced-motion behavior.
 
 Do not run deployment commands or create remote resources as part of the current documentation-only request.
