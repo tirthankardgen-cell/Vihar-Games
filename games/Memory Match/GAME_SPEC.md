@@ -14,6 +14,8 @@
 **Match format:** Find all matching pairs using memory.  
 **Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
+**Visual theme:** Illustrated Keepsakes; cream picture cards with identical patterned backs, simple everyday-object illustrations, muted colours, and gentle flat face changes.
+
 ## 1. Game and objective
 
 An even set of hidden cards contains pairs of identical identities. Reveal two cards per attempt. A matching pair stays matched; a mismatch becomes hidden again. Solo players clear the board using as few attempts and as little active time as possible. Multiplayer players compete for the most matched pairs.
@@ -79,3 +81,56 @@ An even set of hidden cards contains pairs of identical identities. Reveal two c
 - The catalog entry opens `/memory-match`; the launch endpoint redirects there; info and rules endpoints identify this game, and another game's room code or local save cannot affect it.
 - Room commands use the documented `/api/games/memory-match` namespace, retain guest access without a sign-in form, and reject unsupported game actions.
 - All gameplay graphics and transitions remain 2D; verify flat boards/pieces on desktop and mobile, with no raised, extruded, perspective, or semi-3D presentation.
+- The Illustrated Keepsakes presentation keeps all difficulty layouts, identical hidden backs, distinct picture identities, matched pairs, observation timing, and 2–4-player turn/score states clear; card transitions remain 2D and never expose unrevealed identities.
+
+## 7. Detailed 2D visual direction — Illustrated Keepsakes
+
+### 7.1. Mood and palette
+
+The game should feel like opening a small collection of friendly picture cards. Everyday illustrations provide the personality, with a quiet paper layout and warm, muted colours.
+
+- Use cream cards and a warm off-white page, with muted coral, mustard, leaf green, and blue illustration accents.
+- Give illustrations simple shapes, a consistent line weight, and a lightly printed or hand-painted flat treatment.
+- Use a small repeating pattern on card backs. Every hidden card has exactly the same visible back treatment.
+- Keep cards, borders, illustrations, and face changes flat, with no perspective, raised stacks, or 3D flip effect.
+
+### 7.2. Picture identities, card backs, and grid
+
+- Prepare at least 15 clearly distinct picture identities for the Hard preset, using everyday subjects such as mangoes, kites, chai cups, birds, flowers, or umbrellas.
+- A pair uses the same illustration twice. Avoid pairs that depend only on a slight colour difference or nearly identical silhouettes.
+- Use the exact 12-, 20-, and 30-card presets from section 2, with stable positions for the entire run or round.
+- Centre each illustration within a simple cream card outline, leaving enough space for clear selection and matched-state markers.
+- Hidden backs, hover styling, loading behaviour, and accessible labels must not reveal the concealed identity.
+- Keep matched pairs face up with a gentle outline or small corner checkmark. They remain distinguishable and cannot be selected again.
+
+### 7.3. Pages, typography, and layout
+
+- Carry the cream paper, muted illustration palette, and back pattern through the overview, difficulty setup, rules, board, pause, and results.
+- Use a friendly title with readable live text for difficulty, attempts, active time, player names, points, and turn status.
+- In solo, place attempts and active time above the cards. In multiplayer, use a compact 2–4-player row with pair totals and an active-player underline.
+- On phones, choose a grid arrangement that keeps pictures and touch targets readable. Allow vertical scrolling for larger presets while preserving card order and indices.
+- On wider screens, give the grid more columns and generous space; responsive rearrangement must retain each card's identity and logical position.
+- Use accessible labels such as "Card 7, face down" until a legitimate reveal makes its picture name available.
+
+### 7.4. Modes and pair states
+
+- Solo, pass-and-play, and private rooms share the same card set and paper styling.
+- Show the first revealed card distinctly, permit the second valid selection, then reflect the documented pending-pair state.
+- A match receives the gentle matched marker; multiplayer adds one point and keeps the same player active.
+- A mismatch keeps both pictures available for the existing 1.5-second observation period, then conceals them and advances the multiplayer turn exactly once.
+- Place the pass-and-play handover prompt on the same paper page after pair resolution. Use names and text to identify the next player.
+- Solo pause conceals unresolved cards and displays a clear Resume action, preserving identities and remaining observation time.
+- Completion shows solo attempts/time or multiplayer pair totals and all tied winners, with no invented tiebreaker.
+
+### 7.5. Animation and feedback
+
+- Reveal and conceal faces through a brief flat fade or immediate 2D face change. Keep card positions and outer outlines stable.
+- Matching pairs receive a soft outline or corner checkmark, with a quiet score update.
+- First-card animation must not delay the valid second selection. After the second selection, the rules still prevent a third card until resolution.
+- Honour the existing mismatch-observation deadline; transitions must not shorten the picture-viewing period or add a separate waiting phase.
+- Respect reduced-motion preferences by changing faces and matched markers immediately while preserving the required observation time.
+- Keep accepted pair resolution, scoring, and turn advancement independent of decorative feedback, and cancel obsolete transitions on restart or navigation.
+
+### 7.6. Planned artwork handoff
+
+Prepare a consistent set of at least 15 flat illustrations, one universal card-back pattern, cream card outlines, and selection/match markers. Use lightweight SVG illustrations within accessible HTML/SVG card controls. Keep the concealed card-index-to-identity mapping private online; expose a card's identity and accessible picture name only after a legitimate reveal or match. These picture assets remain future production work.

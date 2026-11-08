@@ -14,6 +14,8 @@
 **Match format:** Classic mine-clearing puzzle with a guaranteed safe first reveal.  
 **Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
+**Visual theme:** Retro Desktop; a tidy flat light-grey grid on a charcoal background, familiar coloured numbers, teal flags, and small classic-computer pixel accents.
+
 ## 1. Game and objective
 
 Reveal all cells that do not contain mines, using neighboring mine counts to reason about danger. Revealing a mine loses the run. Flags are optional guesses; correctly flagging every mine is not required to win.
@@ -76,3 +78,55 @@ Reveal all cells that do not contain mines, using neighboring mine counts to rea
 - The game works within the single Vihar Games build and deployment on Vercel; its page and API paths resolve under `games.vihar.online`.
 - The catalog entry opens `/minesweeper`; the launch endpoint redirects there; info and rules endpoints identify this game, and another game's room code or local save cannot affect it.
 - All gameplay graphics and transitions remain 2D; verify flat boards/pieces on desktop and mobile, with no raised, extruded, perspective, or semi-3D presentation.
+- The Retro Desktop presentation keeps all three preset grids, covered/revealed states, numbered clues, flags, touch input modes, and terminal results readable; large boards remain navigable without shrinking cells into unusable targets.
+
+## 7. Detailed 2D visual direction — Retro Desktop
+
+### 7.1. Mood and palette
+
+The game should feel like a tidy classic desktop puzzle with modern readability. Use recognisable Minesweeper symbols and small pixel-style accents around a clean flat grid.
+
+- Use a charcoal surrounding page, light-grey covered cells, a slightly different pale tone for revealed cells, and teal flags.
+- Keep familiar coloured numbered clues with clear numerals and sufficient contrast against revealed cells.
+- Use restrained pixel-style lettering for the title or counter accents, while keeping cell numbers and controls crisp and readable.
+- Cells and controls are flat bordered shapes. The retro direction does not use bevels, raised buttons, perspective, or simulated 3D tiles.
+
+### 7.2. Grid, flags, mines, and input modes
+
+- Render the exact Beginner 9 × 9, Intermediate 16 × 16, and Expert 30-column × 16-row presets.
+- Covered and revealed cells differ clearly in fill and border treatment. Revealed zero cells are quiet and empty; numbered cells retain prominent clues.
+- Flags use a consistent teal symbol that remains legible at normal cell size. A mine uses a distinct dark symbol, with a restrained red outline for the mine that caused a loss.
+- Expose the remaining-mine counter and active timer as readable text. Make clear that the counter reflects placed flags rather than verified mine locations.
+- On touch devices, provide prominent labelled Reveal and Flag modes, with a persistent active-mode indicator.
+- Show keyboard focus and any chord target clearly. Visual previews cannot certify covered cells as safe or flags as correct.
+
+### 7.3. Pages, typography, and layout
+
+- Carry the charcoal, grey, teal, and small pixel accents through the overview, preset selection, rules, grid, pause, and result screens.
+- Place preset, counter, and time above the grid, with Reveal/Flag and main actions nearby.
+- Keep New Board and Restart Same Board distinctly labelled. Preserve the required unfinished-run replacement confirmation.
+- Beginner can fit a phone-width grid. For larger presets, offer a navigable 2D board viewport with pan/scroll and optional zoom while keeping controls accessible.
+- Preserve useful cell sizes and legible numbers on Expert; a narrow screen must not compress all 30 columns into tiny targets.
+- On desktop, give the grid room to expand while keeping status and input mode visible during navigation.
+
+### 7.4. Puzzle states and feedback
+
+- Minesweeper remains a solo puzzle. Show the selected preset and local run/replay status.
+- Before the first reveal, show the untouched covered grid and ready state. After generation, preserve the accepted layout and ongoing active timer.
+- Flags, direct reveals, region expansion, and chords use the same consistent cell treatments.
+- Pause presents a simple desktop-style panel and suspends the documented input/timer state.
+- On a mine hit, identify the loss clearly and retain the board. On victory, show the preset and active time without requiring every mine to be flagged.
+- Keep replay records distinguishable from first-attempt wins, and stop further gameplay input after either result.
+
+### 7.5. Animation and feedback
+
+- Reveal connected empty areas in a quick, gentle wave based on the already accepted safe region. The visual sequence cannot reveal protected flagged cells.
+- Flags appear or disappear with a brief fade; counters update from the accepted action.
+- A mine hit uses a static red outline and concise result text. Keep the board stable rather than shaking or replacing it with a large explosion.
+- Reveal, chord, and terminal-state evaluation remain atomic and independent of decorative animation. A mine hit retains precedence over victory.
+- Respect reduced-motion preferences by displaying the full accepted reveal region, flags, and result immediately.
+- Keep scrolling, mode controls, pause, and keyboard navigation responsive during larger-board reveals.
+
+### 7.6. Planned artwork and accessibility handoff
+
+Prepare flat cell states, flag/mine symbols, numeral styles, counter panels, focus outlines, and a small pixel-title treatment. Use an HTML grid and accessible live text for counts and status. Provide mouse, explicit touch-mode, and keyboard actions with visible focus; the retro theme must not make a right mouse button necessary. Detailed background artwork is unnecessary.

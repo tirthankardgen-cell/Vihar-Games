@@ -14,6 +14,8 @@
 **Match format:** Standard 3 × 3 Tic-Tac-Toe, one round at a time.  
 **Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
+**Visual theme:** Notebook Doodles; a minimal, mostly empty notebook page with hand-drawn board lines, X/O marks, and drawing animations.
+
 ## 1. Game and objective
 
 Two players alternate placing X and O in empty cells. The first to make three of their marks in a row wins. A full board with no winning line is a draw.
@@ -74,3 +76,51 @@ Two players alternate placing X and O in empty cells. The first to make three of
 - The catalog entry opens `/tic-tac-toe`; the launch endpoint redirects there; info and rules endpoints identify this game, and another game's room code or local save cannot affect it.
 - Room commands use the documented `/api/games/tic-tac-toe` namespace, retain guest access without a sign-in form, and reject unsupported game actions.
 - All gameplay graphics and transitions remain 2D; verify flat boards/pieces on desktop and mobile, with no raised, extruded, perspective, or semi-3D presentation.
+- The overview, setup, and play screens follow the Notebook Doodles direction below. On mobile and desktop, the board feels drawn directly onto a mostly empty notebook page; hand-drawn lines, marks, and animations stay readable and do not delay play.
+
+## 7. Detailed 2D visual direction — Notebook Doodles
+
+### 7.1. Overall mood and notebook page
+
+The experience should feel like opening an empty notebook, drawing a Tic-Tac-Toe grid, and playing with a friend. Keep the aesthetic minimal, quiet, informal, and personal. The doodles are the board and the moves themselves; the page does not need a collection of decorative sketches.
+
+- Use a warm white or pale cream paper background with generous empty space around the board. Any paper grain or notebook ruling should be very faint, so the page still looks mostly blank.
+- Keep the entire scene flat and 2D. The board is drawn directly on the page, with no raised tiles, perspective, heavy shadows, or surrounding desk scene.
+- Use a restrained palette: charcoal or graphite for the grid and text, with muted blue and muted red ink available for the two players. Keep X and O recognizable by shape as well as colour.
+- Avoid busy borders, stickers, large illustrations, dense textures, neon effects, and confetti. Small purposeful strokes are enough to establish the notebook identity.
+
+### 7.2. Hand-drawn board and player marks
+
+- Draw the 3 × 3 board with exactly two horizontal and two vertical pencil or pen lines. Leave the outside edges open, as on a casually sketched paper grid.
+- Give strokes slight natural irregularity in curvature, endpoints, and thickness. The result should look drawn by hand while keeping all nine cells clear and evenly usable.
+- Draw each X as two diagonal pen strokes and each O as one slightly imperfect loop. Keep marks centred, similarly sized, and clearly separated from the grid lines.
+- Use controlled variations between marks without changing their identity or making the board appear untidy. A placed mark stays still for the rest of the round.
+- On a three-in-a-row win, draw a single hand-drawn line through the winning marks. A draw leaves the completed board visible with a short text result.
+
+### 7.3. Typography, controls, and layout
+
+- Use a readable handwritten style for the game title and small accent labels. Keep instructions, names, difficulty choices, scores, and buttons in clear readable text; do not bake text into artwork.
+- Keep the board as the visual focus. Place a compact player/turn row above it and a small score row and essential actions nearby, leaving the rest of the page open.
+- Controls should feel like simple notebook annotations: quiet text, light hand-drawn outlines, or underlines. Keep touch targets comfortable even when their visible styling is minimal.
+- On mobile, use one centred page with the board, turn label, and primary actions within easy reach. On larger screens, preserve the same spacious composition rather than filling the margins with panels.
+- Carry the same paper, ink, and handwritten accents through the overview, mode selection, difficulty setup, rules, and result states.
+
+### 7.4. Computer and friend presentation
+
+- Reuse the same notebook board and visual language across supported modes.
+- In Play Computer, show the human's name or "You", the label "Computer", their current X/O marks, and a quiet "Computer is thinking" status while a move is pending. Difficulty selection uses the same understated paper controls.
+- In Pass-and-Play, show the two optional player names and a clear label such as "Alex's turn". Indicate the active player with a small ink underline or outline and show the handover prompt on the same notebook page.
+- Keep scores attached to player identity when X/O ownership alternates on a rematch. Turn and result messages remain readable text rather than relying only on ink colour.
+
+### 7.5. Hand-drawn animations
+
+- When a fresh board appears, briefly reveal the four grid lines as if a pencil is drawing them across the paper. Do not continuously wobble or redraw the finished grid.
+- Animate an accepted X in two short drawing strokes and an accepted O in one continuous loop. The motion should follow the stroke path, giving the impression that the player just drew the mark.
+- Draw the winning line in one brief continuous stroke, then show the result quietly beside the board. Use restrained ink or underline feedback for buttons and the active turn.
+- A rematch clears the previous marks and returns to a fresh notebook grid with a short, gentle transition.
+- Keep all animation brief, planar, and non-blocking. Record an accepted move immediately; visual drawing must not add artificial computer delays or hold up the next turn or handover.
+- Respect reduced-motion preferences by displaying the completed grid, marks, and winning line immediately without drawing transitions.
+
+### 7.6. Artwork approach
+
+Use lightweight flat SVG or equivalent 2D drawing paths for the grid, X/O marks, winning line, and subtle control accents. Keep stroke styling consistent across these elements. The notebook identity should come from the paper, spacing, typography, and hand-drawn strokes; elaborate background artwork or character assets are unnecessary.

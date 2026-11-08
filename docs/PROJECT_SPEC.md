@@ -3,8 +3,8 @@
 # Vihar Games — Project specification
 
 **Project:** Vihar Games  
-**Updated:** 8 November 2026  
-**Scope:** Shared deployment scaffold and consolidated plans for twelve 2D games, including detailed Indian artwork guidance for Chess, Carrom, and Ludo.
+**Updated:** 9 November 2026  
+**Scope:** Shared deployment scaffold and consolidated plans for twelve 2D games, including an approved detailed visual direction for every game.
 
 **Deployment target:** One Next.js application, one Vercel project, one domain.  
 **Implementation status:** Application scaffold implemented; all game engines and online services remain planned.
@@ -115,7 +115,7 @@ Acceptance requires all catalog paths and launch endpoints to resolve, unsupport
 
 The current phase delivers a deployable application scaffold with pinned dependencies, local fonts, lint/type/build scripts, metadata, and Vercel configuration. Gameplay acceptance checks apply as each game is implemented. The initial sitemap contains the homepage and twelve overviews; coming-soon rules pages remain `noindex` until their real rules are published. No remote deployment or backend resources are created by scaffolding.
 
-## 9. Mandatory 2D presentation and approved Indian artwork
+## 9. Mandatory 2D presentation and approved visual styles
 
 Every game is 2D only, including Chess, Carrom, Ludo, and Billiards. Use flat HTML/SVG graphics or Canvas 2D and ordinary 2D position/opacity transitions. Do not use WebGL, Three.js, React Three Fiber, 3D models, isometric boards, extruded pieces, raised rims, modeled dice, CSS perspective, or 3D transforms. Painted texture is allowed as flat artwork; it cannot imply raised or tilted gameplay objects. The prior 3D and semi-3D directions are superseded.
 
@@ -133,4 +133,22 @@ Adapt the [Gulam Chor artwork handoff](https://github.com/tirthankardgen-cell/Gu
 
 Keep Yatra One/Hind typography, the neem-green/terracotta/ochre/cream palette, block-print accents, and the warm everyday courtyard mood coherent across the three games. Titles, scores, labels, room codes, and rules stay accessible live text. Decoration stays outside active board areas and cannot resemble extra game pieces or safe cells.
 
-Each game's detailed visual guidance lives in its own `GAME_SPEC.md`; the global 2D requirement applies to all twelve. Shared style tokens and local Hind/Yatra One fonts now live inside Vihar Games. Detailed game artwork and game engines remain future work, with no runtime dependency on Gulam Chor.
+The other nine approved visual directions are:
+
+| Game | Theme and visual requirements |
+| --- | --- |
+| [Tic-Tac-Toe](../games/Tic-Tac-Toe/GAME_SPEC.md#7-detailed-2d-visual-direction--notebook-doodles) | Notebook Doodles: mostly empty paper, hand-drawn grid/marks, and brief drawing animations |
+| [Billiards](../games/Billiards/GAME_SPEC.md#7-detailed-2d-visual-direction--vintage-pool-club) | Vintage Pool Club: overhead green table, flat numbered solid/striped balls, slim aiming, and cream labels |
+| [Snakes and Ladders](../games/Snakes%20and%20Ladders/GAME_SPEC.md#7-detailed-2d-visual-direction--folk-art-journey) | Folk Art Journey: cream numbered path, illustrated snakes, bamboo ladders, and earthy margin motifs |
+| [Connect Four](../games/Connect%20Four/GAME_SPEC.md#7-detailed-2d-visual-direction--retro-toybox) | Retro Toybox: flat blue frame, coral/mustard discs, cream page, and short planar drops |
+| [Checkers](../games/Checkers/GAME_SPEC.md#7-detailed-2d-visual-direction--block-print-cloth) | Block Print Cloth: indigo/cream squares, terracotta/ivory counters, printed crowns, and clear capture markers |
+| [Reversi](../games/Reversi/GAME_SPEC.md#7-detailed-2d-visual-direction--quiet-garden) | Quiet Garden: sage grid, charcoal/ivory discs, legal-move dots, and flat colour-change feedback |
+| [Sudoku](../games/Sudoku/GAME_SPEC.md#7-detailed-2d-visual-direction--puzzle-journal) | Puzzle Journal: off-white ruled page, crisp clues, blue entries, pencil notes, and soft selection highlights |
+| [Minesweeper](../games/Minesweeper/GAME_SPEC.md#7-detailed-2d-visual-direction--retro-desktop) | Retro Desktop: flat grey grid, coloured clues, teal flags, readable counters, and small pixel accents |
+| [Memory Match](../games/Memory%20Match/GAME_SPEC.md#7-detailed-2d-visual-direction--illustrated-keepsakes) | Illustrated Keepsakes: cream cards, identical patterned backs, distinct everyday pictures, and flat face fades |
+
+Each game's detailed visual guidance lives in section 7 of its own `GAME_SPEC.md`; the global 2D requirement applies to all twelve. Keep mode selection, player names, turn indicators, scores, and main actions consistently organised while carrying the selected game's theme through setup, play, rules, and results. Supported local and online modes share that game's visual language; Sudoku and Minesweeper retain solo puzzle interfaces.
+
+Keep decorative animation brief and separate from rule resolution, accepted state, and computer computation. Respect reduced-motion preferences while preserving required physics resolution and Memory Match observation timing. Decoration must not obscure gameplay targets, numbers, or state, and large boards need readable, navigable mobile layouts.
+
+Shared style tokens and local Hind/Yatra One fonts now live inside Vihar Games. The handoffs define future artwork and game presentation; detailed assets and game engines remain future work, with no runtime dependency on Gulam Chor.

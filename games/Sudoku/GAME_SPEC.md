@@ -14,6 +14,8 @@
 **Match format:** Standard 9 × 9 Sudoku with Easy, Medium, and Hard difficulty.  
 **Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
+**Visual theme:** Puzzle Journal; an off-white puzzle page with a neatly ruled grid, crisp numerals, blue player entries, small pencil notes, and generous blank margins.
+
 ## 1. Game and objective
 
 Complete a partially filled grid with digits 1–9 so that every row, column, and 3 × 3 box contains each digit exactly once. The puzzle starts with fixed clues and must have exactly one solution.
@@ -74,3 +76,55 @@ Complete a partially filled grid with digits 1–9 so that every row, column, an
 - The game works within the single Vihar Games build and deployment on Vercel; its page and API paths resolve under `games.vihar.online`.
 - The catalog entry opens `/sudoku`; the launch endpoint redirects there; info and rules endpoints identify this game, and another game's room code or local save cannot affect it.
 - All gameplay graphics and transitions remain 2D; verify flat boards/pieces on desktop and mobile, with no raised, extruded, perspective, or semi-3D presentation.
+- The Puzzle Journal presentation clearly separates fixed clues, player entries, pencil notes, selection, conflicts, and assisted results on mobile and desktop; visual feedback does not claim correctness without the documented check or hint actions.
+
+## 7. Detailed 2D visual direction — Puzzle Journal
+
+### 7.1. Mood and palette
+
+The game should feel like a neatly printed Sudoku page in a quiet puzzle journal. It shares the paper family of Tic-Tac-Toe's Notebook Doodles theme, with crisp numerals and a carefully ruled grid for focused solving.
+
+- Use warm off-white paper, graphite grid lines and fixed clues, muted blue player entries, and subtle grey pencil notes.
+- Leave generous blank margins. Any paper grain stays faint enough to keep small notes and grid boundaries clear.
+- Use pale selection highlights and restrained coral for conflict feedback, always paired with an outline or text explanation.
+- Keep the page and all controls flat and 2D, with an uncluttered notebook-like composition.
+
+### 7.2. Grid, entries, notes, and highlights
+
+- Draw the exact 9 × 9 grid, using stronger dividers around the nine 3 × 3 boxes and finer internal cell lines.
+- Fixed clues use a bold graphite numeral treatment. Editable entries use a distinct blue treatment; both remain crisp and readable.
+- Pencil notes appear in a consistent small 3 × 3 arrangement inside a cell. They remain distinguishable from final entries.
+- Highlight the selected cell and its row, column, and box quietly. Matching-digit emphasis may aid scanning without overwhelming the grid.
+- Show conflicts with a cell outline and a concise explanation of the violated row, column, or box rule.
+- Selection or conflict-free styling does not certify a digit against the unique solution. Fixed clues remain visibly protected from edits and notes.
+
+### 7.3. Pages, typography, and layout
+
+- Carry the paper, graphite, blue ink, and light notebook accents through the overview, difficulty setup, rules, puzzle, pause, and completion screens.
+- Use a modest journal-style title with clear live text and clean printed numerals throughout the grid and keypad.
+- Place difficulty and active time above the grid. Put the 1–9 keypad, Erase, Notes, Undo, Redo, Check, Hint, and Pause controls within easy reach.
+- Show Notes mode as a persistent labelled state so the player can tell whether a key adds a note or a final entry.
+- On phones, place the keypad and essential actions below the square grid. Keep notes legible and provide a larger 2D grid view when necessary.
+- On wide screens, allow a compact control area beside the grid while preserving generous paper margins and consistent action labels.
+
+### 7.4. Puzzle states and feedback
+
+- Sudoku remains a solo puzzle; its visual setup shows difficulty and local resume options.
+- Preserve the distinction between ordinary entries, conflicting entries, checked inconsistencies, and cells supplied by a hint.
+- Check reports the documented inconsistencies without silently filling the puzzle. Hint feedback identifies the filled cell and updates the assisted-run indicators.
+- Keep hint/check counts readable. Completion shows difficulty, active time, hints, and checks so assisted and unassisted records remain distinguishable.
+- Pause presents a quiet paper panel with a clear Resume action and the documented suspended input/timer state.
+- Give unfinished-run replacement, restart, and invalid-save messages the same readable journal controls as the main puzzle.
+
+### 7.5. Animation and feedback
+
+- Entries appear with a brief ink fade; notes and erasures use equally restrained transitions.
+- Selection, matching-digit emphasis, and conflict outlines respond immediately and avoid repeated flashing.
+- Use a gentle underline or outline for active Notes mode and chosen keypad actions.
+- Keep edit acceptance, undo/redo, timer behaviour, checks, hints, and completion independent of decorative motion.
+- Respect reduced-motion preferences by displaying all accepted edits and highlights immediately.
+- Keep completion quiet: retain the finished grid and reveal a compact result message on the page.
+
+### 7.6. Planned artwork and accessibility handoff
+
+Prepare the paper treatment, ruled grid, selection/conflict styles, keypad, and small note/erase control symbols. Use live text for every numeral, note, timer, and record; the visual style should not require puzzle images. Provide keyboard entry and navigation, visible focus, and accessible labels that distinguish fixed clues, editable cells, notes, and conflicts. Elaborate illustration assets are unnecessary.

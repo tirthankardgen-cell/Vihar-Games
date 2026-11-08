@@ -14,6 +14,8 @@
 **Match format:** English draughts / American checkers with explicit casual draw rules.  
 **Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
+**Visual theme:** Block Print Cloth; an indigo-and-cream board with a restrained textile border, flat terracotta and ivory counters, and printed crown symbols.
+
 ## 1. Game and objective
 
 Players move diagonally and capture opposing pieces by jumping over them. A player wins when the opponent has no pieces remaining or cannot make a legal move. This release uses an 8 × 8 board; international 10 × 10 draughts has different rules and is a separate variant.
@@ -77,3 +79,55 @@ Players move diagonally and capture opposing pieces by jumping over them. A play
 - The catalog entry opens `/checkers`; the launch endpoint redirects there; info and rules endpoints identify this game, and another game's room code or local save cannot affect it.
 - Room commands use the documented `/api/games/checkers` namespace, retain guest access without a sign-in form, and reject unsupported game actions.
 - All gameplay graphics and transitions remain 2D; verify flat boards/pieces on desktop and mobile, with no raised, extruded, perspective, or semi-3D presentation.
+- The Block Print Cloth presentation keeps playable squares, piece ownership, crowns, mandatory captures, and multi-jump destinations clear on mobile and desktop; all move and capture feedback follows the exact Checkers rules.
+
+## 7. Detailed 2D visual direction — Block Print Cloth
+
+### 7.1. Mood and palette
+
+The game should feel like a traditional checkerboard printed on a neatly spread cloth. Use a small amount of textile character around a calm, readable strategy board.
+
+- Alternate indigo and cream squares, with terracotta and ivory counters for the two sides.
+- Use a restrained block-print border and very faint cloth texture. Patterns belong outside the playable squares.
+- Keep outlines and text dark enough to read clearly on cream, and use cream text on indigo where needed.
+- The board, counters, crowns, and decorative print remain flat; kings use a symbol rather than a raised stack of pieces.
+
+### 7.2. Board, counters, and kings
+
+- Use the exact 8 × 8 layout, with the darker indigo squares as the playable cells and the starting arrangement from section 2.
+- Draw each counter as a simple flat circle with a thin boundary and a small printed detail.
+- Give the two sides distinct colour and centre treatments so ownership is readable without colour alone.
+- A crowned piece carries a clear small crown icon. Its symbol stays visible when selected and throughout a capture sequence.
+- Mark the selected counter with an outline and legal destinations with quiet dots or rings. Keep the original board squares visible beneath these marks.
+- During mandatory capture, show the currently legal capturing pieces and destinations. After a jump, continue to identify the same piece when another capture is required.
+
+### 7.3. Pages, typography, and layout
+
+- Carry the indigo, cream, terracotta, and block-print accents through the overview, setup, rules, board, and results.
+- Use a modest decorative title with clear live text for names, side ownership, difficulty, scores, and move explanations.
+- Place the player/turn row above the board and essential actions beside or below it. Keep the cloth border narrow.
+- On phones, preserve comfortably sized cells and clear crown icons. Reduce decorative border width before reducing board legibility.
+- Keep the board orientation stable during pass-and-play and identify forward movement and active ownership clearly.
+- Provide keyboard focus, selectable-piece labels, legal-destination descriptions, and result text alongside visual highlighting.
+
+### 7.4. Modes and gameplay states
+
+- Computer, pass-and-play, and private rooms use the same cloth board and counters.
+- Label the computer and selected difficulty clearly; keep its thinking status compact.
+- When captures are available, show a concise "Capture required" message. During a chain, show that the current player must continue with the same piece.
+- Crown only when the rules engine reports promotion. In this variant, crowning ends the turn immediately; visual feedback must follow that rule.
+- Change the active-player indicator only when a completed turn actually ends. Keep side ownership and session scores attached to player identity on rematches.
+- Explain wins by no pieces or no legal moves, normal draws, agreed draws, resignation, and forfeits with the correct text reason.
+
+### 7.5. Animation and feedback
+
+- Ordinary moves slide between diagonal cells. Captures use a short planar jump or movement along the accepted capture path.
+- Fade each captured counter after its capture is accepted, and briefly stamp the crown symbol when a piece is promoted.
+- Keep multi-jump feedback connected to the same selected piece; animation does not offer an extra move or a choice forbidden by mandatory capture.
+- Use a quiet active-player underline and result label. Keep decorative motion brief and independent of rule resolution or computer search.
+- Respect reduced-motion preferences by showing accepted positions, removed counters, and crowns immediately, with a concise move summary.
+- Clear obsolete move previews and playback when restarting, restoring, or leaving a match.
+
+### 7.6. Planned artwork handoff
+
+Prepare the flat checkerboard, a narrow block-print border, subtle cloth texture, two counter treatments, crown symbols, and selection/capture markers. Use lightweight HTML/SVG or Canvas 2D graphics. Textile artwork is a planned accent and must not obscure the board or resemble additional counters.

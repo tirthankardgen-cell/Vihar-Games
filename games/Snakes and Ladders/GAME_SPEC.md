@@ -14,6 +14,8 @@
 **Match format:** Race to square 100 on one fixed board.  
 **Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
+**Visual theme:** Folk Art Journey; a cream numbered board with illustrated snakes, bamboo ladders, earthy colours, and small folk-art details around the margins.
+
 ## 1. Game and objective
 
 Players roll a die and move along numbered squares. Landing on a ladder moves a player forward; landing on a snake moves them backward. The first player to land exactly on 100 wins. There is no strategy advantage for computer players: all seats follow the same random dice rules.
@@ -77,3 +79,54 @@ Players roll a die and move along numbered squares. Landing on a ladder moves a 
 - The catalog entry opens `/snakes-and-ladders`; the launch endpoint redirects there; info and rules endpoints identify this game, and another game's room code or local save cannot affect it.
 - Room commands use the documented `/api/games/snakes-and-ladders` namespace, retain guest access without a sign-in form, and reject unsupported game actions.
 - All gameplay graphics and transitions remain 2D; verify flat boards/pieces on desktop and mobile, with no raised, extruded, perspective, or semi-3D presentation.
+- The Folk Art Journey board keeps all 100 numbers, fixed snake/ladder endpoints, and up to four shared-square tokens distinguishable; die and token animation preserve each accepted roll and the exact-100 rule.
+
+## 7. Detailed 2D visual direction — Folk Art Journey
+
+### 7.1. Mood and palette
+
+The board should feel like a cheerful illustrated family game printed on warm paper. Folk-art snakes and ladders provide the personality, while the numbered path remains easy to follow.
+
+- Use cream paper with terracotta, mustard, leaf green, and muted blue accents. Keep alternating cell tones subtle.
+- Give snakes a friendly illustrated treatment with simple patterned bodies; ladders resemble lightly drawn bamboo rails and rungs.
+- Put small folk-art motifs around the outer margins. Leave square numbers, token positions, and traversal endpoints clear.
+- Render everything as flat printed artwork, including the board, tokens, and die faces.
+
+### 7.2. Numbered path, snakes, ladders, and tokens
+
+- Use a 10 × 10 board numbered 1–100 in a clear alternating row path. Make the start direction and finish square readable.
+- Draw every snake and ladder against the exact fixed map in section 2. Artwork placement cannot invent, move, or obscure endpoints.
+- Use a consistent visual distinction between ladder bottoms/tops and snake heads/tails. Keep the number visible where a traversal begins or ends.
+- Give each of the 2–4 seats a stable token colour and a simple identifying symbol. Computer tokens use the same system as human tokens.
+- When tokens share a square, arrange their symbols within that cell so every player remains visible. Keep position 0 visibly outside the numbered path.
+- Use a flat die face with clear pips and a prominent Roll control. Show the accepted value in text as well as on the die.
+
+### 7.3. Pages, typography, and layout
+
+- Carry the cream paper, earthy accents, and small folk-art details through the overview, seat setup, rules, board, and result screens.
+- Use a warm display title and crisp live text for board numbers, player names, room codes, and movement explanations.
+- Put a compact player/turn row above the board and the die, Roll control, and last-roll explanation below it.
+- On phones, prioritise readable square numbers and token symbols over border decoration. Provide 2D zoom or a larger board view when needed.
+- On larger screens, retain generous margins and a compact status area rather than surrounding the board with decorative panels.
+
+### 7.4. Modes and gameplay states
+
+- Computer, pass-and-play, and private-room matches share the same board. Show every active seat and clearly mark whose turn it is.
+- Identify computer seats in text; their visual treatment must not suggest different dice privileges or a strategy difficulty that this game does not have.
+- Explain accepted movement plainly, for example: "Rolled 4", "Ladder: 28 to 84", or "Need an exact roll to reach 100".
+- An overshoot leaves the token on its existing square. Passing an endpoint never triggers its illustration or traversal feedback.
+- Keep the next-player handover distinct from the rolling state. On reaching 100, highlight the winning token and show the winner's name.
+- If a seat is abandoned, remove its token and update the player row to reflect the accepted active seats.
+
+### 7.5. Animation and feedback
+
+- Briefly cycle through flat die faces, then settle on the accepted die value. The animation does not generate or replace the roll.
+- Move tokens through the accepted numbered squares with short steps, then follow the ladder or snake path when the destination requires it.
+- Traversal paths stay in the page plane. Keep motion brief even for long snakes or ladders, with a text explanation that remains visible afterward.
+- Use a quiet finish outline and result label. Sixes and traversals retain the normal turn sequence defined in the rules.
+- Respect reduced-motion preferences by displaying the final accepted token position and die value immediately, together with the movement reason.
+- Resolve state independently of decorative playback; transitions must not add artificial waits, permit another roll, or replay an accepted turn after reconnect.
+
+### 7.6. Planned artwork handoff
+
+Prepare the numbered board, the fixed-map snake and ladder illustrations, four distinguishable token symbols, six flat die faces, and a small reusable set of margin motifs. Use SVG or Canvas 2D with readable text equivalents for positions and roll outcomes. Detailed illustrations remain planned assets.

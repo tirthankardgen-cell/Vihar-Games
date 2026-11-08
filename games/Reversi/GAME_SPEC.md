@@ -14,6 +14,8 @@
 **Match format:** Standard 8 × 8 Reversi starting position.  
 **Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
+**Visual theme:** Quiet Garden; a muted sage-green board with fine grid lines, flat charcoal and ivory discs, generous space, and a small leaf accent.
+
 ## 1. Game and objective
 
 Players place discs to surround straight lines of the opponent's discs, converting those discs to their own side. When neither player can move, the player with more discs wins.
@@ -77,3 +79,55 @@ Players place discs to surround straight lines of the opponent's discs, converti
 - The catalog entry opens `/reversi`; the launch endpoint redirects there; info and rules endpoints identify this game, and another game's room code or local save cannot affect it.
 - Room commands use the documented `/api/games/reversi` namespace, retain guest access without a sign-in form, and reject unsupported game actions.
 - All gameplay graphics and transitions remain 2D; verify flat boards/pieces on desktop and mobile, with no raised, extruded, perspective, or semi-3D presentation.
+- The Quiet Garden presentation makes disc ownership, legal placements, atomic captures, automatic passes, and final counts clear on mobile and desktop; all colour changes remain flat 2D.
+
+## 7. Detailed 2D visual direction — Quiet Garden
+
+### 7.1. Mood and palette
+
+The game should feel calm and thoughtful, like a simple strategy board in a quiet garden. Keep the playing area spare and let the contrast between the two disc sides provide the focus.
+
+- Use muted sage green for the board, cream for the surrounding page, charcoal for Black, and ivory for White.
+- Keep grid lines fine but clearly visible. Use a deeper green or dark outline for active controls and selection.
+- A small leaf illustration may sit in an outer margin or near the title. Keep botanical decoration away from empty cells and disc positions.
+- All discs and board surfaces are flat shapes, without stone-like volume, spherical highlights, shadows, or raised edges.
+
+### 7.2. Board, discs, and legal-move markers
+
+- Render the exact 8 × 8 board and four-disc starting position from section 2.
+- Keep charcoal and ivory discs similarly sized, clearly bounded, and readable against the sage cells.
+- Use small quiet dots to indicate legal empty cells for the current player. Ensure they are visually distinct from placed discs.
+- Show the selected destination with a simple outline. Disc captures change side within their existing cells; they never move between cells.
+- Represent each player's current side and disc count in a compact badge above the board, using both a disc symbol and text.
+- Retain the final arrangement after completion and identify the actual result reason alongside the counts.
+
+### 7.3. Pages, typography, and layout
+
+- Carry the sage, cream, charcoal, and ivory palette through the overview, mode setup, rules, board, and results.
+- Use a calm display title and clear live text for player names, difficulty, counts, turns, and room controls.
+- Place two player/count badges above the centred board and keep essential actions and session results nearby.
+- On phones, preserve readable cells and comfortably sized placement targets; keep the leaf accent small enough to leave the board central.
+- On wide screens, use generous surrounding space and the same compact control arrangement.
+- Provide visible keyboard focus, cell labels, legal-placement descriptions, and text summaries of captures and passes.
+
+### 7.4. Modes and gameplay states
+
+- Computer, pass-and-play, and private rooms share the same garden palette and disc styling.
+- Label the computer, its difficulty, and any pending thinking state without covering the board.
+- Keep current side ownership attached to the correct player as Black ownership alternates on rematches.
+- After a legal move, update all captured directions and disc counts from the same accepted state. Decorative intermediate colours cannot enable an extra placement.
+- Show automatic passes with a concise message such as "No legal move; turn passed". A player cannot voluntarily pass while a legal move exists.
+- Finish when the engine reports completion, including when both sides have no move with empty cells remaining. Use distinct text for a normal count result, draw, resignation, or forfeit.
+
+### 7.5. Animation and feedback
+
+- New discs appear with a brief flat fade. Captured discs change colour through a short 2D wipe or crossfade within their existing circular boundaries.
+- Keep all captures from one move part of the same accepted action, even if their visual colour transitions are slightly staggered.
+- Use a soft active-player underline and a static final-count emphasis. Keep the legal-move dots stable while the player considers a move.
+- Animation remains brief and independent of legality, turn advancement, automatic passes, and computer search.
+- Respect reduced-motion preferences by showing accepted disc colours and counts immediately, with a readable capture/pass summary.
+- Clear stale legal-move markers and animations when restarting or leaving a match.
+
+### 7.6. Planned artwork handoff
+
+Prepare the flat sage grid, charcoal/ivory disc symbols, player badges, legal-move dots, selection outlines, and one small optional leaf illustration. Use lightweight HTML/SVG or Canvas 2D graphics with accessible live text. Detailed botanical artwork remains a planned margin accent.

@@ -14,6 +14,8 @@
 **Match format:** Standard seven-column, six-row Connect Four.  
 **Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
+**Visual theme:** Retro Toybox; a flat blue frame, circular slots, coral and mustard discs, rounded lettering, and a warm cream background.
+
 ## 1. Game and objective
 
 Two players alternate dropping one token into a column. Tokens occupy the lowest empty cell in that column. The first player to connect four of their own tokens horizontally, vertically, or diagonally wins.
@@ -74,3 +76,54 @@ Two players alternate dropping one token into a column. Tokens occupy the lowest
 - The catalog entry opens `/connect-four`; the launch endpoint redirects there; info and rules endpoints identify this game, and another game's room code or local save cannot affect it.
 - Room commands use the documented `/api/games/connect-four` namespace, retain guest access without a sign-in form, and reject unsupported game actions.
 - All gameplay graphics and transitions remain 2D; verify flat boards/pieces on desktop and mobile, with no raised, extruded, perspective, or semi-3D presentation.
+- The Retro Toybox presentation clearly distinguishes empty slots, both players' discs, legal/full columns, the actual landing cell, and every winning line on mobile and desktop; decorative drops never change accepted placement.
+
+## 7. Detailed 2D visual direction — Retro Toybox
+
+### 7.1. Mood and palette
+
+The game should feel like a familiar childhood board game with cheerful colours and a tidy, modern composition.
+
+- Use a warm cream background, a muted blue frame, coral discs for one player, and mustard discs for the other.
+- Keep lettering rounded and friendly, with small colour accents on controls and player labels.
+- Leave the surrounding page open so the slot grid and its two player colours dominate.
+- The frame, slots, and discs are flat graphics. Do not imply depth through hole shadows, bevels, raised plastic, or a perspective stand.
+
+### 7.2. Board, discs, and column selection
+
+- Render exactly seven columns and six rows as a clear rectangular frame containing evenly spaced circular slots.
+- Empty slots use a pale neutral fill. Occupied slots contain a clearly bounded coral or mustard disc.
+- Add a small ring or centre symbol to distinguish ownership independently of colour; carry the same symbols into player labels.
+- Show a subtle preview above a legal selected column and make the entire column target usable on touch devices.
+- Full columns have a clear unavailable state and readable feedback; their selection cannot consume a turn.
+- After placement, outline the actual contiguous winning run reported by the game. Preserve longer-than-four winning lines and distinguish a draw from a win.
+
+### 7.3. Pages, typography, and layout
+
+- Carry the cream, blue, coral, and mustard palette through the overview, difficulty setup, rules, board, and result screens.
+- Use a rounded display title with readable live text for names, difficulty, scores, turn status, and room controls.
+- Place two compact player badges above the board, with an active-player underline and a small session score row.
+- Keep the board and column controls centred on phones. Preserve its seven-by-six proportions and provide comfortable column targets without adding narrow ornamental controls.
+- On wide screens, retain the same arrangement and spacing; room and rematch controls remain secondary to the board.
+
+### 7.4. Modes and gameplay states
+
+- Computer, pass-and-play, and private rooms share the same frame and disc styling.
+- Computer setup shows Easy, Medium, or Hard and the opening-player choice. A quiet thinking label identifies a pending computer move.
+- Pass-and-play uses player names and the active disc symbol, with the handover prompt placed on the same cream page.
+- Keep disc ownership, opening-player alternation, current actor, and session wins/draws readable after a rematch.
+- Show column previews only for valid current-player input. Finish states keep the final board visible and disable further placement.
+- A resignation or forfeit has its own result text rather than a fabricated four-disc highlight.
+
+### 7.5. Animation and feedback
+
+- An accepted disc drops vertically into its computed lowest empty slot, followed by one small settling bounce.
+- The bounce stays within the landing slot and is decorative; it cannot imply a second placement, rearrange existing discs, or change the accepted landing row.
+- Fade in a simple outline around the winning run. Use brief underline transitions for player changes and gentle feedback for unavailable columns.
+- Keep placement, turn advancement, and result evaluation independent of decorative motion. Drawing feedback must not add an artificial computer delay or hold up handover.
+- Respect reduced-motion preferences by showing discs in their accepted slots immediately and using static selection and winning outlines.
+- Cancel stale previews and animations when a round is restarted or left.
+
+### 7.6. Planned artwork handoff
+
+Prepare a flat frame/slot treatment, two patterned disc symbols, player badges, column-preview indicators, and winning outlines. Build the board with lightweight HTML/SVG graphics and accessible live text controls. The theme needs simple reusable shapes rather than elaborate background artwork.

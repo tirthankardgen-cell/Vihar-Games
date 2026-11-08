@@ -3,7 +3,7 @@
 # Vihar Games — Game catalog
 
 **Project:** Vihar Games  
-**Updated:** 8 November 2026  
+**Updated:** 9 November 2026  
 **Hosting:** One Next.js application in one Vercel project.  
 **Status:** The deployment scaffold lists all twelve games and serves their coming-soon pages plus catalog/launch/info APIs. Every game remains `planned`; gameplay, rules JSON, and online room APIs are future work.
 
@@ -54,6 +54,7 @@ Accounts, email addresses, passwords, visible sign-in, and downloads are not req
 - Preserve the exact rules in each specification. This reorganization changes project structure, routes, and API delivery.
 - Render all twelve games with HTML, SVG, or Canvas 2D. Do not use 3D or semi-3D presentation, modeled objects, raised/tilted boards, CSS perspective, or 3D transforms. Physics for Carrom and Billiards remains a 2D x/y simulation.
 - Chess, Carrom, and Ludo use the detailed Gulam Chor-inspired Indian courtyard artwork direction in section 7 of their specifications. This includes the warm palette, cream Hindi titles, block-print/paper textures, and quiet flat controls.
+- Every game now has an approved visual theme in section 7 of its own specification. The [visual index](./README.md#approved-2d-artwork-direction) lists all twelve handoffs, including Notebook Doodles for Tic-Tac-Toe and the eight distinct themes approved for the remaining games. Keep graphics flat, layouts uncluttered, and animation brief, with reduced-motion alternatives and preserved gameplay timing.
 - Chess retains local solo play against Acharya Dev (आचार्य देव), a fictional Indian chess mentor with his own 2D avatar and selectable Easy, Medium, or Hard difficulty. His identity is distinct from human multiplayer seats.
 
 ## Planning documents

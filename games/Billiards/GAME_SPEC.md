@@ -14,6 +14,8 @@
 **Match format:** One rack of casual 8-ball pool, with the exact house rules below.  
 **Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 
+**Visual theme:** Vintage Pool Club; an uncluttered overhead pool table with deep green felt, cream labels, flat numbered balls, and restrained club-style accents.
+
 ## 1. Game and objective
 
 This project uses pocket billiards, specifically 8-ball pool. One player clears balls 1–7 and the other clears 9–15. After clearing their assigned group, a player wins by legally pocketing the 8-ball in their declared pocket. Carom billiards, snooker, and 9-ball would require separate specifications.
@@ -82,3 +84,51 @@ This project uses pocket billiards, specifically 8-ball pool. One player clears 
 - The catalog entry opens `/billiards`; the launch endpoint redirects there; info and rules endpoints identify this game, and another game's room code or local save cannot affect it.
 - Room commands use the documented `/api/games/billiards` namespace, retain guest access without a sign-in form, and reject unsupported game actions.
 - All gameplay graphics and transitions remain 2D; verify flat boards/pieces on desktop and mobile, with no raised, extruded, perspective, or semi-3D presentation.
+- The Vintage Pool Club presentation keeps balls, solids/stripes, aiming, power, declared pockets, and rule messages readable on mobile and desktop; motion and reduced-motion playback preserve the accepted shot outcome.
+
+## 7. Detailed 2D visual direction — Vintage Pool Club
+
+### 7.1. Mood and palette
+
+The game should feel like a quiet, traditional pool club viewed directly from above. Keep the table central and the surrounding interface compact, with a calm, confident mood.
+
+- Use deep green for the playing surface, a dark charcoal or brown table outline, cream text, and a small amount of muted ochre for active controls.
+- A faint felt texture may add character while remaining flat and unobtrusive. Keep the area surrounding the table plain.
+- Use the familiar numbered-ball colours together with solid/striped markings. Ball identity must remain clear independently of the surrounding theme palette.
+- All artwork stays 2D: the table, cushions, pockets, cue, and balls are flat shapes with no perspective, raised rims, reflections, or spherical shading.
+
+### 7.2. Table, balls, and shot controls
+
+- Draw the overhead table at the physics model's proportions, with six clearly positioned pocket symbols and a thin cushion boundary.
+- Render each object ball as a flat numbered circle. Solids and stripes have visibly different fills; the 8-ball is dark with a readable cream number, and the cue ball is plain ivory.
+- Keep number labels legible and ball boundaries distinct against the green surface. A simple outline is enough to separate touching balls.
+- Use a slim aim line and a flat cue indicator for direction, plus a compact power bar with a readable value or label.
+- Highlight the chosen pocket before an 8-ball shot. Show ball-in-hand placement as an outlined cue-ball preview that clearly distinguishes valid and invalid positions.
+
+### 7.3. Pages, typography, and layout
+
+- Carry the green, cream, and understated club accents through the overview, mode setup, rules, table, and result screens.
+- Use restrained club-sign lettering for the title and readable live text for player names, difficulty, group assignments, scores, and rule messages.
+- Place the player/turn row and remaining-group indicators above the table. Put aim, power, Shoot, and any required pocket declaration controls close to the playing area.
+- On narrow screens, place controls below the table and provide a usable landscape layout. Keep the table's proportions and allow 2D magnification when labels or precise cue placement need more room.
+- Keep essential controls comfortably sized for touch and expose keyboard focus and accessible shot/status descriptions alongside the drawn table.
+
+### 7.4. Modes and gameplay states
+
+- Computer, practice, pass-and-play, and private rooms share the same table and visual language. Label the opponent and selected difficulty clearly.
+- Practice shows its repeat-shot controls without competitive group assignments or an invented win/loss result.
+- Show whose turn it is, whether the table is open, each assigned group, ball-in-hand entitlement, and any required pocket declaration using concise text and ball symbols.
+- While a shot resolves, retain the table view and show a quiet resolving status. Update pocketed-ball indicators, groups, fouls, and the next player from the settled accepted result.
+- Keep foul, scratch, illegal-break choice, respotted 8-ball, and rack-result messages visible beside the table. Pass-and-play handover appears after the shooter's earned shots have ended.
+
+### 7.5. Animation and feedback
+
+- Balls glide along their accepted 2D trajectories. Pocketed balls disappear cleanly at their pockets, and any rule-required respot becomes visible in the settled state.
+- The power bar responds directly to adjustment; selection outlines and the active-player underline use brief, gentle transitions.
+- Decorative motion never changes shot parameters, physics, group assignment, or scoring. The existing rule that a new shot waits until resolution is complete still applies.
+- Respect reduced-motion preferences by simplifying or skipping trajectory playback and showing the accepted settled state with a concise outcome message. Preserve all shot rules and input restrictions.
+- Keep menus and status controls responsive during computation and playback, and cancel obsolete visual playback when leaving or restoring the game.
+
+### 7.6. Planned artwork handoff
+
+Prepare flat table/cushion/pocket paths, subtle felt texture, cue and aim indicators, solid/striped numbered ball symbols, group indicators, and simple selection outlines. Use Canvas 2D or equivalent flat graphics for gameplay, with accessible live text for controls and outcomes. These are planned assets; this specification does not claim that artwork or gameplay has already been produced.
