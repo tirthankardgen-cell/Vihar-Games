@@ -2,13 +2,25 @@
 
 # Vihar Games — Page and API contract
 
-**Status:** Planned endpoints; no handlers have been implemented.  
+**Status:** Catalog, launch, and info handlers are implemented in the deployment scaffold. Rules and online room endpoints remain planned.
+
 **Application:** One Vihar Games website and one Vercel project.  
 **API origin:** `https://games.vihar.online`  
 **Game page pattern:** `/<game-id>`  
 **Game API pattern:** `/api/games/<game-id>`
 
 **Presentation:** All game pages are 2D only. API metadata declares `presentation: "2d"`; API behavior, game rules, and room authority remain independent of decorative artwork.
+
+## Current scaffold behavior
+
+- `GET /api/games` returns the twelve registered entries.
+- `GET /api/games/<game-id>` returns a same-site 307 redirect.
+- `GET /api/games/<game-id>/info` returns public metadata.
+- Unknown IDs on these endpoints return `404 UNKNOWN_GAME` with a request ID.
+- All entries report `availability: "planned"`, `availableModes: []`, `roomActions: []`, and `rulesVersion: null`. `plannedModes` and `playerLimits` describe future play.
+- `/rules`, all room/action paths, and internal cleanup have no handlers yet and return 404. The detailed gameplay contracts below apply when those APIs are implemented.
+
+These routes run within the same Next.js application and require no Firebase configuration in this phase.
 
 ## 1. Game pages and endpoint namespaces
 
@@ -42,9 +54,9 @@ Each game also has `/<game-id>/how-to-play`. A private invite uses `/<game-id>/p
 
 Public `GET` endpoints do not create rooms, roll dice, start matches, change settings, or submit moves. JSON consumers use `/info` instead of the redirect endpoint. Unknown IDs return 404 rather than redirecting to arbitrary destinations. API responses send `X-Robots-Tag: noindex`.
 
-Metadata exposes an `availability` field. During incremental implementation, an unfinished game remains a catalog entry with `planned` availability and a truthful page; only `playable` games accept live match creation. This document's routes are future requirements and are not currently live.
+Metadata exposes an `availability` field. During incremental implementation, an unfinished game remains a catalog entry with `planned` availability and a truthful page; only `playable` games accept live match creation. The catalog, launch, and info handlers are scaffolded; the remaining endpoints are future requirements.
 
-Chess metadata also exposes its local computer persona: `id: "acharya-dev"`, English/Hindi display names, a planned avatar reference, and difficulty IDs `easy`, `medium`, and `hard`. This is public presentation information; solo search and moves stay in the browser. It does not introduce a computer room member or require online authentication for solo play.
+When Chess is implemented, its metadata also exposes its local computer persona: `id: "acharya-dev"`, English/Hindi display names, a planned avatar reference, and difficulty IDs `easy`, `medium`, and `hard`. This is public presentation information; solo search and moves stay in the browser. It does not introduce a computer room member or require online authentication for solo play.
 
 ## 3. Online room endpoints
 

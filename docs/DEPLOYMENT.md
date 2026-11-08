@@ -2,18 +2,31 @@
 
 # Vihar Games — Single-project deployment plan
 
-**Status:** Future deployment requirements; no application scaffold or deployment has been created.  
+**Status:** Application scaffold ready for Vercel. Gameplay and online backend setup remain future work; no remote deployment has been performed.
+
 **Project name:** Vihar Games  
 **Suggested Vercel project slug:** `vihar-games`  
 **Production custom domain:** `games.vihar.online`
 
 **Presentation:** All twelve games are 2D only; the single website does not require a 3D rendering engine or modeled gameplay assets.
 
+## Deploy the current scaffold
+
+1. With Node.js 26.13.0 (or a newer stable 26.x patch), run `npm ci` and `npm run check` in the Vihar Games directory.
+2. Push this repository to a Git provider and import it into Vercel as one Next.js project.
+3. The current Git root is this directory. Keep Vercel's Root Directory at the repository root (`.`). If you instead use a repository containing the whole Games workspace, select `Vihar Games`.
+4. Select Node.js **26.x**, install with **`npm ci`**, build with **`npm run build`**, and keep Next.js's default output. `vercel.json` supplies the framework and commands; `package.json` supplies the Node.js major.
+5. Deploy and attach `games.vihar.online`. Add the exact DNS record Vercel shows for that hostname and confirm HTTPS.
+
+The scaffold needs no secrets, Firebase project, or cron. `NEXT_PUBLIC_SITE_URL` is optional and defaults to `https://games.vihar.online`; `.env.example` documents it. Public metadata uses the production canonical URL on provider previews as well. Configure the variables in sections 4–6 when online gameplay is implemented.
+
+Next.js **16.4.5** and stable Node.js **26.13.0** were verified online on **8 November 2026**. Vercel lists **26.x** as its default supported runtime. Exact Next.js/React/TypeScript/Tailwind/ESLint versions are locked in the package and lockfile; see [the version table and sources](../README.md#versions-verified-online). Node.js 27 alpha is excluded as a prerelease. Hind and Yatra One are bundled with their font licenses, so builds do not fetch fonts.
+
 ## 1. Vercel project boundary
 
-Create one Vercel project for the entire website when implementation is requested. In a repository containing the whole workspace, set the project root to `Vihar Games`. If that directory is the repository root, use the repository root directly.
+Create one Vercel project for the entire website. In a repository containing the whole workspace, set the project root to `Vihar Games`. If that directory is the repository root, use the repository root directly.
 
-The root contains one Next.js application, one `package.json`, one lockfile, one Tailwind configuration, and one build pipeline. The twelve game specifications and future source modules belong to that application. None of the individual game folders receives its own Vercel project or package installation.
+The root contains one Next.js application, one `package.json`, one lockfile, one Tailwind CSS 4/PostCSS configuration, and one build pipeline. The twelve game specifications and future source modules belong to that application. None of the individual game folders receives its own Vercel project or package installation.
 
 Keep the sibling `Bap Ka Rasta`, `Game 3`, and `Gulam Chor` directories outside the build root. Their existing deployments, packages, environment files, and data do not become dependencies of Vihar Games.
 
@@ -28,9 +41,9 @@ Keep the sibling `Bap Ka Rasta`, `Game 3`, and `Gulam Chor` directories outside 
 
 ## 3. Technology and build settings
 
-Resolve the latest stable compatible Next.js App Router, React, TypeScript, and Tailwind CSS versions when implementation starts. Choose the newest stable Node.js release supported by Vercel, verify compatibility with the Firebase SDK and Admin SDK, and lock exact versions once for the shared application.
+The scaffold pins the online-verified stable Next.js App Router, React, TypeScript, and Tailwind CSS releases and the newest stable Node.js major supported by Vercel. Verify Firebase SDK and Admin SDK compatibility when adding multiplayer dependencies.
 
-Planned Vercel settings after implementation:
+Vercel settings for the current application:
 
 | Setting | Requirement |
 | --- | --- |
@@ -46,7 +59,7 @@ Use shared lint, type-check, rules tests, and build checks before release. Confi
 
 ## 4. Shared environment configuration
 
-These are planned variable names, not credentials to populate during this documentation phase.
+Only `NEXT_PUBLIC_SITE_URL` is used by the current scaffold. The Firebase and scheduler variables below are planned for the multiplayer phase.
 
 | Variable | Use |
 | --- | --- |
@@ -87,9 +100,11 @@ Per-room turn deadlines and Memory Match's mismatch deadlines are evaluated on r
 
 Set the site canonical to `https://games.vihar.online` and each game canonical to its path, including `https://games.vihar.online/chess` and `https://games.vihar.online/carrom`. Rules pages have separate canonical URLs ending in `/how-to-play`.
 
-The production sitemap contains the homepage, twelve game overviews, and twelve rules pages. Exclude play and room URLs, API endpoints, private state, and participant names. Mark play pages `noindex`; send `X-Robots-Tag: noindex` on API responses. Keep metadata and links on the shared production domain.
+The initial sitemap contains the homepage and twelve game overviews. Coming-soon rules pages are `noindex` and join the sitemap when real rules are published. The completed production sitemap will then contain the homepage, twelve overviews, and twelve rules pages. Exclude play and room URLs, API endpoints, private state, and participant names. Mark play pages `noindex`; send `X-Robots-Tag: noindex` on API responses. Keep metadata and links on the shared production domain.
 
 ## 8. Release verification
+
+For the scaffold, verify lint, type checking, production build, all twelve overview/play/rules-placeholder paths, catalog and info JSON, launch redirects, unknown-game 404s, API `noindex` headers, canonical URLs, and the initial sitemap. Check the catalog on desktop and phone widths. The gameplay and backend checks below apply as their implementations arrive.
 
 1. Run the shared lint, type-check, meaningful game-engine tests, and production build.
 2. Verify the homepage lists all twelve games and excludes the three earlier projects.
@@ -102,4 +117,4 @@ The production sitemap contains the homepage, twelve game overviews, and twelve 
 9. Confirm the only user-facing deployment domain is `games.vihar.online` and no game requires a separate Vercel project.
 10. Verify every game is flat 2D, with no 3D/semi-3D board, token, die, or card effect. Compare Chess, Carrom, and Ludo with their Gulam Chor-inspired artwork handoffs and check phone readability, focus, and reduced-motion behavior.
 
-Do not run deployment commands or create remote resources as part of the current documentation-only request.
+Scaffolding prepares the local application and deployment settings. The user can import and deploy the ready repository to Vercel using the steps above.

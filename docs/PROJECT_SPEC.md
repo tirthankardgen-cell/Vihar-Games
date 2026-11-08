@@ -4,9 +4,10 @@
 
 **Project:** Vihar Games  
 **Updated:** 8 November 2026  
-**Scope:** Consolidated documentation for twelve 2D games, including detailed Indian artwork guidance for Chess, Carrom, and Ludo.  
+**Scope:** Shared deployment scaffold and consolidated plans for twelve 2D games, including detailed Indian artwork guidance for Chess, Carrom, and Ludo.
+
 **Deployment target:** One Next.js application, one Vercel project, one domain.  
-**Implementation status:** Not started.
+**Implementation status:** Application scaffold implemented; all game engines and online services remain planned.
 
 ## 1. Project boundary
 
@@ -15,6 +16,10 @@ The shared application contains exactly the twelve entries in the [catalog](../G
 Use `https://games.vihar.online` for the whole project. Chess is `/chess`, Carrom is `/carrom`, and every other module uses its catalog game ID as its page path. Remove the previous individual game subdomains from this project's canonical URLs, invitations, metadata, and deployment requirements.
 
 The rule specifications remain the source of truth for gameplay. This consolidated plan defines how those games share routing, infrastructure, guest access, and deployment.
+
+### Current scaffold
+
+The shared homepage, twelve overviews, coming-soon play/rules pages, public catalog API, launch redirects, and metadata APIs are implemented. The registry is an explicit twelve-game allowlist. No game is playable yet. Authentication, Firebase, gameplay, rules JSON, room APIs, persistence, workers, and cleanup are added during later game implementation. The scaffold builds and deploys with no required environment variables.
 
 ## 2. Shared page contract
 
@@ -48,7 +53,7 @@ No email address, password, visible sign-in, or installation is required. Touch,
 
 At implementation time, use one root `package.json`, one root lockfile, one Next.js App Router application, shared TypeScript configuration, shared Tailwind setup, and one Vercel configuration. Individual game folders are specification folders and do not become independently deployed applications.
 
-The future source structure should include:
+The source structure uses these boundaries:
 
 - `src/app/page.tsx` for the shared catalog and `src/app/[gameId]/...` for game, play, and rules routes.
 - `src/app/api/games/...` for catalog and game API route handlers, including the game ID in every per-game path.
@@ -57,7 +62,7 @@ The future source structure should include:
 - `src/lib/rooms/` for shared API validation, room lifecycle, membership, idempotency, state serialization, and database operations.
 - `src/lib/storage/` for game-scoped local save helpers, and workers for bounded computer searches or physics simulations.
 
-These are documented future paths, not source files to create in this phase. Dynamic App Router parameters and framework APIs must follow the documentation of the version installed when coding starts.
+The scaffold creates the shared App Router pages, catalog/launch/info route handlers, and `src/lib/catalog/registry.ts`. Game engines, rooms, storage helpers, and workers remain future paths. Next.js 16 dynamic route parameters use promises and are awaited by the implemented pages and route handlers.
 
 The registry maps public IDs such as `tic-tac-toe` to explicit modules and declares `presentation: "2d"` for every entry. Lazy-load the selected game's browser bundle; opening Chess must not load every game's engine or physics dependencies. Share infrastructure without sharing mutable match state.
 
@@ -108,7 +113,7 @@ Deploy only the `Vihar Games` directory as the root of one Vercel project. Attac
 
 Acceptance requires all catalog paths and launch endpoints to resolve, unsupported modes to be rejected, and every game to complete its defined flows inside the same build. Validate same-origin save isolation, cross-game room isolation, concurrent commands, reconnects, and hidden-state permissions in addition to each game's rules.
 
-This phase delivers these documents and the relocated specifications. It does not install dependencies, initialize an application, implement games or APIs, or deploy a site.
+The current phase delivers a deployable application scaffold with pinned dependencies, local fonts, lint/type/build scripts, metadata, and Vercel configuration. Gameplay acceptance checks apply as each game is implemented. The initial sitemap contains the homepage and twelve overviews; coming-soon rules pages remain `noindex` until their real rules are published. No remote deployment or backend resources are created by scaffolding.
 
 ## 9. Mandatory 2D presentation and approved Indian artwork
 
@@ -128,4 +133,4 @@ Adapt the [Gulam Chor artwork handoff](https://github.com/tirthankardgen-cell/Gu
 
 Keep Yatra One/Hind typography, the neem-green/terracotta/ochre/cream palette, block-print accents, and the warm everyday courtyard mood coherent across the three games. Titles, scores, labels, room codes, and rules stay accessible live text. Decoration stays outside active board areas and cannot resemble extra game pieces or safe cells.
 
-Each game's detailed visual guidance lives in its own `GAME_SPEC.md`; the global 2D requirement applies to all twelve. Future assets and shared style tokens live inside Vihar Games, with no runtime dependency on Gulam Chor. This update creates documentation only, not artwork or game source.
+Each game's detailed visual guidance lives in its own `GAME_SPEC.md`; the global 2D requirement applies to all twelve. Shared style tokens and local Hind/Yatra One fonts now live inside Vihar Games. Detailed game artwork and game engines remain future work, with no runtime dependency on Gulam Chor.

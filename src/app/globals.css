@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #faf3e5;
+  --cream: #f5e6c5;
+  --ink: #293d35;
+  --muted: #62695b;
+  --terracotta: #af6443;
+  --brass: #dfb36d;
+  --line: #dbd2bf;
+}
+
+@theme inline {
+  --color-background: var(--paper);
+  --color-foreground: var(--ink);
+  --font-sans: var(--font-hind), "Nirmala UI", sans-serif;
+  --font-display: var(--font-yatra), Georgia, serif;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-hind), "Nirmala UI", sans-serif; font-size: 17px; line-height: 1.6; }
+a { color: inherit; text-decoration: none; }
+button, a { -webkit-tap-highlight-color: transparent; }
+a:focus-visible { outline: 3px solid var(--terracotta); outline-offset: 5px; }
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3 { font-family: var(--font-yatra), Georgia, serif; font-weight: 400; line-height: 1.15; }
+ul { margin: 0; padding: 0; list-style: none; }
+::selection { background: var(--brass); color: var(--ink); }
+
+.page-shell { width: min(1160px, calc(100% - 64px)); margin-inline: auto; }
+.skip-link { position: absolute; left: 16px; top: 12px; padding: 8px 16px; background: var(--paper); z-index: 10; transform: translateY(-160%); }
+.skip-link:focus { transform: translateY(0); }
+.site-header { display: flex; align-items: center; justify-content: space-between; padding-block: 24px; gap: 20px; }
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand-hindi { font-family: var(--font-yatra), Georgia, serif; font-size: 38px; line-height: 1; }
+.brand-label { padding-left: 14px; border-left: 1px solid var(--line); font-size: 12px; letter-spacing: .15em; line-height: 1.4; }
+.nav-link { display: inline-flex; align-items: center; gap: 16px; font-size: 15px; }
+.nav-link:hover, .text-link:hover, .back-link:hover { color: var(--terracotta); }
+.eyebrow { font-size: 12px; letter-spacing: .15em; text-transform: uppercase; }
+
+.hero { display: grid; grid-template-columns: 1.45fr 1fr; align-items: center; padding: 64px; gap: 40px; background: var(--ink); color: var(--cream); border-radius: 10px; }
+.hero h1 { margin-block: 20px; font-size: clamp(42px, 5.2vw, 66px); }
+.hero-copy > p:not(.eyebrow) { max-width: 440px; font-size: 18px; }
+.hero-actions { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; margin-top: 30px; }
+.hero-note { font-size: 14px; }
+.hero-art { justify-self: center; width: min(280px, 100%); text-align: center; }
+.hero-art svg { display: block; width: 100%; height: auto; }
+.hero-art p { margin-top: 18px; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
+.button { display: inline-flex; align-items: center; justify-content: center; gap: 18px; min-height: 46px; padding: 12px 20px 10px; border: 1px solid transparent; border-radius: 4px; font-size: 15px; line-height: 1.4; }
+.button-paper { background: var(--cream); color: var(--ink); }
+.button-paper:hover { background: var(--brass); }
+.button-ink { background: var(--ink); color: var(--cream); }
+.button-ink:hover { background: #3b5145; }
+
+.collection { padding-block: 64px 48px; scroll-margin-top: 28px; }
+.section-heading { display: flex; justify-content: space-between; align-items: end; gap: 32px; margin-bottom: 28px; }
+.section-heading h2 { margin-top: 10px; font-size: clamp(30px, 4vw, 40px); }
+.section-heading > p { color: var(--muted); font-size: 15px; }
+.game-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.game-grid > li { min-width: 0; }
+.game-card { display: flex; flex-direction: column; height: 100%; padding: 26px; border: 1px solid var(--line); border-radius: 6px; background: #fdf8ee; }
+.game-card:hover { border-color: var(--terracotta); background: #f7edde; }
+.card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.game-symbol { display: inline-flex; align-items: center; justify-content: center; width: 54px; height: 54px; border: 1px solid var(--line); border-radius: 6px; background: var(--cream); color: var(--ink); font-family: Georgia, "Segoe UI Symbol", serif; font-size: 35px; line-height: 1; letter-spacing: -.08em; }
+.card-number { color: var(--muted); font-size: 13px; }
+.card-category { color: var(--muted); font-size: 11px; }
+.game-card h3 { margin-block: 9px 12px; font-size: 27px; }
+.card-description { flex: 1; color: var(--muted); font-size: 16px; }
+.players-label { margin-top: 20px; font-size: 13px; }
+.card-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
+.status-badge { display: inline-block; padding: 3px 10px 1px; border: 1px solid #c9c7b4; border-radius: 3px; background: #eeeddf; color: #475443; font-size: 12px; line-height: 1.6; }
+.site-footer { display: flex; justify-content: space-between; gap: 20px; padding-block: 26px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+.site-footer a:hover { color: var(--ink); }
+
+.detail-page { padding-block: 22px 72px; min-height: 65vh; }
+.back-link { display: inline-flex; gap: 12px; min-height: 44px; align-items: center; font-size: 15px; }
+.game-overview { display: grid; grid-template-columns: 1.5fr 1fr; align-items: start; gap: 80px; padding-top: 40px; }
+.overview-symbol { width: 72px; height: 72px; font-size: 45px; margin-bottom: 26px; }
+.game-overview h1 { margin-block: 14px; font-size: clamp(38px, 6vw, 60px); }
+.hindi-title { margin-block: -6px 18px; color: var(--terracotta); font-family: var(--font-yatra), Georgia, serif; font-size: 28px; }
+.lead { font-size: 21px; color: var(--muted); max-width: 620px; }
+.game-overview .status-badge { margin-top: 28px; }
+.availability-note { margin-top: 14px; color: var(--muted); max-width: 480px; }
+.detail-actions { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; margin-top: 28px; }
+.text-link { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; font-size: 15px; }
+.mode-panel { padding: 32px; border: 1px solid var(--line); border-radius: 6px; background: var(--cream); }
+.mode-panel h2 { margin-block: 12px 24px; font-size: 30px; }
+.mode-panel li, .planned-modes li { padding-block: 12px; border-bottom: 1px solid #d3c6a9; }
+.mode-panel > p:last-child { margin-top: 24px; font-size: 14px; color: var(--muted); }
+.coming-soon-panel { max-width: 740px; padding: 40px 0; }
+.coming-soon-panel > .eyebrow { margin-top: 28px; }
+.coming-soon-panel h1 { margin-block: 14px 20px; font-size: clamp(34px, 5vw, 54px); }
+.coming-soon-panel > p:not(.eyebrow) { margin-bottom: 16px; }
+.coming-soon-panel > .button { margin-top: 24px; }
+.planned-modes { margin-top: 28px; max-width: 440px; }
+.planned-modes h2 { font-size: 26px; margin-bottom: 10px; }
+
+@media (max-width: 900px) {
+  .hero { padding: 40px; gap: 28px; }
+  .hero-art { width: 220px; }
+  .game-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .game-overview { gap: 36px; }
+}
+
+@media (max-width: 600px) {
+  .page-shell { width: calc(100% - 32px); }
+  .site-header { padding-block: 20px; }
+  .brand { gap: 10px; }
+  .brand-label { padding-left: 10px; font-size: 10px; letter-spacing: .1em; }
+  .brand-hindi { font-size: 32px; }
+  .nav-link { font-size: 13px; gap: 8px; min-height: 44px; }
+  .hero { grid-template-columns: 1fr; padding: 32px 24px; gap: 0; }
+  .hero h1 { font-size: 42px; }
+  .hero-copy > p:not(.eyebrow) { font-size: 17px; }
+  .hero-art { display: none; }
+  .hero-actions { gap: 18px; }
+  .collection { padding-top: 40px; }
+  .section-heading { display: block; }
+  .section-heading > p { margin-top: 16px; }
+  .section-heading > p br { display: none; }
+  .game-grid { grid-template-columns: 1fr; gap: 14px; }
+  .game-card { padding: 24px; }
+  .card-top { margin-bottom: 20px; }
+  .site-footer { font-size: 12px; gap: 14px; }
+  .game-overview { grid-template-columns: 1fr; padding-top: 24px; gap: 40px; }
+  .detail-page { padding-bottom: 48px; }
+  .mode-panel { padding: 24px; }
+  .coming-soon-panel { padding-top: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}

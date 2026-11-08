@@ -4,9 +4,55 @@
 
 **One project, twelve browser games, one Vercel deployment.** The homepage lists every included game. Selecting Chess opens `/chess`; selecting Carrom opens `/carrom`. The other games use their documented paths on the same domain.
 
-**Status:** Documentation only, updated 8 November 2026. No game code, package scaffold, API handlers, or deployment configuration has been created.
+**Status:** Deployment scaffold created 8 November 2026. The shared catalog, twelve game overviews, coming-soon play/rules pages, and public catalog/launch/info APIs are implemented. All twelve games have `planned` availability; gameplay and online rooms will be built one by one.
 
 **Presentation:** All twelve games are 2D only. Boards, pieces, cards, dice, and transitions use flat graphics; 3D, semi-3D, raised or tilted boards, and perspective effects are excluded.
+
+## Run locally
+
+Use **Node.js 26.13.0** (or a newer stable 26.x patch). The `.nvmrc` and `.node-version` files pin the verified local release; `package.json` selects Vercel's supported `26.x` runtime. Vercel manages the runtime's minor and patch updates.
+
+From this directory:
+
+```sh
+npm ci
+npm run dev
+```
+
+Open `http://localhost:3000`. No environment variables or Firebase credentials are required for the scaffold. To change the canonical site URL, copy `.env.example` to `.env.local` and edit `NEXT_PUBLIC_SITE_URL`.
+
+```sh
+npm run check   # ESLint, route type generation, TypeScript, production build
+npm start       # Serve the completed production build
+```
+
+## Deploy this scaffold to Vercel
+
+1. Push this repository to your Git provider, then import it as one Vercel project.
+2. Use **Next.js**, **Node.js 26.x**, install command **`npm ci`**, and build command **`npm run build`**. Keep the default output directory. The current Git repository is rooted in this folder, so use the repository root (`.`). Use `Vihar Games` only if you later commit the enclosing Games workspace as the repository.
+3. Deploy, then attach **`games.vihar.online`** and apply the DNS record shown by Vercel. Set `NEXT_PUBLIC_SITE_URL=https://games.vihar.online` if you want it explicit; this is already the application default.
+
+The included `vercel.json` sets the framework, install, and build commands. Firebase setup and scheduled room cleanup belong to the later multiplayer phase. See [deployment details](./docs/DEPLOYMENT.md).
+
+## Versions verified online
+
+Checked on **8 November 2026**, then pinned in `package.json` and `package-lock.json`:
+
+| Technology | Version |
+| --- | --- |
+| Node.js | 26.13.0, stable LTS; Vercel runtime `26.x` |
+| Next.js | 16.4.5 |
+| React / React DOM | 19.3.1 |
+| TypeScript | 6.0.3, latest compatible with the linting plugins |
+| Tailwind CSS / PostCSS plugin | 4.3.5 |
+| ESLint / Next.js config | 9.39.5 / 16.4.5 |
+| npm | 11.20.0 |
+
+Sources: [Node.js release index](https://nodejs.org/dist/index.json), [Next.js latest stable package](https://registry.npmjs.org/next/latest), [Vercel's supported Node.js versions](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions), and each package's npm `latest` metadata. The Node.js 27 alpha in the release index is a prerelease; Node.js 26.13.0 is the latest stable release and is supported by Vercel.
+
+ESLint 10.14.0 and TypeScript 7.0.2 are newer standalone releases, but Next.js's React/accessibility/import lint plugins require ESLint 9 and `typescript-eslint` requires TypeScript below 6.1. The scaffold pins the latest stable versions within those peer dependency ranges instead of forcing an incompatible installation.
+
+The production dependency audit reports zero vulnerabilities. The full npm audit reports eight moderate advisories in the development-only lint dependency chain; these are separate from the deployed application dependencies.
 
 ## Included games
 
@@ -14,7 +60,7 @@ Chess, Carrom, Billiards, Tic-Tac-Toe, Ludo, Snakes and Ladders, Connect Four, C
 
 The [game catalog](./GAME_CATALOG.md) maps every game to its page, API base, supported modes, and detailed specification.
 
-## Player experience
+## Planned player experience
 
 1. Open `https://games.vihar.online` and select a game from the catalog.
 2. Read its rules or choose a play mode.
@@ -25,6 +71,8 @@ The [game catalog](./GAME_CATALOG.md) maps every game to its page, API base, sup
 No account registration, visible sign-in, or download is required. All ten multiplayer games support both pass-and-play and private rooms. Sudoku and Minesweeper are single-player puzzles.
 
 ## Page paths and API endpoints
+
+The homepage and all overview, play, and how-to-play paths resolve now. Play and rules pages clearly say **Coming soon**. Only the catalog, launch redirects, and `/info` APIs are implemented in this scaffold; rules JSON, authentication, rooms, actions, and gameplay are later work.
 
 | Purpose | Chess example | Carrom example |
 | --- | --- | --- |
@@ -38,10 +86,35 @@ No account registration, visible sign-in, or download is required. All ten multi
 
 Page routes open browser experiences. JSON APIs supply metadata and perform online actions. The launch API provides the requested click-to-open behavior without making a `GET` request start or mutate a match.
 
-## Current documentation structure
+## Project structure
 
 ```text
 Vihar Games/
+  package.json
+  package-lock.json
+  next.config.ts
+  postcss.config.mjs
+  eslint.config.mjs
+  tsconfig.json
+  vercel.json
+  .env.example
+  .nvmrc
+  .node-version
+  src/
+    app/
+      layout.tsx
+      page.tsx
+      globals.css
+      fonts/
+      [gameId]/
+      api/games/
+      robots.ts
+      sitemap.ts
+    components/
+    lib/
+      catalog/registry.ts
+      api.ts
+      site.ts
   README.md
   GAME_CATALOG.md
   docs/
@@ -63,7 +136,11 @@ Vihar Games/
     Memory Match/GAME_SPEC.md
 ```
 
-Each game folder contains one Markdown specification. Application source directories described in the architecture document are future implementation plans.
+Each `games/` folder still contains its Markdown specification. Future engines belong in `src/games/<game-id>/`; online room helpers and storage helpers can be added when a game needs them. The shared allowlisted registry is `src/lib/catalog/registry.ts`.
+
+Tailwind CSS 4 uses `postcss.config.mjs` and the CSS theme in `src/app/globals.css`; a separate `tailwind.config.js` is not required. Hind and Yatra One are bundled locally from [Google Fonts](https://github.com/google/fonts), with their SIL Open Font License files beside them. Builds and visitors do not need to fetch fonts from Google.
+
+The current sitemap includes the homepage and twelve overview pages. Play URLs are `noindex`. Coming-soon rules pages are also `noindex` and will join the sitemap when their real rules are published. API responses carry `X-Robots-Tag: noindex`.
 
 ## Documents and authority
 

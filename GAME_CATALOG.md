@@ -5,13 +5,13 @@
 **Project:** Vihar Games  
 **Updated:** 8 November 2026  
 **Hosting:** One Next.js application in one Vercel project.  
-**Status:** Documentation only; the games and endpoints are planned, not implemented.
+**Status:** The deployment scaffold lists all twelve games and serves their coming-soon pages plus catalog/launch/info APIs. Every game remains `planned`; gameplay, rules JSON, and online room APIs are future work.
 
 **Presentation:** Every game is 2D only, using flat boards, pieces, cards, dice, and planar transitions.
 
 ## Included games and endpoints
 
-All paths below use `https://games.vihar.online`. A game page opens the game overview and its play options. A browser visit to that game's `GET` launch API redirects to the same page. Every game also has `/play` and `/how-to-play` beneath its game path, plus `/info` and `/rules` beneath its API base.
+All production paths below use `https://games.vihar.online`. A game page opens its coming-soon overview. A browser visit to that game's `GET` launch API redirects to the same page. Every game has coming-soon `/play` and `/how-to-play` pages and an implemented `/info` API. The `/rules` API will arrive with the game's implementation.
 
 | Game specification | Game page | Launch API / API base | Solo | Pass-and-play people | Online room people |
 | --- | --- | --- | --- | --- | --- |
@@ -29,6 +29,8 @@ All paths below use `https://games.vihar.online`. A game page opens the game ove
 | [Memory Match](./games/Memory%20Match/GAME_SPEC.md) | `/memory-match` | `/api/games/memory-match` | Solo puzzle | 2–4 | 2–4 |
 
 Select any game from the shared homepage at `/`. The twelve entries above are the complete Vihar Games catalog for this phase.
+
+The mode and player columns describe the approved future games. Current API metadata reports `availability: "planned"`, `availableModes: []`, `roomActions: []`, and `rulesVersion: null`; intended modes are separately listed in `plannedModes`.
 
 ## Shared play flow
 
