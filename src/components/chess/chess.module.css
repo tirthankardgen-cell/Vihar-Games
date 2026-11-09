@@ -66,6 +66,7 @@
 .boardColumn { min-width: 0; }
 .playerBar { display: flex; justify-content: space-between; align-items: center; min-height: 58px; padding: 5px 3px; gap: 10px; }
 .playerBar > span { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; }
+.playerBar strong, .resume strong, .resume p, .turn { overflow-wrap: anywhere; min-width: 0; }
 .boardFrame { position: relative; display: grid; grid-template-columns: 18px minmax(0, 1fr); grid-template-rows: auto 22px; background: #c99558; padding: 10px 10px 0 2px; border: 1px solid #293d35; }
 .rankLabels { display: grid; grid-template-rows: repeat(8, 1fr); font-size: 12px; text-align: center; align-items: center; }
 .fileLabels { grid-column: 2; display: grid; grid-template-columns: repeat(8, 1fr); font-size: 12px; text-align: center; align-items: center; }

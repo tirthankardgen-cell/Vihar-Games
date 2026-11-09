@@ -62,7 +62,7 @@ The source structure uses these boundaries:
 - `src/lib/rooms/` for shared API validation, room lifecycle, membership, idempotency, state serialization, and database operations.
 - `src/lib/storage/` for game-scoped local save helpers, and workers for bounded computer searches or physics simulations.
 
-The scaffold creates the shared App Router pages, catalog/launch/info route handlers, and `src/lib/catalog/registry.ts`. Game engines, rooms, storage helpers, and workers remain future paths. Next.js 16 dynamic route parameters use promises and are awaited by the implemented pages and route handlers.
+The shared application contains App Router pages, catalog/launch/info handlers, and `src/lib/catalog/registry.ts`. Chess and Tic Tac Toe also have engines, local storage helpers, computer workers, and rules handlers. Online rooms and the remaining ten engines are future work. Next.js 16 dynamic route parameters use promises and are awaited by the implemented pages and route handlers.
 
 The registry maps public IDs such as `tic-tac-toe` to explicit modules and declares `presentation: "2d"` for every entry. Lazy-load the selected game's browser bundle; opening Chess must not load every game's engine or physics dependencies. Share infrastructure without sharing mutable match state.
 
@@ -113,7 +113,7 @@ Deploy only the `Vihar Games` directory as the root of one Vercel project. Attac
 
 Acceptance requires all catalog paths and launch endpoints to resolve, unsupported modes to be rejected, and every game to complete its defined flows inside the same build. Validate same-origin save isolation, cross-game room isolation, concurrent commands, reconnects, and hidden-state permissions in addition to each game's rules.
 
-The current application includes pinned dependencies, local fonts, lint/type/test/build scripts, metadata, Vercel configuration, and Tic Tac Toe's local module. Its sitemap contains the homepage, twelve overviews, and Tic Tac Toe's rules page; other rules placeholders remain `noindex`. Gameplay acceptance checks apply as modules are implemented. Remote backend resources are not provisioned by this work.
+The current application includes pinned dependencies, local fonts, lint/type/test/build scripts, metadata, Vercel configuration, and Chess/Tic Tac Toe's local modules. Its sitemap contains the homepage, twelve overviews, and both published rules pages; other rules placeholders remain `noindex`. Gameplay acceptance checks apply as modules are implemented. Remote backend resources are not provisioned by this work.
 
 ## 9. Mandatory 2D presentation and approved visual styles
 

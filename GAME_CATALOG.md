@@ -5,13 +5,13 @@
 **Project:** Vihar Games  
 **Updated:** 9 November 2026  
 **Hosting:** One Next.js application in one Vercel project.  
-**Status:** Tic Tac Toe is `playable` in computer and pass-and-play modes, with notebook screens and published rules. Private-room screens are prepared but backend integration is deferred. The other eleven games remain `planned`; catalog/launch/info APIs serve the whole collection.
+**Status:** Chess and Tic Tac Toe are `playable` in computer and pass-and-play modes, with their courtyard/notebook screens and published rules. Private-room screens are prepared but backend integration is deferred. The other ten games remain `planned`; catalog/launch/info APIs serve the whole collection.
 
 **Presentation:** Every game is 2D only, using flat boards, pieces, cards, dice, and planar transitions.
 
 ## Included games and endpoints
 
-All production paths below use `https://games.vihar.online`. A browser visit to a game's `GET` launch API redirects to its overview. Tic Tac Toe opens its full-screen notebook hero and has implemented `/play`, `/how-to-play`, and `/rules` paths. The other eleven games retain their overview and play/rules placeholders. Every game has an implemented `/info` API.
+All production paths below use `https://games.vihar.online`. A browser visit to a game's `GET` launch API redirects to its overview. Chess and Tic Tac Toe open their courtyard and notebook heroes and have implemented `/play`, `/how-to-play`, and `/rules` paths. The other ten games retain their overview and play/rules placeholders. Every game has an implemented `/info` API.
 
 | Game specification | Game page | Launch API / API base | Solo | Pass-and-play people | Online room people |
 | --- | --- | --- | --- | --- | --- |
@@ -30,7 +30,7 @@ All production paths below use `https://games.vihar.online`. A browser visit to 
 
 Select any game from the shared homepage at `/`. The twelve entries above are the complete Vihar Games catalog for this phase.
 
-The mode and player columns describe the full approved designs. Tic Tac Toe metadata reports `availability: "playable"`, `availableModes: ["computer", "pass-and-play"]`, and `rulesVersion: "1.0.0"`; its online mode remains planned. Other games report `planned` availability and no available modes or rules version. All room actions remain deferred.
+The mode and player columns describe the full approved designs. Chess and Tic Tac Toe metadata reports `availability: "playable"`, `availableModes: ["computer", "pass-and-play"]`, and `rulesVersion: "1.0.0"`; online modes remain planned. Other games report `planned` availability and no available modes or rules version. All room actions remain deferred.
 
 ## Shared play flow
 

@@ -6,12 +6,14 @@
 
 # Chess — Game specification
 
-**Status:** Documentation for a planned Vihar Games module; implementation has not started.  
+**Status:** Computer and pass-and-play are implemented, with local saves, published rules, and the courtyard interface. Create/Join Room screens are prepared; Firebase rooms, online authority, forfeit, and online rematches are deferred at the user's request until backend credentials are supplied.
+
 **Platform:** Browser on mobile, tablet, and desktop.  
 **Access:** No account, visible sign-in, or download.  
 **Players:** One human against the computer, or exactly two humans.  
 **Vihar computer:** Acharya Dev (आचार्य देव), a fictional Indian chess mentor with a dedicated flat 2D avatar.  
-**Required modes:** Computer opponent, pass-and-play, and private online room.  
+**Required modes:** Computer opponent and pass-and-play available now; private online room remains the documented next phase.
+
 **Match format:** Standard chess; untimed in the first release.  
 **Presentation:** 2D only; flat boards and pieces. No 3D or semi-3D rendering.
 

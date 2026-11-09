@@ -74,7 +74,7 @@ No account registration, visible sign-in, or download is required. All ten multi
 
 ## Page paths and API endpoints
 
-The homepage and all overview, play, and how-to-play paths resolve. Tic Tac Toe's play and rules pages are ready; the other eleven games retain **Coming soon** pages. Catalog, launch, and `/info` APIs are implemented, along with Tic Tac Toe's `/rules` JSON. Firebase authentication, room creation, online actions, and room cleanup remain later work.
+The homepage and all overview, play, and how-to-play paths resolve. Chess and Tic Tac Toe have playable local modes and published rules; the other ten games retain **Coming soon** pages. Catalog, launch, and `/info` APIs are implemented, along with both playable games' `/rules` JSON. Firebase authentication, room creation, online actions, and room cleanup remain later work.
 
 | Purpose | Chess example | Carrom example |
 | --- | --- | --- |
@@ -142,11 +142,11 @@ Vihar Games/
     Memory Match/GAME_SPEC.md
 ```
 
-Each `games/` folder contains its Markdown specification. Tic Tac Toe's engine, computer worker, local persistence, rules, and tests live in `src/games/tic-tac-toe/`. Other engines will follow the same module boundary. Online helpers remain deferred. The shared allowlisted registry is `src/lib/catalog/registry.ts`.
+Each `games/` folder contains its Markdown specification. Chess and Tic Tac Toe engines, computer workers, local persistence, rules, and tests live in `src/games/chess/` and `src/games/tic-tac-toe/`. Their interfaces live in matching `src/components/` directories. Other engines will follow the same module boundary. Online room helpers remain deferred. The shared allowlisted registry is `src/lib/catalog/registry.ts`.
 
 Tailwind CSS 4 uses `postcss.config.mjs` and the CSS theme in `src/app/globals.css`; a separate `tailwind.config.js` is not required. Hind, Yatra One, and Tic Tac Toe's handwritten Caveat font are bundled locally from [Google Fonts](https://github.com/google/fonts), with their SIL Open Font License files beside them. Builds and visitors do not need to fetch fonts from Google.
 
-The current sitemap includes the homepage, twelve overview pages, and Tic Tac Toe's published rules page. Play URLs are `noindex`. The other eleven rules placeholders remain `noindex` until their rules are published. API responses carry `X-Robots-Tag: noindex`.
+The current sitemap includes the homepage, twelve overview pages, and Chess/Tic Tac Toe's published rules pages. Play URLs are `noindex`. The other ten rules placeholders remain `noindex` until their rules are published. API responses carry `X-Robots-Tag: noindex`.
 
 ## Documents and authority
 
@@ -177,7 +177,7 @@ Chess, Carrom, and Ludo adapt the Indian courtyard artwork style inspected in Gu
 | Minesweeper | Flat grey cells, coloured clues, teal flags, and restrained retro-computer accents | [Retro Desktop visual direction](./games/Minesweeper/GAME_SPEC.md#7-detailed-2d-visual-direction--retro-desktop) |
 | Memory Match | Cream picture cards, identical patterned backs, and flat everyday-object illustrations | [Illustrated Keepsakes visual direction](./games/Memory%20Match/GAME_SPEC.md#7-detailed-2d-visual-direction--illustrated-keepsakes) |
 
-All twelve games have an approved visual handoff in their own specifications. Each handoff covers palette, artwork, text, board/piece treatment, pages, interaction states, animation, responsive layout, accessibility, and planned asset requirements. Keep mode selection, player names, turn indicators, scores, and main actions consistently organised across the collection while using each game's theme throughout its screens. Tic Tac Toe's notebook graphics and local gameplay are implemented; the other eleven games remain planned. The earlier 3D/semi-3D request is superseded by the latest 2D-only direction.
+All twelve games have an approved visual handoff in their own specifications. Each handoff covers palette, artwork, text, board/piece treatment, pages, interaction states, animation, responsive layout, accessibility, and planned asset requirements. Keep mode selection, player names, turn indicators, scores, and main actions consistently organised across the collection while using each game's theme throughout its screens. Chess's original flat SVG courtyard, pieces, and mentor portrait and Tic Tac Toe's notebook graphics are implemented; the other ten games remain planned. The earlier 3D/semi-3D request is superseded by the latest 2D-only direction.
 
 Chess solo mode offers **Easy, Medium, and Hard** against **Acharya Dev (आचार्य देव)**, Vihar's fictional Indian chess mentor. He has a dedicated flat 2D portrait and a consistent identity at all levels. The [Chess computer-opponent handoff](./games/Chess/GAME_SPEC.md#8-solo-computer-opponent--acharya-dev) defines his avatar, level behavior, and local play flow.
 

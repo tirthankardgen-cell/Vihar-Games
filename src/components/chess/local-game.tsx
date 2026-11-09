@@ -15,6 +15,7 @@ export function LocalGame({ session, onChange, onBack, onAgain, saved, paused = 
   const [promotion, setPromotion] = useState<MoveInput | null>(null);
   const [notice, setNotice] = useState("");
   const [confirmResign, setConfirmResign] = useState(false);
+  const [confirmLeave, setConfirmLeave] = useState(false);
   const [claiming, setClaiming] = useState(false);
   const [intended, setIntended] = useState("");
   const [flipped, setFlipped] = useState(false);
@@ -127,13 +128,14 @@ export function LocalGame({ session, onChange, onBack, onAgain, saved, paused = 
           <button className={styles.secondary} disabled={locked || Boolean(match.drawOffer)} onClick={() => attempt(() => offerDraw(match, actor))}>Offer draw</button>
           <button className={styles.secondary} disabled={locked} onClick={() => { setIntended(""); setClaiming(true); }}>Claim draw</button>
           <button className={styles.secondary} disabled={Boolean(match.result || session.handover)} onClick={() => setConfirmResign(true)}>Resign</button>
-          <button className={styles.secondary} onClick={onBack}>Save &amp; leave</button>
+          <button className={styles.secondary} onClick={() => { if (saved || match.result) onBack(); else setConfirmLeave(true); }}>{saved ? "Save & leave" : "Leave game"}</button>
         </div>
         <p className={styles.small}>{saved ? "Saved on this device. Come back whenever you like." : "Storage is unavailable. Keep this tab open to continue your game."} {session.mode === "computer" && "Undo takes back your move and the computer's reply."}</p>
       </aside>
     </div>
     {promotion && <Dialog title="Choose your promotion" onClose={() => setPromotion(null)}><p>Your pawn has reached the last rank. Choose its new piece to complete this move.</p><div className={styles.promotion}>{(["q", "r", "b", "n"] as Promotion[]).map((type) => <button key={type} className={styles.secondary} onClick={() => move({ ...promotion, promotion: type })}><Piece type={type} color={actor} /><span>{pieceNames[type]}</span></button>)}</div><button className={styles.textButton} onClick={() => setPromotion(null)}>Cancel move</button></Dialog>}
     {confirmResign && <Dialog title="Resign this game?" onClose={() => setConfirmResign(false)}><p>{session.players[opposite(actor)]} will win by resignation.</p><div className={styles.actions}><button className={styles.primary} onClick={() => { attempt(() => resign(match, actor)); setConfirmResign(false); }}>Yes, resign</button><button className={styles.secondary} onClick={() => setConfirmResign(false)}>Keep playing</button></div></Dialog>}
+    {confirmLeave && <Dialog title="Leave this unsaved game?" onClose={() => setConfirmLeave(false)}><p>This browser cannot save your game. You can return to it from the mode screen while this tab stays open, but it will be lost if you refresh or close the tab.</p><div className={styles.actions}><button className={styles.primary} onClick={onBack}>Leave without saving</button><button className={styles.secondary} onClick={() => setConfirmLeave(false)}>Keep playing</button></div></Dialog>}
     {claiming && <Dialog title="Claim a draw" onClose={() => setClaiming(false)}><p>Claim on three occurrences of the same position, or 50 moves by each side without a pawn move or capture. You can also declare a legal intended move that would meet either condition.</p><label className={styles.field}>Position to check<select value={intended} onChange={(e) => setIntended(e.target.value)}><option value="">Current position</option>{legalMoves.map((m, i) => <option key={i} value={i}>After {m.san} ({m.from} → {m.to})</option>)}</select></label><p role="status">{eligible ? `Valid claim: ${eligible === "threefold-repetition" ? "threefold repetition" : "50-move rule"}.` : "This position does not meet a claim condition."}</p><div className={styles.actions}><button disabled={!eligible} className={styles.primary} onClick={() => { attempt(() => claimDraw(match, actor, intendedMove)); setClaiming(false); }}>Confirm draw claim</button><button className={styles.secondary} onClick={() => setClaiming(false)}>Keep playing</button></div></Dialog>}
   </section>;
 }
