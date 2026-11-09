@@ -1,0 +1,6 @@
+.controls { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; }
+.controls:empty { display: none; }
+.controls button { font: inherit; color: inherit; background: transparent; border: 1px solid currentColor; border-radius: 4px; min-height: 40px; padding: 6px 12px; cursor: pointer; }
+.controls button:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+.notice { font-size: 12px; max-width: 32ch; }
+@media (max-width: 480px) { .controls { gap: 6px; } .controls button { font-size: 12px; padding: 6px 8px; } }

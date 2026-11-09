@@ -12,10 +12,11 @@
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "next typegen && tsc --noEmit",
-    "test": "node --experimental-strip-types --test src/games/tic-tac-toe/*.test.ts",
+    "test": "node --experimental-strip-types --test src/games/tic-tac-toe/*.test.ts src/games/chess/*.test.ts",
     "check": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
+    "chess.js": "1.4.0",
     "next": "16.4.5",
     "react": "19.3.1",
     "react-dom": "19.3.1"

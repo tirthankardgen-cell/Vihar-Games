@@ -7,7 +7,7 @@
 **Scope:** Shared deployment scaffold and consolidated plans for twelve 2D games, including an approved detailed visual direction for every game.
 
 **Deployment target:** One Next.js application, one Vercel project, one domain.  
-**Implementation status:** Shared application and Tic Tac Toe local gameplay implemented. The other eleven engines and all online services remain planned; room UI is prepared for later Firebase integration.
+**Implementation status:** Chess and Tic Tac Toe computer/pass-and-play gameplay, local saves, rules and Vihar embedding are implemented. The other ten engines and all online rooms remain planned.
 
 ## 1. Project boundary
 
@@ -19,7 +19,7 @@ The rule specifications remain the source of truth for gameplay. This consolidat
 
 ### Current scaffold
 
-The shared homepage, twelve overviews, public catalog API, launch redirects, and metadata APIs are implemented. Tic Tac Toe adds a full-screen notebook hero, computer/pass-and-play setup and gameplay, local persistence, a computer worker, and published rules/JSON. The other eleven games retain their placeholders. The registry remains an explicit twelve-game allowlist. Firebase authentication, rooms, and cleanup are deferred until the user supplies backend details. Local play builds and runs with no required environment variables.
+The shared homepage, twelve overviews, public catalog API, launch redirects, and metadata APIs are implemented. Chess and Tic Tac Toe have computer/pass-and-play setup, local persistence, computer workers and published rules/JSON. Chess includes legal-move selection, promotion, draw claims/offers, resignation and practice undo; its computer opponent is Acharya Dev. Tic Tac Toe keeps its full-screen notebook and session scores. Both use the existing Vihar v1 embed and activity SDKs; only visible active rounds report gameplay, and pausing/hiding stops computer workers. The other ten entries remain planned. Local play needs no Firebase configuration. Private rooms and game-host authentication remain deferred.
 
 ## 2. Shared page contract
 

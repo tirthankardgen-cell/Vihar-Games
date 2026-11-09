@@ -1,4 +1,5 @@
 import { RULES_VERSION, ticTacToeModes } from "@/games/tic-tac-toe/rules";
+import { CHESS_RULES_VERSION, chessModes, computerPersona } from "@/games/chess/rules";
 
 export type PlayMode =
   | "computer"
@@ -63,7 +64,7 @@ export const games: readonly Game[] = [
     playersLabel: "Solo or 2 players",
     plannedModes: computerModes,
     playerLimits: twoPlayerLimits,
-    availability: "planned",
+    availability: "playable",
     presentation: "2d",
   },
   {
@@ -219,9 +220,11 @@ export function getGameInfo(game: Game) {
     availability: game.availability,
     presentation: game.presentation,
     plannedModes: game.plannedModes,
-    availableModes: game.id === "tic-tac-toe" ? ticTacToeModes : [],
+    availableModes: game.id === "chess" ? chessModes : game.id === "tic-tac-toe" ? ticTacToeModes : [],
     playerLimits: game.playerLimits,
-    rulesVersion: game.id === "tic-tac-toe" ? RULES_VERSION : null,
+    rulesVersion: game.id === "chess" ? CHESS_RULES_VERSION : game.id === "tic-tac-toe" ? RULES_VERSION : null,
+    ...(game.availability === "playable" ? { embedVersion: 1 } : {}),
+    ...(game.id === "chess" ? { computerPersona } : {}),
     roomActions: [],
   };
 }

@@ -2,13 +2,14 @@ import Link from "next/link";
 import { Arrow, DoodleMark } from "./doodles";
 import styles from "./notebook.module.css";
 
-export function NotebookNav({ rules = false }: { rules?: boolean }) {
+export function NotebookNav({ rules = false, controls, embedded = false }: { rules?: boolean; controls?: React.ReactNode; embedded?: boolean }) {
   return <header className={styles.nav}>
-    <Link href="/" className={`${styles.navLink} ${styles.navBrand}`} aria-label="Vihar Games home">
+    {!embedded && <Link href="/" className={`${styles.navLink} ${styles.navBrand}`} aria-label="Vihar Games home">
       <span className={styles.tinyMarks} aria-hidden="true"><DoodleMark mark="X" /><DoodleMark mark="O" /></span>
       <span>Vihar Games</span>
-    </Link>
-    <Link className={styles.navLink} href={rules ? "/tic-tac-toe" : "/tic-tac-toe/how-to-play"}>
+    </Link>}
+    {controls}
+    <Link className={styles.navLink} href={rules ? "/tic-tac-toe" : "/tic-tac-toe/how-to-play"} target={embedded ? "_blank" : undefined} rel={embedded ? "noopener noreferrer" : undefined}>
       {rules ? <><Arrow back /> Back to notebook</> : <>How to play <Arrow /></>}
     </Link>
   </header>;

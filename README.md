@@ -4,9 +4,11 @@
 
 **One project, twelve browser games, one Vercel deployment.** The homepage lists every included game. Selecting Chess opens `/chess`; selecting Carrom opens `/carrom`. The other games use their documented paths on the same domain.
 
-**Status:** Tic Tac Toe is implemented with a full-screen notebook hero, computer play, pass-and-play, saved local rounds, and rules. Its Create/Join Room screens are prepared; Firebase/backend integration is deferred until the user supplies details. The other eleven games retain their planned pages and visual specifications.
+**Status:** Chess and Tic Tac Toe support computer play, pass-and-play, saved local games, and published rules. Chess keeps its Indian courtyard and Acharya Dev mentor; Tic Tac Toe keeps its ruled notebook. Both integrate with Vihar's embedded player, Exit, pause and activity SDK. Private online rooms remain coming soon; the other ten games retain their planned pages and visual specifications.
 
 **Presentation:** All twelve games are 2D only. Boards, pieces, cards, dice, and transitions use flat graphics; 3D, semi-3D, raised or tilted boards, and perspective effects are excluded.
+
+Chess uses [chess.js](https://github.com/jhlywa/chess.js); its [BSD license notice](public/licenses/chess-js.txt) ships with the game. Bundled fonts retain their original notices.
 
 ## Run locally
 

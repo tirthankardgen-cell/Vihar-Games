@@ -2,7 +2,7 @@
 
 # Vihar Games — Page and API contract
 
-**Status:** Catalog, launch, and info handlers are implemented, along with Tic Tac Toe's public rules endpoint. Firebase authentication and all online room endpoints are deferred until backend details are supplied.
+**Status:** Catalog, launch, info and Chess/Tic Tac Toe rules handlers are implemented. Both playable games advertise Vihar embed protocol v1. Game-host Firebase authentication and online room endpoints remain deferred.
 
 **Application:** One Vihar Games website and one Vercel project.  
 **API origin:** `https://games.vihar.online`  
@@ -17,8 +17,8 @@
 - `GET /api/games/<game-id>` returns a same-site 307 redirect.
 - `GET /api/games/<game-id>/info` returns public metadata.
 - Unknown IDs on these endpoints return `404 UNKNOWN_GAME` with a request ID.
-- Tic Tac Toe reports `availability: "playable"`, `availableModes: ["computer", "pass-and-play"]`, and `rulesVersion: "1.0.0"`. Other entries report `planned` availability, empty available modes, and a null rules version. All `roomActions` remain empty.
-- Tic Tac Toe's `/rules` returns its published rules. Other registered games return `404 RULES_NOT_AVAILABLE`; unknown games return `404 UNKNOWN_GAME`. All room/action paths and internal cleanup remain unimplemented. Their contracts below apply to the later backend phase.
+- Chess and Tic Tac Toe report `availability: "playable"`, `availableModes: ["computer", "pass-and-play"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. Chess also declares its Acharya Dev computer persona. Other entries report `planned`, empty available modes, and a null rules version. All `roomActions` remain empty.
+- Chess and Tic Tac Toe `/rules` endpoints return their published rules. Other registered games return `404 RULES_NOT_AVAILABLE`; unknown games return `404 UNKNOWN_GAME`. All room/action paths and internal cleanup remain unimplemented. Their contracts below apply to the later backend phase.
 
 These routes run within the same Next.js application and require no Firebase configuration in this phase.
 

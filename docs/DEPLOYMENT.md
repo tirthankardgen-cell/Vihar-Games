@@ -2,7 +2,7 @@
 
 # Vihar Games — Single-project deployment plan
 
-**Status:** The shared application and Tic Tac Toe's computer/pass-and-play modes are ready for Vercel. Private-room UI is prepared; Firebase/backend setup is deferred until the user supplies details. This work does not provision remote backend resources.
+**Status:** Chess and Tic Tac Toe's computer/pass-and-play modes and Vihar embedded integration are implemented. Private rooms and game-host Firebase setup remain deferred. The existing Vihar account service supplies optional scoped activity launches; direct guest play needs no backend configuration.
 
 **Project name:** Vihar Games  
 **Suggested Vercel project slug:** `vihar-games`  
@@ -23,6 +23,8 @@ The scaffold needs no secrets, Firebase project, or cron. `NEXT_PUBLIC_SITE_URL`
 Next.js **16.4.5** and stable Node.js **26.13.0** were verified online on **8 November 2026**. Vercel lists **26.x** as its default supported runtime. Exact Next.js/React/TypeScript/Tailwind/ESLint versions are locked in the package and lockfile; see [the version table and sources](../README.md#versions-verified-online). Node.js 27 alpha is excluded as a prerelease. Hind and Yatra One are bundled with their font licenses, so builds do not fetch fonts.
 
 ## 1. Vercel project boundary
+
+Chess and Tic Tac Toe play routes send `Content-Security-Policy: frame-ancestors 'self' https://vihar.online`, without conflicting X-Frame-Options. Their public manifests advertise `embedVersion: 1`. The shared `useViharPlay` hook uses unchanged copies of Vihar's public `/sdk/vihar-id.js` and `/sdk/vihar-embed.js` under `src/lib/vihar-sdk/`; keep these synchronized when the Vihar protocol changes. Menus, handovers, paused/hidden rounds and chess practice do not credit play time. Exiting flushes the game-owned session; Vihar bounds the wait. Credentials stay in the existing SDK and never cross UI messages. Record releases and verification in the Vihar website's single `development.md`.
 
 Create one Vercel project for the entire website. In a repository containing the whole workspace, set the project root to `Vihar Games`. If that directory is the repository root, use the repository root directly.
 

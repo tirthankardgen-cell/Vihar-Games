@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
         source: "/api/:path*",
         headers: [{ key: "X-Robots-Tag", value: "noindex" }],
       },
+      {
+        source: "/:gameId(chess|tic-tac-toe)/play",
+        headers: [{ key: "Content-Security-Policy", value: "frame-ancestors 'self' https://vihar.online" }],
+      },
     ];
   },
 };

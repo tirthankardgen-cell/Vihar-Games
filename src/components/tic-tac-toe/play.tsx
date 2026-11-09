@@ -9,6 +9,8 @@ import { NotebookFooter, NotebookNav, Steps } from "./notebook";
 import { RoomSetup } from "./room-setup";
 import { Setup } from "./setup";
 import styles from "./notebook.module.css";
+import { useViharPlay } from "@/lib/use-vihar-play";
+import { ViharPlayControls } from "../vihar-play-controls";
 
 type Screen = "choose" | "setup" | "game" | "create" | "join";
 
@@ -21,6 +23,8 @@ export default function TicTacToePlay({ initialRoomCode }: { initialRoomCode?: s
   const [canSave, setCanSave] = useState(true);
   const [notice, setNotice] = useState("");
   const active = useRef<LocalSession | null>(null);
+  const inRound = screen === "game" && session?.match.status === "playing";
+  const vihar = useViharPlay("tic-tac-toe", inRound, inRound && !session?.handover);
 
   useEffect(() => {
     let cancelled = false;
@@ -58,8 +62,8 @@ export default function TicTacToePlay({ initialRoomCode }: { initialRoomCode?: s
 
   function backToChoose() { active.current = null; setSession(null); setScreen("choose"); }
 
-  return <main id="main-content" className={styles.page}>
-    <NotebookNav />
+  return <main id="main-content" className={styles.page} data-vihar-embedded={vihar.embedded || undefined}>
+    <NotebookNav embedded={vihar.embedded} controls={<ViharPlayControls play={vihar} inRound={inRound} />} />
     {screen === "choose" && <section className={`${styles.content} ${styles.chooseContent}`}>
       <Steps step={1} />
       <h1 className={styles.screenTitle}>Who&apos;s on the other side?</h1>
@@ -86,7 +90,7 @@ export default function TicTacToePlay({ initialRoomCode }: { initialRoomCode?: s
       <p className={styles.smallNote}>X goes first. Three in a row wins. Simple as that.</p>
     </section>}
     {screen === "setup" && <Setup mode={mode} settings={settings} onSettings={setSettings} onStart={start} onBack={backToChoose} />}
-    {screen === "game" && session && <LocalGame session={session} onChange={commit} onBack={backToChoose} saved={canSave} />}
+    {screen === "game" && session && <LocalGame session={session} onChange={commit} onBack={backToChoose} saved={canSave} paused={vihar.paused} />}
     {(screen === "create" || screen === "join") && <RoomSetup key={screen} joining={screen === "join"} initialCode={initialRoomCode ?? ""} onBack={backToChoose} onLocal={() => choose("pass-and-play")} />}
     <NotebookFooter />
   </main>;

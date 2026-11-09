@@ -132,3 +132,4 @@ ul { margin: 0; padding: 0; list-style: none; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
+body:has([data-vihar-embedded]) > :is(.site-header, .site-footer, .skip-link) { display: none; }

@@ -9,9 +9,9 @@ import { Arrow, ButtonOutline, DoodleMark } from "./doodles";
 import { Steps } from "./notebook";
 import styles from "./notebook.module.css";
 
-type Props = { session: LocalSession; onChange: (session: LocalSession, expectedRevision: number) => boolean; onBack: () => void; saved: boolean };
+type Props = { session: LocalSession; onChange: (session: LocalSession, expectedRevision: number) => boolean; onBack: () => void; saved: boolean; paused?: boolean };
 
-export function LocalGame({ session, onChange, onBack, saved }: Props) {
+export function LocalGame({ session, onChange, onBack, saved, paused = false }: Props) {
   const [lastMove, setLastMove] = useState<number | null>(null);
   const [error, setError] = useState("");
   const match = session.match;
@@ -19,7 +19,7 @@ export function LocalGame({ session, onChange, onBack, saved }: Props) {
   const finished = match.status === "finished";
 
   useEffect(() => {
-    if (session.mode !== "computer" || session.match.status !== "playing" || session.match.actor !== 1) return;
+    if (paused || session.mode !== "computer" || session.match.status !== "playing" || session.match.actor !== 1) return;
     let cancelled = false;
     let worker: Worker | null = null;
     const snapshot = session;
@@ -40,10 +40,10 @@ export function LocalGame({ session, onChange, onBack, saved }: Props) {
       worker.postMessage({ board: snapshot.match.board, mark: markForSeat(snapshot.match, 1), difficulty: snapshot.difficulty, revision: snapshot.match.revision, sessionId: snapshot.id });
     } catch { void fallback(); }
     return () => { cancelled = true; worker?.terminate(); };
-  }, [session, onChange]);
+  }, [session, onChange, paused]);
 
   function move(cell: number) {
-    if (thinking || session.handover || finished) return;
+    if (paused || thinking || session.handover || finished) return;
     try {
       const updated = playMove(match, match.actor, cell);
       if (onChange({ ...session, match: updated, handover: session.mode === "pass-and-play" && updated.status === "playing" }, match.revision)) {
@@ -59,7 +59,7 @@ export function LocalGame({ session, onChange, onBack, saved }: Props) {
   const actorName = session.players[match.actor];
   const winnerName = match.winner === null ? "" : session.players[match.winner];
   const departingName = match.winner === null ? "" : session.players[otherSeat(match.winner)];
-  const title = finished ? match.reason === "draw" ? "A lovely little draw." : `${winnerName} ${winnerName === "You" ? "win" : "wins"}!` : thinking ? "Computer is thinking…" : `${actorName === "You" ? "Your" : `${actorName}'s`} turn.`;
+  const title = paused ? "Game paused." : finished ? match.reason === "draw" ? "A lovely little draw." : `${winnerName} ${winnerName === "You" ? "win" : "wins"}!` : thinking ? "Computer is thinking…" : `${actorName === "You" ? "Your" : `${actorName}'s`} turn.`;
   const explanation = finished
     ? match.reason === "draw" ? "A full page. Shall we try another?"
       : match.reason === "resignation" ? `${departingName} gave up this round.`
@@ -78,20 +78,20 @@ export function LocalGame({ session, onChange, onBack, saved }: Props) {
       <span className={styles.versus} style={{ gridColumn: 2, gridRow: 1 }} aria-hidden="true">vs</span>
     </div>
     <div id="turn-status" className={styles.status} role="status" aria-live="polite" aria-atomic="true">
-      <h1 title={title}>{finished && match.reason !== "draw"
+      <h1 title={title}>{paused ? title : finished && match.reason !== "draw"
         ? <><span className={styles.statusName}>{winnerName}</span> {winnerName === "You" ? "win" : "wins"}!</>
         : !finished && !thinking && actorName !== "You"
           ? <><span className={styles.statusName}>{actorName}</span>&apos;s turn.</>
           : title}</h1>
       <p title={explanation}>{explanation}</p>
     </div>
-    <div className={styles.boardSlot}><Board key={`${session.id}:${match.round}`} match={match} locked={thinking || session.handover || finished} lastMove={lastMove} onMove={move} /></div>
+    <div className={styles.boardSlot}><Board key={`${session.id}:${match.round}`} match={match} locked={paused || thinking || session.handover || finished} lastMove={lastMove} onMove={move} /></div>
     <div className={styles.scoreRow} aria-label="Session score">
       <div aria-label={`${session.players[0]}: ${match.wins[0]} wins`}><span className={styles.scoreNumber}>{match.wins[0]}</span><span className={styles.scoreLabel}>{session.players[0]}</span></div>
       <div aria-label={`${match.draws} draws`}><span className={styles.scoreNumber}>{match.draws}</span><span className={styles.scoreLabel}>Draws</span></div>
       <div aria-label={`${session.players[1]}: ${match.wins[1]} wins`}><span className={styles.scoreNumber}>{match.wins[1]}</span><span className={styles.scoreLabel}>{session.players[1]}</span></div>
     </div>
-    <div className={styles.gameActions}>
+    <div className={styles.gameActions} inert={paused}>
       {session.handover ? <button className={styles.button} type="button" onClick={() => onChange({ ...session, handover: false }, match.revision)}>I&apos;m ready <Arrow /><ButtonOutline /></button>
         : finished ? <button className={styles.button} type="button" onClick={rematch}>Play Again <Arrow /><ButtonOutline /></button>
         : <button className={styles.textButton} type="button" onClick={() => {
