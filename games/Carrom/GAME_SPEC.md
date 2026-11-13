@@ -6,7 +6,7 @@
 
 # Carrom — Game specification
 
-**Status:** Documentation for a planned Vihar Games module; implementation has not started.  
+**Status:** Local practice, computer (Easy/Medium/Hard), and pass-and-play are playable with saved boards and Vihar embedding. Private online rooms remain planned.
 **Platform:** Browser on mobile, tablet, and desktop.  
 **Access:** No account, visible sign-in, or download.  
 **Players:** One human against the computer, two humans, or one-person practice.  
@@ -21,7 +21,7 @@ Players take turns striking coins into pockets. Each player owns nine coins of o
 ## 2. Exact rules
 
 - Begin with nine coins for each side, one queen, and one striker. Use a standard carrom starting arrangement. Assign the two coin sets before the board begins; choose the opening player randomly, then alternate opening players on rematches.
-- The active player places the striker on their baseline, chooses direction and power, and confirms one shot. Between the end circles, the striker must touch both baseline lines; when placed on an end circle, it must cover that circle completely and avoid the diagonal arrow line. Placement cannot overlap a coin. No shot begins while objects from the previous shot are moving.
+- The active player places the striker on their baseline, slides the striker along the baseline, pulls backward to aim and set power, then releases to shoot. Keyboard controls in Board options can also confirm a shot. Between the end circles, the striker must touch both baseline lines; when placed on an end circle, it must cover that circle completely and avoid the diagonal arrow line. Placement cannot overlap a coin. No shot begins while objects from the previous shot are moving.
 - A shot resolves only when all objects have stopped and its coin pockets and fouls have been classified. Reposition the striker for each new shot.
 - Pocketing at least one own coin in a legal shot earns another turn. Pocketing only an opponent's coin leaves it pocketed and passes the turn. Pocketing nothing also passes the turn.
 - A player can pocket the queen only after they have already pocketed at least one own coin in an earlier legal shot and still have at least one own coin remaining.
@@ -121,7 +121,7 @@ Keep the style affectionate and familiar. Avoid neon, glass panels, casino styli
 
 - On `/carrom`, use the same illustrated courtyard, large cream कैरम lettering, and warm paper-and-ink controls. Continue that style across practice, computer setup, pass-and-play, and the online room lobby.
 - On `/carrom/play`, prioritize the complete board, current player, own-coin counts, queen/cover status, penalty debt, and the documented actions. Keep room code, connection state, and foul explanations in flat supporting panels.
-- Baseline placement uses a flat valid-position marker. Aiming uses a thin 2D direction line and a flat power control with an explicit Confirm Shot action; do not introduce a perspective cue or a generated perfect-shot preview.
+- Baseline placement uses a flat valid-position marker. Aiming uses a thin 2D striker path with cushion reflections and surface-contact markers, stopping at the first coin or pocket. Drag farther backward for more power and release to strike. Board options retains keyboard controls and Confirm Shot. No later coin outcomes are predicted.
 - During a shot, show only the accepted planar disc movement and pocket events. After settlement, communicate extra turns, pending queen cover, failed cover, returned coins, and foul penalties with clear text and restrained markers.
 - At handover, wait for the shot to settle and the actual next player to accept. An optional flat 180-degree board orientation change keeps labels upright and canonical physics coordinates unchanged.
 - Results preserve the last accepted board state and show the winning player or forfeit reason with the existing new-board/rematch/lobby choices.
@@ -151,3 +151,12 @@ Keep the style affectionate and familiar. Avoid neon, glass panels, casino styli
 - [Current artwork resolver](https://github.com/tirthankardgen-cell/Gulam-Chor/blob/76bd85b24ea7edce32c0be2f33e89c1a1d481923/src/lib/art.ts)
 
 These links point to the inspected revision of the separate Gulam Chor repository. Future Vihar Games assets and style tokens must live within this shared application; do not introduce runtime imports from the sibling project.
+
+
+## 8. Shipped local physics and controls
+
+The board uses fixed 1/180-second steps, mass-aware elastic disc contacts, dissipative cushions, and uniform sliding friction. No force attracts pieces toward a pocket: capture occurs only when a disc crosses the opening by its radius-dependent threshold. All modes share the same parameters. Simulations are bounded to 12 seconds and rejected safely if they cannot settle.
+
+Computer difficulty limits candidate search and adds aim/power execution error after selecting a shot. It submits ordinary shots to the same simulation; it cannot assign pocket lists or alter positions. Own-coin extra turns follow the published rules for either player.
+
+The guide tracks the striker center and marks its actual radius contact with the wall or first coin. It does not forecast outcomes after a coin collision. Sliding alone never fires; pulling back adds power; release fires; returning to the striker cancels. Pointer cancellation also cancels. Local saves contain only accepted settled states, including queen status, debts and pass-and-play handover.

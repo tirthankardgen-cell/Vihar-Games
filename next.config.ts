@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
         headers: [{ key: "X-Robots-Tag", value: "noindex" }],
       },
       {
-        source: "/:gameId(chess|tic-tac-toe)/play",
+        source: "/:gameId(chess|tic-tac-toe|carrom)/play",
         headers: [{ key: "Content-Security-Policy", value: "frame-ancestors 'self' https://vihar.online" }],
       },
     ];

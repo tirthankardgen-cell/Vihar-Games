@@ -7,7 +7,7 @@
 **Scope:** Shared deployment scaffold and consolidated plans for twelve 2D games, including an approved detailed visual direction for every game.
 
 **Deployment target:** One Next.js application, one Vercel project, one domain.  
-**Implementation status:** Chess and Tic Tac Toe computer/pass-and-play gameplay, local saves, rules and Vihar embedding are implemented. The other ten engines and all online rooms remain planned.
+**Implementation status:** Chess, Tic Tac Toe, and Carrom local gameplay, local saves, rules and Vihar embedding are implemented. The other nine engines and all online rooms remain planned.
 
 ## 1. Project boundary
 
@@ -19,7 +19,7 @@ The rule specifications remain the source of truth for gameplay. This consolidat
 
 ### Current scaffold
 
-The shared homepage, twelve overviews, public catalog API, launch redirects, and metadata APIs are implemented. Chess and Tic Tac Toe have computer/pass-and-play setup, local persistence, computer workers and published rules/JSON. Chess includes legal-move selection, promotion, draw claims/offers, resignation and practice undo; its computer opponent is Acharya Dev. Tic Tac Toe keeps its full-screen notebook and session scores. Both use the existing Vihar v1 embed and activity SDKs; only visible active rounds report gameplay, and pausing/hiding stops computer workers. The other ten entries remain planned. Local play needs no Firebase configuration. Private rooms and game-host authentication remain deferred.
+The shared homepage, twelve overviews, public catalog API, launch redirects, and metadata APIs are implemented. Chess and Tic Tac Toe have computer/pass-and-play setup, local persistence, computer workers and published rules/JSON. Chess includes legal-move selection, promotion, draw claims/offers, resignation and practice undo; its computer opponent is Acharya Dev. Tic Tac Toe keeps its full-screen notebook and session scores. Carrom adds practice, drag shots, deterministic worker physics, contact guides and settled-state saves. All three use the existing Vihar v1 embed and activity SDKs; only visible active rounds report gameplay, and pausing/hiding stops computer workers. The other nine entries remain planned. Local play needs no Firebase configuration. Private rooms and game-host authentication remain deferred.
 
 ## 2. Shared page contract
 
@@ -62,7 +62,7 @@ The source structure uses these boundaries:
 - `src/lib/rooms/` for shared API validation, room lifecycle, membership, idempotency, state serialization, and database operations.
 - `src/lib/storage/` for game-scoped local save helpers, and workers for bounded computer searches or physics simulations.
 
-The shared application contains App Router pages, catalog/launch/info handlers, and `src/lib/catalog/registry.ts`. Chess and Tic Tac Toe also have engines, local storage helpers, computer workers, and rules handlers. Online rooms and the remaining ten engines are future work. Next.js 16 dynamic route parameters use promises and are awaited by the implemented pages and route handlers.
+The shared application contains App Router pages, catalog/launch/info handlers, and `src/lib/catalog/registry.ts`. Chess, Tic Tac Toe, and Carrom also have engines, local storage helpers, computer workers, and rules handlers. Online rooms and the remaining nine engines are future work. Next.js 16 dynamic route parameters use promises and are awaited by the implemented pages and route handlers.
 
 The registry maps public IDs such as `tic-tac-toe` to explicit modules and declares `presentation: "2d"` for every entry. Lazy-load the selected game's browser bundle; opening Chess must not load every game's engine or physics dependencies. Share infrastructure without sharing mutable match state.
 
@@ -113,7 +113,7 @@ Deploy only the `Vihar Games` directory as the root of one Vercel project. Attac
 
 Acceptance requires all catalog paths and launch endpoints to resolve, unsupported modes to be rejected, and every game to complete its defined flows inside the same build. Validate same-origin save isolation, cross-game room isolation, concurrent commands, reconnects, and hidden-state permissions in addition to each game's rules.
 
-The current application includes pinned dependencies, local fonts, lint/type/test/build scripts, metadata, Vercel configuration, and Chess/Tic Tac Toe's local modules. Its sitemap contains the homepage, twelve overviews, and both published rules pages; other rules placeholders remain `noindex`. Gameplay acceptance checks apply as modules are implemented. Remote backend resources are not provisioned by this work.
+The current application includes pinned dependencies, local fonts, lint/type/test/build scripts, metadata, Vercel configuration, and Chess/Tic Tac Toe's local modules. Its sitemap contains the homepage, twelve overviews, and all three published rules pages; other rules placeholders remain `noindex`. Gameplay acceptance checks apply as modules are implemented. Remote backend resources are not provisioned by this work.
 
 ## 9. Mandatory 2D presentation and approved visual styles
 
