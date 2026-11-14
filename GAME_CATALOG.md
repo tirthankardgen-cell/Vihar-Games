@@ -5,13 +5,13 @@
 **Project:** Vihar Games  
 **Updated:** 15 November 2026
 **Hosting:** One Next.js application in one Vercel project.  
-**Status:** 24 catalog entries, including twelve new solo puzzle/arcade designs. Chess, Tic Tac Toe, and Carrom are `playable` in computer and pass-and-play modes; Carrom also supports practice. Paperwing is `playable` in solo Standard/Practice. Sudoku is `playable` in solo Easy/Medium/Hard. Dune Dash is `playable` in solo Endless/Practice. Monsoon Blocks is `playable` in solo Standard/Practice. All seven have original screens and published rules, and appear first in the catalog. Private-room screens are prepared but backend integration is deferred. The other 17 games remain `planned`; catalog/launch/info APIs serve the whole collection.
+**Status:** 24 catalog entries, including twelve new solo puzzle/arcade designs. Chess, Tic Tac Toe, and Carrom are `playable` in computer and pass-and-play modes; Carrom also supports practice. Paperwing is `playable` in solo Standard/Practice. Sudoku is `playable` in solo Easy/Medium/Hard. Dune Dash is `playable` in solo Endless/Practice. Monsoon Blocks is `playable` in solo Standard/Practice. Silk Trail is `playable` in solo Calm/Flow/Swift. All eight have original screens and published rules, and appear first in the catalog. Private-room screens are prepared but backend integration is deferred. The other 16 games remain `planned`; catalog/launch/info APIs serve the whole collection.
 
 **Presentation:** Every game is 2D only, using flat boards, pieces, cards, dice, and planar transitions.
 
 ## Included games and endpoints
 
-All production paths below use `https://games.vihar.online`. A browser visit to a game's `GET` launch API redirects to its overview. Chess, Tic Tac Toe, Carrom, Sudoku, Paperwing, Dune Dash, and Monsoon Blocks open their own themed overviews and have implemented `/play`, `/how-to-play`, and `/rules` paths. The other 17 games retain their overview and play/rules placeholders. Every game has an implemented `/info` API.
+All production paths below use `https://games.vihar.online`. A browser visit to a game's `GET` launch API redirects to its overview. Chess, Tic Tac Toe, Carrom, Sudoku, Paperwing, Dune Dash, Monsoon Blocks, and Silk Trail open their own themed overviews and have implemented `/play`, `/how-to-play`, and `/rules` paths. The other 16 games retain their overview and play/rules placeholders. Every game has an implemented `/info` API.
 
 | Game specification | Game page | Launch API / API base | Solo | Pass-and-play people | Online room people |
 | --- | --- | --- | --- | --- | --- |
@@ -42,7 +42,7 @@ All production paths below use `https://games.vihar.online`. A browser visit to 
 
 Select any game from the shared homepage at `/`. The 24 entries above are the complete Vihar Games catalog for this phase. Ten retain planned multiplayer support; Sudoku, Minesweeper, and the twelve additions are exclusively solo.
 
-The mode and player columns describe the full approved designs. Chess and Tic Tac Toe metadata reports `availability: "playable"`, `availableModes: ["computer", "pass-and-play"]`, and `rulesVersion: "1.0.0"`; online modes remain planned. Carrom also reports `availability: "playable"`, `availableModes: ["computer", "practice", "pass-and-play"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. Paperwing reports `playable`, `availableModes: ["solo"]`, `soloPresets: ["standard", "practice"]`, `rulesVersion: "2.0.0"`, and `embedVersion: 1`. Dune Dash reports `playable`, `availableModes: ["solo"]`, `soloPresets: ["endless", "practice"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. Monsoon Blocks reports `playable`, `availableModes: ["solo"]`, `soloPresets: ["standard", "practice"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. The other seventeen games report `planned` availability and no available modes or rules version. All room actions remain deferred.
+The mode and player columns describe the full approved designs. Chess and Tic Tac Toe metadata reports `availability: "playable"`, `availableModes: ["computer", "pass-and-play"]`, and `rulesVersion: "1.0.0"`; online modes remain planned. Carrom also reports `availability: "playable"`, `availableModes: ["computer", "practice", "pass-and-play"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. Paperwing reports `playable`, `availableModes: ["solo"]`, `soloPresets: ["standard", "practice"]`, `rulesVersion: "2.0.0"`, and `embedVersion: 1`. Dune Dash reports `playable`, `availableModes: ["solo"]`, `soloPresets: ["endless", "practice"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. Monsoon Blocks reports `playable`, `availableModes: ["solo"]`, `soloPresets: ["standard", "practice"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. The other sixteen games report `planned` availability and no available modes or rules version. All room actions remain deferred.
 
 ## New solo games and original styles
 
@@ -61,7 +61,7 @@ The mode and player columns describe the full approved designs. Chess and Tic Ta
 | [Rangoli Loops](./games/Rangoli%20Loops/spec.md) | Loop deduction | Chalk Threshold: dotted limestone grid and rangoli corners |
 | [Orbit Breaker](./games/Orbit%20Breaker/spec.md) | Brick breaker | Celestial Instrument: comet, chart tiles, gold paddle |
 
-Each new `spec.md` defines exact rules, controls, presets, scoring/progress, endings, local state, artwork, sound direction, and future acceptance criteria. [Shared solo standards](./docs/SOLO_GAME_STANDARDS.md) cover premium flat 2D presentation, accessibility, pause/resume, local saves, and later Quick Play integration. Paperwing, Dune Dash, and Monsoon Blocks now ship local engines, original artwork, optional audio, saves and game screens. The other nine additions retain catalog entries and specifications; their implementation remains future work. The other nine additions' `/play` and `/how-to-play` pages stay **Coming soon**, and `/rules` returns `404 RULES_NOT_AVAILABLE` until actual rules are published.
+Each new `spec.md` defines exact rules, controls, presets, scoring/progress, endings, local state, artwork, sound direction, and future acceptance criteria. [Shared solo standards](./docs/SOLO_GAME_STANDARDS.md) cover premium flat 2D presentation, accessibility, pause/resume, local saves, and later Quick Play integration. Paperwing, Dune Dash, Monsoon Blocks, and Silk Trail now ship local engines, original artwork, optional audio, saves and game screens. The other eight additions retain catalog entries and specifications; their implementation remains future work. The other eight additions' `/play` and `/how-to-play` pages stay **Coming soon**, and `/rules` returns `404 RULES_NOT_AVAILABLE` until actual rules are published.
 
 ## Shared play flow
 
@@ -105,10 +105,15 @@ Sudoku now reports `availability: "playable"`, `availableModes: ["solo"]`, `solo
 3. Checkers, Reversi, Sudoku, and Minesweeper add rule engines and puzzle sessions.
 4. Chess and Ludo add special moves and multi-seat behavior.
 5. Carrom and Billiards add deterministic shot simulation. Their physics require more work than the other familiar games.
-6. When solo additions are commissioned, start with Silk Trail/Mosaic Shift, then Lantern Logic/Pebble Solitaire/Tide Turn, followed by Crate Courtyard/Prism Paths/Rangoli Loops and the remaining arcade games. This is a suggested sequence; implementation begins only when requested.
+6. When further solo additions are commissioned, start with Mosaic Shift, then Lantern Logic/Pebble Solitaire/Tide Turn, followed by Crate Courtyard/Prism Paths/Rangoli Loops and the remaining arcade games. This is a suggested sequence; implementation begins only when requested.
 
 Future work begins only when game implementation is requested.
 
 ## Monsoon Blocks local release
 
 Monsoon Blocks now ships solo Standard/Practice, original flat Rain Window artwork, local saves and records, optional glass effects and Cloudlight music, and published rules `1.0.0`. Its manifest declares `embedVersion: 1`, `presentation: "2d"`, and null multiplayer limits. Other planned entries keep their placeholders until their engines ship.
+
+
+## Silk Trail local release
+
+Silk Trail reports playable solo mode, Calm/Flow/Swift presets, rules version 1.0.0, embed version 1, 2D presentation, and null multiplayer limits. Its overview, play, and paged rules screens ship with original Silk Garden art and enabled-by-default optional Mulberry Thread audio. Local saves and bests stay separate from other games and presets.

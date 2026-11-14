@@ -1,0 +1,16 @@
+export { RULES_VERSION as SILK_RULES_VERSION } from "./engine.ts";
+export const silkModes = ["solo"] as const;
+export const silkRules = [
+  { title: "A little garden to grow into", items: ["Guide a snake around a 20 × 20 garden. You begin with three cells at (10,10), (9,10), and (8,10), facing right. The walls are solid. There is no wrapping and no obstacle inside the garden."] },
+  { title: "Follow the mulberry leaves", items: ["One leaf appears on a uniformly sampled empty cell. Eat it to grow by one cell and earn one point. Exactly one new leaf appears after each bite; it cannot move, expire, or appear beneath the snake."] },
+  { title: "Leave room for the next turn", items: ["Each tick moves one cell. Without a leaf the tail vacates; moving into that old tail cell is legal. With a leaf the tail stays. A wall or occupied body cell ends the run immediately."] },
+  { title: "Choose your rhythm", items: ["Calm moves 5 cells per second, Flow 8, and Swift 11. Flow is the default. The speed never increases during a run. Calm gives you more time to plan; reflex play still relies on visual timing."] },
+  { title: "A clear, deliberate turn", items: ["Use arrow keys, WASD, or the labelled direction pad. At most one turn applies per tick. Two turns can wait in the queue. Repeated, reverse, and overflow turns are ignored; every queued turn is checked against its predecessor."] },
+  { title: "Swipe within the silk panel", items: ["Touch players can also swipe on the garden. Use a clear horizontal or vertical gesture of at least 24 pixels. Very short or ambiguous diagonal swipes do nothing. Gestures outside the garden keep their usual behaviour."] },
+  { title: "Let the garden rest", items: ["Space, Escape, or Pause freezes movement, active time, and sound, and clears queued turns. Changing tabs, losing focus, navigating away, or a Vihar host pause does the same. Returning alone never resumes play."] },
+  { title: "Ready when you are", items: ["A new garden waits on Ready. Start and Resume both count 3, 2, 1 before movement begins. Countdown time does not advance the snake or active time. Restart asks before replacing an unfinished run."] },
+  { title: "A trail of your own", items: ["Scores count leaves only. Results show leaves, final length, active time, the ending reason, and that preset’s local best. Play again uses a fresh seed with the same preset. There are no bonuses, extra lives, levels, or opponents."] },
+  { title: "Garden complete", items: ["Fill all 400 cells to win Garden complete with 397 leaves. No new leaf is sampled from the full garden. Your last legal position stays visible when a collision ends the run."] },
+  { title: "Pick up the same thread", items: ["Unfinished gardens save on this device and restore paused. The body, direction, leaf, generator, score, tick remainder, and active time stay intact. Resizing and Larger garden never change the logical 20 × 20 board."] },
+  { title: "The sounds of the garden", items: ["Leaf rustles, a dry wooden end note, and original Mulberry Thread music default to on after interaction. Sound and Music have independent switches; saved choices are respected. All sound stops on interruption or Exit. Score and result text provide visible feedback."] },
+] as const;

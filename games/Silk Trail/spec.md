@@ -1,7 +1,7 @@
 # Silk Trail
 
-**Status:** Planned; catalog and specification only.  
-**Updated:** 14 November 2026  
+**Status:** Playable locally; Calm, Flow, and Swift, published rules, saves, original artwork, sound, and music.\
+**Updated:** 15 November 2026\
 **Game ID:** `silk-trail` · **Category:** Arcade · **Players:** One  
 **Page:** `/silk-trail` · **API base:** `/api/games/silk-trail`  
 **Style:** Silk Garden · **Inspiration:** Classic snake
@@ -48,22 +48,26 @@ Speed stays fixed throughout a run. Score counts leaves only. Results show leave
 - Overview: one curled snake illustration and a short invitation. Setup: three swatches for the movement presets. Play: score and pause above the framed garden. Results: a flat stitched ribbon with the achieved length.
 - Necessary movement is a short planar step or interpolation between authoritative ticks; eating adds a brief outline. No elastic stretching that conceals occupied cells, particle shower, or flashing loss screen.
 - Phone layout keeps the entire garden visible with the direction pad below. Wider screens centre the panel with generous paper margins. Provide an optional larger grid view without changing coordinates.
-- Optional sound: soft leaf rustle and one dry wooden end note, with visible score/end feedback.
+- Optional sound: soft leaf rustle and one dry wooden end note, with visible score/end feedback. Original **Mulberry Thread** music and effects default to on after interaction, with independent switches and persistent mute choices, as requested for this release.
 
 ## 6. State and shared requirements
 
-Follow [solo game standards](../../docs/SOLO_GAME_STANDARDS.md). A future save contains the ordered distinct body cells, direction, tick remainder, leaf or completed flag, seed/generator state, preset, score, and active time. Validate adjacency, bounds, length/score agreement, and that the leaf is unoccupied. Restore paused with an empty input queue.
+Follow [solo game standards](../../docs/SOLO_GAME_STANDARDS.md). The local save contains the ordered distinct body cells, direction, tick remainder, leaf or completed flag, seed/generator state, preset, score, and active time. Validate adjacency, bounds, length/score agreement, and that the leaf is unoccupied. Restore paused with an empty input queue.
 
-## 7. Future asset handoff
+## 7. Original assets
 
-Original snake head/segment SVGs, mulberry leaf, silk border repeat, preset marks, completion ribbon, and two optional sounds. These are planned assets; no engine or custom play interface ships with this specification.
+Native SVG curled-snake cover, connected rounded snake with directional eyes and stitch marks, mulberry leaf, woven border, three preset swatches, and a flat stitched results ribbon ship in `src/components/silk-trail/`. Local Web Audio synthesizes leaf rustle, a wooden ending, and the original music without external audio requests.
 
-## 8. Acceptance when implemented
+## 8. Acceptance
 
 - Tail-vacating moves work; neck reversal, queued reversal, wall contact, and true self-collision behave exactly as above.
 - Leaves always occupy a valid empty cell; growth and score advance once per leaf.
 - A full board ends cleanly at length 400/score 397.
 - Input, pause, save restoration, and movement rate agree across keyboard, touch, resizing, and different refresh rates.
+
+## Local release
+
+Rules version `1.0.0` is published at `/api/games/silk-trail/rules`; `/info` advertises solo Calm/Flow/Swift and embed v1. The pure engine and save validation live in `src/games/silk-trail/`. Overview, setup, Ready, countdown, gameplay, pause, results, paged rules, and restart confirmation use the Silk Garden theme and one dynamic viewport. Vihar host pause, focus loss, and hidden tabs require deliberate resume. No gameplay server or room is required.
 
 ## Mandatory single-viewport presentation
 

@@ -8,12 +8,14 @@ import { PAPERWING_RULES_VERSION, paperwingModes, paperwingRules } from "@/games
 import { SUDOKU_RULES_VERSION, sudokuModes, sudokuRules } from "@/games/sudoku/rules";
 import { MONSOON_RULES_VERSION, monsoonModes, monsoonRules } from "@/games/monsoon-blocks/rules";
 import { DUNE_DASH_RULES_VERSION, duneDashModes, duneDashRules } from "@/games/dune-dash/rules";
+import { SILK_RULES_VERSION, silkModes, silkRules } from "@/games/silk-trail/rules";
 
 export const runtime = "nodejs";
 
 export async function GET(_request: Request, { params }: { params: Promise<{ gameId: string }> }) {
   const game = getGame((await params).gameId);
   if (!game) return unknownGameResponse();
+  if (game.id === "silk-trail") return NextResponse.json({ gameId: game.id, rulesVersion: SILK_RULES_VERSION, rules: silkRules, availableModes: silkModes, plannedModes: [], presets: ["calm", "flow", "swift"] });
   if (game.id === "monsoon-blocks") return NextResponse.json({ gameId: game.id, rulesVersion: MONSOON_RULES_VERSION, rules: monsoonRules, availableModes: monsoonModes, plannedModes: [], presets: ["standard", "practice"] });
   if (game.id === "dune-dash") return NextResponse.json({ gameId: game.id, rulesVersion: DUNE_DASH_RULES_VERSION, rules: duneDashRules, availableModes: duneDashModes, plannedModes: [], presets: ["endless", "practice"] });
   if (game.id === "sudoku") return NextResponse.json({ gameId: game.id, rulesVersion: SUDOKU_RULES_VERSION, rules: sudokuRules, availableModes: sudokuModes, plannedModes: [], presets: ["easy", "medium", "hard"] });
