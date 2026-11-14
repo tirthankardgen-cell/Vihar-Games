@@ -1,7 +1,7 @@
 # Monsoon Blocks
 
-**Status:** Planned; catalog and specification only.  
-**Updated:** 14 November 2026  
+**Status:** Playable locally; Standard/Practice, original Rain Window artwork, local saves/records, sound, music, and Vihar embedding.\
+**Updated:** 15 November 2026\
 **Game ID:** `monsoon-blocks` · **Category:** Arcade · **Players:** One  
 **Page:** `/monsoon-blocks` · **API base:** `/api/games/monsoon-blocks`  
 **Style:** Rain Window · **Inspiration:** Falling-block line clearing
@@ -36,6 +36,7 @@ Target session: 3–10 minutes. This is continuous solo falling-block play; no o
 - Touch/pointer: labelled left, right, rotate, drop, hard-drop, hold, and pause controls. Held movement uses the same repeat rules. A ghost outline previews the exact hard-drop landing position.
 - Pause clears held input/repeat state and freezes gravity/lock counters. Resume uses the shared countdown; a resume gesture cannot drop a piece.
 - Results show score, rows, highest level, active time, and local best. There is one standard scoring preset; an optional slower practice preset keeps a separate record and is labelled practice.
+- Practice doubles the Standard gravity interval, retaining the same movement, 400 ms lock delay, and scoring. Standard and Practice keep separate local records.
 
 ## 5. Detailed 2D visual direction — Rain Window
 
@@ -46,21 +47,26 @@ Target session: 3–10 minutes. This is continuous solo falling-block play; no o
 - Rows clear with a brief horizontal wipe. Piece motion and rotation remain planar; reduced motion uses immediate state changes. Loss quietly marks the occupied skyline and shows a paper result slip.
 - Keep the entire visible board and primary touch controls reachable without browser scrolling during play. State previews must match actual piece cells.
 - Optional sound: muted glass taps for placement and a soft rainstick chord for a clear; no continuous rain audio by default.
+- Optional music: **Cloudlight**, an original quiet glass melody with soft chord accompaniment, synthesized locally. Effects and music have separate saved switches and start off. Both pause with play and stop on exit; no audio network request or continuous rain loop is needed.
 
 ## 6. State and shared requirements
 
 Follow [solo game standards](../../docs/SOLO_GAME_STANDARDS.md). Save settled grid, active shape/cells/anchor, hold and allowance, bag/preview and generator state, gravity/lock remainder, reset count, rows, level, score, preset, and active time. Validate fit, legal masks, bounded counters, and level/row agreement. Restore paused; no falling occurs during load.
 
-## 7. Future asset handoff
+## 7. Implemented artwork and audio
 
-Seven original patterned block swatches, rain-window border, ghost/hold/next markers, flat rain motif, result slip, and optional placement/clear sounds. Gameplay and assets remain future work.
+Seven original patterned block swatches, a flat rain-window arch and border, exact ghost/hold/next markers, rain motifs outside the board, and a paper result slip are native SVG/HTML. Original placement/clear effects and the Cloudlight music loop use Web Audio with independent controls. No external artwork, audio, or rendering dependency is required.
 
-## 8. Acceptance when implemented
+## 8. Acceptance and verification
 
 - Every bag contains the seven shapes once, and preview/hold order is reproducible after save restoration.
 - Rotation, horizontal fit offsets, drop distances, lock delay, and the ten-reset cap match these rules.
 - Multi-row clearing is simultaneous; hidden-cell top-out takes precedence; scoring uses the pre-clear level.
 - Touch/key repeat, ghost landing, pause, and gravity remain consistent at different frame rates.
+
+Implementation lives in `src/games/monsoon-blocks/` and `src/components/monsoon-blocks/`. Rules `1.0.0` are published at `/how-to-play` and `/api/games/monsoon-blocks/rules`; the manifest declares solo Standard/Practice and embed v1. Room requests return `422 MODE_NOT_SUPPORTED`.
+
+The shared test command includes 32 Monsoon Blocks engine, save, input, record, and audio-lifecycle checks. Browser verification covers keyboard and pointer repeat, hold limits, hard drop, countdown input isolation, exact paused restoration, independent audio controls, silent pause, result records, and viewport fit from 320×568 portrait through 568×320 landscape and 500×400 player sizes. At high accessibility zoom, essential actions remain reachable by scrolling inside the fixed viewport.
 
 ## Mandatory single-viewport presentation
 

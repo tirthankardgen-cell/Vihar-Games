@@ -2,7 +2,7 @@
 
 # Vihar Games — Page and API contract
 
-**Status:** Catalog, launch, info and Chess/Tic Tac Toe/Carrom/Sudoku/Paperwing/Dune Dash rules handlers are implemented. All six playable games advertise Vihar embed protocol v1. Game-host Firebase authentication and online room endpoints remain deferred.
+**Status:** Catalog, launch, info and Chess/Tic Tac Toe/Carrom/Sudoku/Paperwing/Dune Dash/Monsoon Blocks rules handlers are implemented. All seven playable games advertise Vihar embed protocol v1. Game-host Firebase authentication and online room endpoints remain deferred.
 
 **Application:** One Vihar Games website and one Vercel project.  
 **API origin:** `https://games.vihar.online`  
@@ -18,8 +18,8 @@
 - `GET /api/games/<game-id>/info` returns public metadata.
 - Unknown IDs on these endpoints return `404 UNKNOWN_GAME` with a request ID.
 - Chess and Tic Tac Toe report `availability: "playable"`, `availableModes: ["computer", "pass-and-play"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. Chess also declares its Acharya Dev computer persona. Carrom reports the same version/availability fields with `availableModes: ["computer", "practice", "pass-and-play"]`; Paperwing uses `["solo"]` and declares `soloPresets: ["standard", "practice"]`. Other entries report `planned`, empty available modes, and a null rules version. All `roomActions` remain empty.
-- Chess, Tic Tac Toe, Carrom, Sudoku, Paperwing, and Dune Dash `/rules` endpoints return their published rules. Sudoku also publishes its rules and Easy/Medium/Hard presets; Dune Dash declares solo Endless/Practice, rules `1.0.0`, and embed v1. Other registered games return `404 RULES_NOT_AVAILABLE`; unknown games return `404 UNKNOWN_GAME`. Sudoku room requests return `422 MODE_NOT_SUPPORTED`; other room/action paths and internal cleanup remain unimplemented. Their contracts below apply to the later backend phase.
-- The ten unimplemented solo entries declare `plannedModes: ["solo"]`, null pass-and-play/online limits, `availableModes: []`, and `rulesVersion: null`. Their Markdown design rules do not enable a published rules API or a playable mode.
+- Chess, Tic Tac Toe, Carrom, Sudoku, Paperwing, Dune Dash, and Monsoon Blocks `/rules` endpoints return their published rules. Sudoku also publishes its rules and Easy/Medium/Hard presets; Dune Dash declares solo Endless/Practice, rules `1.0.0`, and embed v1. Monsoon Blocks declares solo Standard/Practice, rules `1.0.0`, and embed v1. Other registered games return `404 RULES_NOT_AVAILABLE`; unknown games return `404 UNKNOWN_GAME`. Sudoku and Monsoon Blocks room requests return `422 MODE_NOT_SUPPORTED`; other room/action paths and internal cleanup remain unimplemented. Their contracts below apply to the later backend phase.
+- The nine unimplemented solo entries declare `plannedModes: ["solo"]`, null pass-and-play/online limits, `availableModes: []`, and `rulesVersion: null`. Their Markdown design rules do not enable a published rules API or a playable mode.
 
 These routes run within the same Next.js application and require no Firebase configuration in this phase.
 
@@ -185,8 +185,12 @@ Implementation checks must verify the twenty-four launch redirects and metadata/
 
 Sudoku is also playable locally: `/api/games/sudoku/info` declares solo play, Easy/Medium/Hard presets, rules version `1.0.0`, 2D presentation, and embed version 1. `/api/games/sudoku/rules` publishes the same nine rule sections, displayed as 18 short journal pages as `/sudoku/how-to-play`. `/api/games/sudoku` redirects to `/sudoku`. Sudoku room paths return `422 MODE_NOT_SUPPORTED`; no puzzle session, hint, check, or record endpoint exists.
 
-Paperwing reports `availability: "playable"`, `availableModes: ["solo"]`, `soloPresets: ["standard", "practice"]`, `rulesVersion: "2.0.0"`, `embedVersion: 1`, and null multiplayer limits. Its `/rules` JSON matches the published postcard rules pages, including immediate starts, speed progression by active time, moving shutters and wax seals. It has no rooms or actions. `/api/games` returns the six playable entries first (Chess, Carrom, Tic-Tac-Toe, Sudoku, Dune Dash, Paperwing), followed by the eighteen planned entries in their original relative order.
+Paperwing reports `availability: "playable"`, `availableModes: ["solo"]`, `soloPresets: ["standard", "practice"]`, `rulesVersion: "2.0.0"`, `embedVersion: 1`, and null multiplayer limits. Its `/rules` JSON matches the published postcard rules pages, including immediate starts, speed progression by active time, moving shutters and wax seals. It has no rooms or actions. `/api/games` returns the seven playable entries first (Chess, Carrom, Tic-Tac-Toe, Sudoku, Monsoon Blocks, Dune Dash, Paperwing), followed by the seventeen planned entries in their original relative order.
 
 ## Dune Dash local release
 
 Dune Dash reports `availability: "playable"`, `availableModes: ["solo"]`, `soloPresets: ["endless", "practice"]`, `rulesVersion: "1.0.0"`, `embedVersion: 1`, and null multiplayer limits. Its `/rules` JSON publishes exact hitboxes, jump/duck inputs, the speed clock, seeded hazard sequence, pause/countdown, device saves/records and Space start/replay. Gameplay and records are local; there are no rooms or gameplay actions. Its play route permits framing by `https://vihar.online`.
+
+## Monsoon Blocks local release
+
+`/api/games/monsoon-blocks/info` reports playable solo Standard/Practice, rules `1.0.0`, embed v1, flat 2D presentation, and null multiplayer limits. `/rules` publishes the same rules as the paged guide. The launch endpoint redirects to `/monsoon-blocks`; recognized room requests return `422 MODE_NOT_SUPPORTED`. Play, saves, controls, effects/music, and records stay local without gameplay API calls.

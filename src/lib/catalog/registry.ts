@@ -3,6 +3,7 @@ import { CHESS_RULES_VERSION, chessModes, computerPersona } from "@/games/chess/
 import { CARROM_RULES_VERSION, carromModes } from "@/games/carrom/rules";
 import { PAPERWING_RULES_VERSION, paperwingModes } from "@/games/paperwing/rules";
 import { SUDOKU_RULES_VERSION, sudokuModes } from "@/games/sudoku/rules";
+import { MONSOON_RULES_VERSION, monsoonModes } from "@/games/monsoon-blocks/rules";
 import { DUNE_DASH_RULES_VERSION, duneDashModes } from "@/games/dune-dash/rules";
 
 export type PlayMode =
@@ -228,6 +229,7 @@ export const games: readonly Game[] = [
     description: "Arrange falling blocks into complete rows beneath a rain-washed window.",
     symbol: "▦",
     playersLabel: "Solo falling blocks",
+    availability: "playable",
   },
   {
     ...plannedSolo,
@@ -340,11 +342,11 @@ export function getGameInfo(game: Game) {
     availability: game.availability,
     presentation: game.presentation,
     plannedModes: game.plannedModes,
-    availableModes: game.id === "chess" ? chessModes : game.id === "tic-tac-toe" ? ticTacToeModes : game.id === "carrom" ? carromModes : game.id === "paperwing" ? paperwingModes : game.id === "sudoku" ? sudokuModes : game.id === "dune-dash" ? duneDashModes : [],
+    availableModes: game.id === "chess" ? chessModes : game.id === "tic-tac-toe" ? ticTacToeModes : game.id === "carrom" ? carromModes : game.id === "paperwing" ? paperwingModes : game.id === "sudoku" ? sudokuModes : game.id === "dune-dash" ? duneDashModes : game.id === "monsoon-blocks" ? monsoonModes : [],
     playerLimits: game.playerLimits,
+    rulesVersion: game.id === "chess" ? CHESS_RULES_VERSION : game.id === "tic-tac-toe" ? RULES_VERSION : game.id === "carrom" ? CARROM_RULES_VERSION : game.id === "paperwing" ? PAPERWING_RULES_VERSION : game.id === "sudoku" ? SUDOKU_RULES_VERSION : game.id === "dune-dash" ? DUNE_DASH_RULES_VERSION : game.id === "monsoon-blocks" ? MONSOON_RULES_VERSION : null,
     ...(game.id === "dune-dash" ? { soloPresets: ["endless", "practice"] } : {}),
-    rulesVersion: game.id === "chess" ? CHESS_RULES_VERSION : game.id === "tic-tac-toe" ? RULES_VERSION : game.id === "carrom" ? CARROM_RULES_VERSION : game.id === "paperwing" ? PAPERWING_RULES_VERSION : game.id === "sudoku" ? SUDOKU_RULES_VERSION : game.id === "dune-dash" ? DUNE_DASH_RULES_VERSION : null,
-    ...(game.id === "paperwing" ? { soloPresets: ["standard", "practice"] } : {}),
+    ...(["paperwing", "monsoon-blocks"].includes(game.id) ? { soloPresets: ["standard", "practice"] } : {}),
     ...(game.id === "sudoku" ? { soloPresets: ["easy", "medium", "hard"] } : {}),
     ...(game.availability === "playable" ? { embedVersion: 1 } : {}),
     ...(game.id === "chess" ? { computerPersona } : {}),
