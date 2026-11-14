@@ -1,8 +1,8 @@
 import { opposite, resolveShot, strikerPosition, validateShot, type Match, type Shot } from "./engine.ts";
 import { simulate } from "./physics.ts";
+import { pockets } from "./geometry.ts";
 
 export type Difficulty = "easy" | "medium" | "hard";
-const pockets = [[56, 56], [544, 56], [56, 544], [544, 544]];
 
 // Search uses the same deterministic physics as human shots, inside a worker.
 // Difficulty changes the number of candidates and aim precision, never physics.

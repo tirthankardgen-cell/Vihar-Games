@@ -1,5 +1,6 @@
 import { coinRadius, createMatch, opposite, type Match, type Side } from "./engine.ts";
 import type { Difficulty } from "./computer.ts";
+import { opponentName } from "./opponent.ts";
 
 export const SESSION_KEY = "vihar-games:carrom:session:v1";
 export const SETTINGS_KEY = "vihar-games:carrom:settings:v1";
@@ -13,7 +14,7 @@ const level = (value: unknown) => ["easy", "medium", "hard"].includes(String(val
 
 export function newSession(mode: Mode, settings: Settings, id: string, opening: Side = Math.random() < .5 ? "cream" : "ink"): Session {
   const first = settings.names[0].trim() || (mode === "pass-and-play" ? "Player 1" : "You");
-  const second = mode === "computer" ? "Computer" : settings.names[1].trim() || "Player 2";
+  const second = mode === "computer" ? opponentName : settings.names[1].trim() || "Player 2";
   return { version: 1, id, mode, difficulty: settings.difficulty, humanSide: settings.coins, players: settings.coins === "cream" ? { cream: first, ink: second } : { cream: second, ink: first }, opening, handover: false, match: createMatch(mode === "practice" ? settings.coins : opening) };
 }
 
@@ -43,6 +44,7 @@ export function parseSession(raw: string | null): Session | null {
     if (m.result?.reason === "cleared" && (m.queen !== "covered" || m.pocketed[m.result.winner].length !== 9)) return null;
     if (s.mode === "practice" && (m.result || s.handover || m.turn !== s.humanSide)) return null;
     if (s.handover && (s.mode !== "pass-and-play" || m.result || m.revision === 0)) return null;
+    if (s.mode === "computer") s.players[opposite(s.humanSide)] = opponentName;
     return s;
   } catch { return null; }
 }

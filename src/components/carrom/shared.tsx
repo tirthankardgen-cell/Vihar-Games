@@ -7,13 +7,14 @@ import styles from "./carrom.module.css";
 export function CarromNav({ home = false, embedded = false, controls }: { home?: boolean; embedded?: boolean; controls?: React.ReactNode }) {
   const brand = <><span className={styles.brandMark} lang="hi">क</span><span lang="hi">कैरम <small lang="en">VIHAR CARROM</small></span></>;
   return <nav className={styles.nav} aria-label="Carrom navigation">
-    {embedded ? <span className={styles.brand}>{brand}</span> : <Link className={styles.brand} href={home ? "/" : "/carrom"} aria-label={home ? "Vihar Games home" : "Carrom courtyard"}>{brand}</Link>}
+    {embedded ? <span className={styles.brand}>{brand}</span> : <Link className={styles.brand} href={home ? "/" : "/carrom"} aria-label={home ? "Vihar Games home" : "Carrom home"}>{brand}</Link>}
+    <span className={styles.navClub}>THE VERANDA CLUB <i aria-hidden="true">✦</i> EST. FOR GOOD COMPANY</span>
     <div className={styles.navActions}>{controls}<Link className={styles.helpLink} href="/carrom/how-to-play" target={embedded ? "_blank" : undefined} rel={embedded ? "noopener noreferrer" : undefined}><Icon name="book" /><span>How to play</span></Link></div>
   </nav>;
 }
 
 export function CarromFooter() {
-  return <footer className={styles.footer}><span><Icon name="sun" />Best served with chai.</span><span lang="hi">बस, एक बाज़ी और।</span></footer>;
+  return <footer className={styles.footer}><span><Icon name="cup" />Best served with chai.</span><span lang="hi">बस, एक बाज़ी और।</span></footer>;
 }
 
 export function Dialog({ title, children, onClose }: { title: string; children: React.ReactNode; onClose: () => void }) {

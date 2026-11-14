@@ -1,9 +1,10 @@
 import { coinRadius, strikerPosition, strikerRadius, type Match, type Shot } from "./engine.ts";
 import { pocketCaptureRadius } from "./physics.ts";
+import { pockets as openings } from "./geometry.ts";
 
 type Point = { x: number; y: number };
 export type GuidePoint = Point & { contact?: Point };
-const pockets = [{ x: 56, y: 56 }, { x: 544, y: 56 }, { x: 56, y: 544 }, { x: 544, y: 544 }];
+const pockets = openings.map(([x, y]) => ({ x, y }));
 
 // A geometric striker guide, ending at the first coin/pocket. Cushion bounces
 // follow the physics bounds and restitution; later coin collisions are not predicted.

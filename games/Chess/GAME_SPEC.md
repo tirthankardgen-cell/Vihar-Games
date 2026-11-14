@@ -134,7 +134,8 @@ Keep the style affectionate and familiar. Avoid neon, glass panels, casino styli
 
 - Animate moves with short 2D translations between cells; captures remove the captured glyph after the accepted move, and castling translates king and rook together. Never rotate a piece in 3D, lift it into depth, or run a camera orbit.
 - Respect reduced motion by showing the accepted final squares immediately. Animation cannot delay authoritative turn changes or override a newer room revision.
-- On desktop, keep the board square with compact supporting panels. On phones, fit all eight files without horizontal clipping, place controls below, and keep labels readable at 360–390 CSS-pixel widths. Permit page scrolling when necessary.
+- Keep every Chess page within one viewport, including the embedded player. For the playing area, use Chess.com's organization as inspiration: a large square board, slim player strips immediately above/below, and a separate right rail for status, move history, and actions. Prioritize board size over decorative headings and footer space. Preserve Vihar's illustrated courtyard identity and flat pieces.
+- On phones, use the available width for all eight files and keep labels readable at 360–390 CSS-pixel widths. Place compact status/actions below the board; open move history and secondary actions in accessible dialogs. Short landscape screens use the side rail. Rules and long histories use paging. Allow internal dialog scrolling at unusually constrained sizes or accessibility zoom so every action stays reachable.
 - Support tap/click selection and keyboard square navigation. Announce selected pieces, legal destinations, check, promotion, and the result. Flat illustration must not remove focus indicators or accessible text.
 
 ### 7.5 Planned asset and implementation handoff
@@ -143,6 +144,7 @@ Keep the style affectionate and familiar. Avoid neon, glass panels, casino styli
 - Use HTML/SVG for the board and pieces; optional Canvas 2D effects may remain cosmetic. No WebGL, Three.js, React Three Fiber, 3D models, CSS perspective, or 3D transforms are needed.
 - Keep every piece, cell, coordinate, and rule state separate from the background image. The renderer reads the existing pure chess engine and shared API state without changing chess rules.
 - Before implementation is accepted, compare desktop/mobile pages with the inspected Gulam Chor references, verify 2D-only rendering, piece recognition, selection contrast, reduced motion, and identical rules across all modes.
+- The current editable cover source is `scripts/make-chess-art.mjs`, producing `/art/chess/courtyard.svg`. It adapts the shared courtyard study with textile/chai details and removes card-game props. The cover uses accessible live Hindi lettering; it is native SVG illustration, not a generated raster painting. See [UI implementation plan](UI_PLAN.md) for the viewport layout and verification targets.
 
 ### 7.6 Inspected references
 

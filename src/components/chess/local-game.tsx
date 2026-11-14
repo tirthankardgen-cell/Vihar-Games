@@ -7,6 +7,8 @@ import type { Session } from "@/games/chess/persistence";
 import { Board } from "./board";
 import { Dialog, Mentor } from "./shared";
 import { Piece } from "./pieces";
+import { Icon } from "./icons";
+import { MoveBook } from "./move-book";
 import styles from "./chess.module.css";
 
 export function LocalGame({ session, onChange, onBack, onAgain, saved, paused = false }: { session: Session; onChange: (session: Session, expectedRevision?: number) => boolean; onBack: () => void; onAgain: () => void; saved: boolean; paused?: boolean }) {
@@ -16,6 +18,7 @@ export function LocalGame({ session, onChange, onBack, onAgain, saved, paused = 
   const [notice, setNotice] = useState("");
   const [confirmResign, setConfirmResign] = useState(false);
   const [confirmLeave, setConfirmLeave] = useState(false);
+  const [panel, setPanel] = useState<"history" | "options" | null>(null);
   const [claiming, setClaiming] = useState(false);
   const [intended, setIntended] = useState("");
   const [flipped, setFlipped] = useState(false);
@@ -96,43 +99,48 @@ export function LocalGame({ session, onChange, onBack, onAgain, saved, paused = 
   const eligible = claimReason(match, intendedMove);
   const status = paused ? "Game paused." : match.result ? resultText(match.result) : session.handover ? `Pass to ${session.players[turn]} · ${sideName(turn)}` : thinking ? "Acharya Dev is thinking…" : `${session.players[turn]} to move · ${sideName(turn)}${board.isCheck() ? " is in check!" : ""}`;
 
+  function leave() { setPanel(null); if (saved || match.result) onBack(); else setConfirmLeave(true); }
+  const controls = <div className={styles.controls} inert={paused}>
+    <button className={styles.toolButton} onClick={() => { setFlipped(!flipped); setSelected(null); }}><Icon name="flip" />Flip board</button>
+    <button className={styles.toolButton} disabled={!canUndo || session.handover || Boolean(match.result)} onClick={undo}><Icon name="undo" />Undo {session.mode === "computer" ? "turn" : "move"}</button>
+    <button className={styles.toolButton} disabled={locked || Boolean(match.drawOffer)} onClick={() => { attempt(() => offerDraw(match, actor)); setPanel(null); }}><Icon name="draw" />Offer draw</button>
+    <button className={styles.toolButton} disabled={locked} onClick={() => { setIntended(""); setPanel(null); setClaiming(true); }}><Icon name="claim" />Claim draw</button>
+    <button className={styles.toolButton} disabled={Boolean(match.result || session.handover)} onClick={() => { setPanel(null); setConfirmResign(true); }}><Icon name="flag" />Resign</button>
+    <button className={styles.toolButton} onClick={leave}><Icon name="leave" />{saved ? "Save & leave" : "Leave game"}</button>
+  </div>;
+  const player = (side: typeof actor) => <div className={styles.playerBar} data-current={!match.result && turn === side}>
+    {session.mode === "computer" && side !== session.humanSide ? <Mentor compact difficulty={session.difficulty} /> : <div className={styles.humanPlayer}><span className={styles.playerInitial} aria-hidden="true">{session.players[side].trim().slice(0, 1).toUpperCase()}</span><strong title={session.players[side]}>{session.players[side]}</strong></div>}
+    <span className={styles.playerSide}><i data-side={side} />{sideName(side)}</span>
+  </div>;
   return <section className={styles.gameSection}>
-    <div className={styles.gameHeading}><div><p className={styles.eyebrow}>{session.mode === "computer" ? `A game with Acharya Dev · ${session.difficulty}` : "A game between friends"}</p><h1>A little thought. Your next move.</h1></div><span className={styles.tag}>Untimed{session.practice ? " · Practice" : ""}</span></div>
+    <div className={styles.gameHeading}><h1>{session.mode === "computer" ? "A game with Acharya Dev" : "A game between friends"}</h1><span className={styles.tag}>{session.mode === "computer" ? `${session.difficulty} · ` : ""}Untimed{session.practice ? " · Practice" : ""}</span></div>
     <div className={styles.gameLayout}>
       <div className={styles.boardColumn}>
-        <div className={styles.playerBar}>{session.mode === "computer" && opposite(orientation) !== session.humanSide ? <Mentor compact /> : <strong>{session.players[opposite(orientation)]}</strong>}<span>{sideName(opposite(orientation))}</span></div>
-        <div className={styles.boardArea}>
-          <Board match={match} orientation={orientation} selected={selected} onSelect={select} locked={locked} />
-        </div>
-        <div className={styles.playerBar}>{session.mode === "computer" && orientation !== session.humanSide ? <Mentor compact /> : <strong>{session.players[orientation]}</strong>}<span>{sideName(orientation)}</span></div>
-        <p className={styles.boardHelp}>Tap a piece, then a marked square. Keyboard: arrows to explore, Enter to select.</p>
+        {player(opposite(orientation))}
+        <div className={styles.boardArea}><Board match={match} orientation={orientation} selected={selected} onSelect={select} locked={locked} /></div>
+        {player(orientation)}
       </div>
       <aside className={styles.gameAside} aria-label="Game information">
-        <div className={styles.panel}><p className={styles.eyebrow}>{match.result ? "The final position" : "At the board"}</p><h2 className={styles.turn} role="status" aria-live="polite">{status}</h2>
-          {!match.result && board.isCheck() && <p>Your king is attacked. Block, capture the attacker, or move the king to safety.</p>}
-          {session.handover && <div className={styles.handover}><p>The next move waits for the other player.</p><button className={styles.primary} onClick={() => onChange({ ...session, handover: false }, match.revision)}>I&apos;m {session.players[turn]} — ready</button></div>}
-          {match.result && <div className={styles.actions}><button className={styles.primary} onClick={onAgain}>Play again</button><button className={styles.secondary} onClick={onBack}>Choose a mode</button></div>}
-          {workerError && <div role="alert"><p>{workerError}</p><button className={styles.secondary} onClick={() => { setWorkerError(""); setRetry((n) => n + 1); }}>Retry computer</button></div>}
-          {match.drawOffer && !match.result && <div className={styles.drawNotice}><p>{session.players[match.drawOffer]} offers a draw.{match.drawOffer === actor ? " Complete your move to pass the offer." : " Accept, decline, or play a move."}</p>{match.drawOffer !== actor && !session.handover && <div className={styles.actions}><button className={styles.primary} onClick={() => attempt(() => respondToDraw(match, actor, true))}>Accept draw</button><button className={styles.secondary} onClick={() => attempt(() => respondToDraw(match, actor, false))}>Decline</button></div>}</div>}
-          <p className={styles.liveNotice} role="status" aria-live="polite">{notice}</p>
+        <div className={styles.statusPanel} data-result={Boolean(match.result)}><div className={styles.statusLabel}><span className={styles.statusDot} /><span>{match.result ? "The final position" : "At the board"}</span></div><h2 className={styles.turn} role="status" aria-live="polite">{status}</h2>
+          {session.handover && <button className={styles.primary} disabled={paused} onClick={() => onChange({ ...session, handover: false }, match.revision)}>I&apos;m {session.players[turn]} — ready<Icon name="arrow" /></button>}
+          {match.result && <div className={styles.actions}><button className={styles.primary} onClick={onAgain}>Play again<Icon name="arrow" /></button><button className={styles.textButton} onClick={onBack}>Choose a mode</button></div>}
+          {workerError && <div className={styles.workerError} role="alert"><p>{workerError}</p><button className={styles.textButton} onClick={() => { setWorkerError(""); setRetry((n) => n + 1); }}>Retry computer<Icon name="undo" /></button></div>}
+          {match.drawOffer && !match.result && <div className={styles.drawNotice}><p>{session.players[match.drawOffer]} offers a draw.{match.drawOffer === actor ? " Complete your move to pass the offer." : " Accept, decline, or play a move."}</p>{match.drawOffer !== actor && !session.handover && <div className={styles.actions}><button className={styles.primary} onClick={() => attempt(() => respondToDraw(match, actor, true))}>Accept draw</button><button className={styles.textButton} onClick={() => attempt(() => respondToDraw(match, actor, false))}>Decline</button></div>}</div>}
         </div>
-        <div className={styles.panel}><div className={styles.panelHeading}><h2>Move book</h2><span>{match.moves.length} half-moves</span></div>
-          <div className={styles.moveBook} tabIndex={0} aria-label="Move history">
-            {!match.notation.length ? <p className={styles.emptyBook}>Every good game begins with a possibility.<br />White moves first.</p> : <table><thead><tr><th scope="col">#</th><th scope="col">White</th><th scope="col">Black</th></tr></thead><tbody>{Array.from({ length: Math.ceil(match.notation.length / 2) }, (_, i) => <tr key={i}><th scope="row">{i + 1}.</th><td>{match.notation[i * 2]}</td><td>{match.notation[i * 2 + 1] ?? "—"}</td></tr>)}</tbody></table>}
-          </div>
-          {match.notation.length > 0 && <p className={styles.lastText}>Last move: {match.notation.at(-1)} · {match.moves.at(-1)?.from} → {match.moves.at(-1)?.to}</p>}
+        <div className={styles.inlineHistory}><MoveBook match={match} /></div>
+        <div className={styles.desktopControls}>{controls}</div>
+        <div className={styles.compactTools} inert={paused}>
+          <button className={styles.toolButton} onClick={() => { setFlipped(!flipped); setSelected(null); }}><Icon name="flip" />Flip board</button>
+          <button className={styles.toolButton} disabled={!canUndo || session.handover || Boolean(match.result)} onClick={undo}><Icon name="undo" />Undo {session.mode === "computer" ? "turn" : "move"}</button>
+          <button className={styles.toolButton} onClick={() => setPanel("history")}><Icon name="book" />Move book</button>
+          <button className={styles.toolButton} onClick={() => setPanel("options")}><Icon name="room" />Game options</button>
         </div>
-        <div className={styles.controls} inert={paused}>
-          <button className={styles.secondary} onClick={() => { setFlipped(!flipped); setSelected(null); }}>Flip board</button>
-          <button className={styles.secondary} disabled={!canUndo || session.handover || Boolean(match.result)} onClick={undo}>Undo {session.mode === "computer" ? "turn" : "move"}</button>
-          <button className={styles.secondary} disabled={locked || Boolean(match.drawOffer)} onClick={() => attempt(() => offerDraw(match, actor))}>Offer draw</button>
-          <button className={styles.secondary} disabled={locked} onClick={() => { setIntended(""); setClaiming(true); }}>Claim draw</button>
-          <button className={styles.secondary} disabled={Boolean(match.result || session.handover)} onClick={() => setConfirmResign(true)}>Resign</button>
-          <button className={styles.secondary} onClick={() => { if (saved || match.result) onBack(); else setConfirmLeave(true); }}>{saved ? "Save & leave" : "Leave game"}</button>
-        </div>
-        <p className={styles.small}>{saved ? "Saved on this device. Come back whenever you like." : "Storage is unavailable. Keep this tab open to continue your game."} {session.mode === "computer" && "Undo takes back your move and the computer's reply."}</p>
+        <p className={styles.saveNote}><span className={styles.statusDot} />{saved ? "Saved on this device" : "Storage unavailable · Keep this tab open"}</p>
       </aside>
     </div>
+    <div className={styles.boardHint}><p>{match.moves.length ? `Last move: ${match.notation.at(-1)} · ${match.moves.at(-1)?.from} → ${match.moves.at(-1)?.to}` : "White opens. Make yourself at home."}</p><span>Tap to move · Arrow keys to explore</span></div>
+    <p className={styles.srOnly} role="status" aria-live="polite">{notice}</p>
+    {panel && <Dialog title={panel === "history" ? "Your move book" : "At your fingertips"} onClose={() => setPanel(null)}>{panel === "history" ? <MoveBook match={match} /> : <>{controls}<p className={styles.small}>Undo takes back a complete turn in computer mode and marks the game as practice.</p></>}</Dialog>}
     {promotion && <Dialog title="Choose your promotion" onClose={() => setPromotion(null)}><p>Your pawn has reached the last rank. Choose its new piece to complete this move.</p><div className={styles.promotion}>{(["q", "r", "b", "n"] as Promotion[]).map((type) => <button key={type} className={styles.secondary} onClick={() => move({ ...promotion, promotion: type })}><Piece type={type} color={actor} /><span>{pieceNames[type]}</span></button>)}</div><button className={styles.textButton} onClick={() => setPromotion(null)}>Cancel move</button></Dialog>}
     {confirmResign && <Dialog title="Resign this game?" onClose={() => setConfirmResign(false)}><p>{session.players[opposite(actor)]} will win by resignation.</p><div className={styles.actions}><button className={styles.primary} onClick={() => { attempt(() => resign(match, actor)); setConfirmResign(false); }}>Yes, resign</button><button className={styles.secondary} onClick={() => setConfirmResign(false)}>Keep playing</button></div></Dialog>}
     {confirmLeave && <Dialog title="Leave this unsaved game?" onClose={() => setConfirmLeave(false)}><p>This browser cannot save your game. You can return to it from the mode screen while this tab stays open, but it will be lost if you refresh or close the tab.</p><div className={styles.actions}><button className={styles.primary} onClick={onBack}>Leave without saving</button><button className={styles.secondary} onClick={() => setConfirmLeave(false)}>Keep playing</button></div></Dialog>}

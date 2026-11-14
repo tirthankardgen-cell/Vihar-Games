@@ -1,14 +1,14 @@
 import { radius, strikerPosition, validateShot, type Match, type Outcome, type Piece, type Shot } from "./engine.ts";
+import { pockets, pocketRadius } from "./geometry.ts";
 
 export type Frame = { id: string; x: number; y: number }[];
 export type Simulation = { outcome: Outcome; frames: Frame[]; duration: number };
 type Body = Piece & { vx: number; vy: number; alive: boolean };
 const DT = 1 / 180, MAX_STEPS = 180 * 12, FRICTION = 175;
-export const pocketRadius = 23;
+export { pocketRadius } from "./geometry.ts";
 // A disc falls only when most of it crosses the opening. There is no force
 // toward a pocket: velocity changes only through friction and collisions.
 export const pocketCaptureRadius = (r: number) => pocketRadius - r * .6;
-const pockets = [[56, 56], [544, 56], [56, 544], [544, 544]];
 
 export function simulate(match: Match, shot: Shot, record = true): Simulation {
   validateShot(match, shot);
