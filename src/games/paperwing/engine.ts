@@ -77,16 +77,20 @@ export function sweepCircle(x: Polynomial, y: Polynomial, rectangle: { left: num
   }
   return null;
 }
-function populate(run: Run): Run {
+function populate(run: Run, edge = WORLD.width + presets[run.mode].spacing): Run {
   const preset = presets[run.mode], gates = [...run.gates];
   let random = run.random, nextId = run.nextId;
-  while (gates.at(-1)!.x < WORLD.width + preset.spacing) {
+  while (gates.at(-1)!.x < edge) {
     const last = gates.at(-1)!;
     random = (Math.imul(random, 1664525) + 1013904223) >>> 0;
     const low = Math.max(210, last.centre - 90), high = Math.min(510, last.centre + 90);
     gates.push({ id: nextId++, x: last.x + preset.spacing, centre: low + Math.floor(random / 4294967296 * (high - low + 1)), scored: false });
   }
   return { ...run, gates, random, nextId };
+}
+// Wider screens preview the same future sequence without advancing the run.
+export function getVisibleGates(run: Run, width: number): Gate[] {
+  return populate(run, Math.max(WORLD.width + presets[run.mode].spacing, width + WORLD.gateWidth)).gates;
 }
 export function createRun(mode: Mode, seed: number): Run {
   const normalized = seed >>> 0;

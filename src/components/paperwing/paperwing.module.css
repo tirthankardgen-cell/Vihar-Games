@@ -160,3 +160,35 @@
   .page { overflow:auto; display:flex; flex-direction:column; }.nav { min-height:48px; flex-shrink:0; }.footer { min-height:26px; flex-shrink:0; }.hero,.choose,.rulesPage { height:auto; min-height:min-content; flex:1; padding-block:16px; }.hero { display:flex; }.heroArt { display:none; }.heroCopy { text-align:center; }.heroActions { justify-content:center; }.choose { gap:12px; }.modeGrid { grid-template-columns:1fr; }.flightLayout { min-height:450px; flex:1; }.rulesBook { min-height:270px; }.dialog { overflow:auto; }.modalBook { min-height:260px; }
 }
 @media (prefers-reduced-motion:reduce) { .shell *, .shell *::before, .shell *::after { animation:none !important; transition:none !important; } }
+
+.shell:has(.fullPlay)::before { display:none; }
+.fullPlay { height:100%; min-height:0; width:100%; display:grid; grid-template-rows:auto minmax(0,1fr); color:var(--ink); }
+.fullPlay button { font-family:inherit; cursor:pointer; }
+.fullPlay button:disabled { opacity:.5; cursor:not-allowed; }
+.fullPlay :is(button,svg[tabindex]):focus-visible { outline:3px solid var(--coral); outline-offset:-4px; }
+.playHud { min-height:58px; padding:10px max(20px,env(safe-area-inset-right)) 10px max(20px,env(safe-area-inset-left)); padding-top:calc(10px + env(safe-area-inset-top)); display:flex; align-items:center; gap:24px; background:var(--paper); border-bottom:1px solid #b8cbd0; }
+.hudName { margin-right:auto; padding:4px 0; border:0; background:transparent; color:var(--ink); font-size:19px; letter-spacing:.14em; text-transform:uppercase; line-height:1.2; }
+.hudScores { display:flex; align-items:center; gap:32px; }
+.hudScores > span { display:flex; align-items:center; gap:10px; font-size:10px; letter-spacing:.1em; text-transform:uppercase; white-space:nowrap; }
+.hudScores output { font:26px var(--font-yatra),Georgia,serif; letter-spacing:0; line-height:1.15; min-width:20px; }
+.hudActions { display:flex; align-items:center; gap:6px; }
+.hudActions:empty { display:none; }
+.hudIcon { width:38px; height:38px; padding:9px; border:1px solid #b8cbd0; border-radius:50%; background:transparent; color:var(--ink); }
+.hudIcon svg { width:100%; height:100%; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; }
+.fullStage { width:100%; height:100%; min-width:0; min-height:0; position:relative; overflow:hidden; background:#d8e7eb; }
+.fullStage .flightField { height:100%; width:100%; max-width:none; aspect-ratio:auto; }
+.flightOverlay { position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; }
+.startIcon { width:82px; height:82px; padding:22px; border:1px solid #2c445c; border-radius:50%; background:#f8f1e4ed; color:var(--ink); box-shadow:0 2px 0 #2c445c20; pointer-events:auto; }
+.startIcon:hover:not(:disabled),.hudIcon:hover { background:#fff9ed; }
+.startIcon svg { width:100%; height:100%; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.startIcon svg path[d^="m12"] { fill:currentColor; stroke-width:1; }
+.resumeCount { font:36px var(--font-yatra),Georgia,serif; line-height:1; }
+@media (max-width:600px) {
+  .playHud { min-height:54px; padding-inline:14px; gap:12px; }.hudName { font-size:13px; letter-spacing:.1em; }.hudScores { gap:15px; }.hudScores > span { flex-direction:column; align-items:start; gap:1px; font-size:8px; letter-spacing:.05em; }.hudScores output { font-size:21px; }.hudIcon { width:34px; height:34px; padding:8px; }.hudActions { gap:4px; }.startIcon { width:72px; height:72px; padding:19px; }
+}
+@media (max-width:350px) {
+  .playHud { padding-inline:11px; gap:8px; }.hudName { font-size:12px; letter-spacing:.07em; }.hudScores { gap:10px; }.hudScores > span { font-size:7px; }.hudIcon { width:32px; height:32px; padding:7px; }
+}
+@media (max-height:430px) {
+  .playHud { min-height:46px; padding-block:6px; }.hudName { font-size:14px; }.hudScores output { font-size:22px; }.startIcon { width:64px; height:64px; padding:17px; }.resumeCount { font-size:28px; }
+}

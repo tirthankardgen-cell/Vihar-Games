@@ -1,27 +1,23 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { flap, step, STEP, presets, type Mode } from "@/games/paperwing/engine";
 import { defaultSettings, emptyRecords, loadRecords, loadSession, loadSettings, newSession, recordResult, saveSession, saveValue, RECORDS_KEY, SETTINGS_KEY, type Session, type Settings, type Records } from "@/games/paperwing/persistence";
 import { useViharPlay } from "@/lib/use-vihar-play";
 import { createAudio } from "./audio";
-import { BirdMark, FlightField, Postmark } from "./art";
+import { BirdMark, FlightField } from "./art";
 import { Dialog, PaperwingFooter, PaperwingNav } from "./shared";
-import { RulesBook } from "./rules-book";
 import styles from "./paperwing.module.css";
 
 type View = "choose" | "ready" | "flying" | "paused" | "countdown" | "result";
 const activeView = (view: View) => view === "flying" || view === "paused" || view === "countdown";
-const timeLabel = (seconds: number) => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, "0")}`;
-const endingLabel = { ceiling: "A little too high.", floor: "A little too low.", panel: "One opening away." };
 const withStorage = (operation: (storage: Storage) => boolean): boolean => { try { return operation(window.localStorage); } catch { return false; } };
 
 export default function PaperwingPlay() {
   const [view, setView] = useState<View>("choose"), [session, setSession] = useState<Session | null>(null);
   const [previous, setPrevious] = useState<Session | null>(null), [settings, setSettings] = useState<Settings>(defaultSettings);
   const [records, setRecords] = useState<Records>(emptyRecords), [saving, setSaving] = useState(true), [notice, setNotice] = useState("");
-  const [countdown, setCountdown] = useState(3), [rulesOpen, setRulesOpen] = useState(false), [confirm, setConfirm] = useState<Mode | null>(null);
+  const [countdown, setCountdown] = useState(3), [confirm, setConfirm] = useState<Mode | null>(null);
   const runtime = useRef<{ view: View; session: Session | null; previous: Session | null; records: Records; settings: Settings; lastSave: number }>({ view: "choose", session: null, previous: null, records: emptyRecords(), settings: defaultSettings, lastSave: 0 });
   const audio = useRef<ReturnType<typeof createAudio> | null>(null), held = useRef(new Set<string>());
   const inRound = activeView(view) && session?.run.status === "flying";
@@ -153,13 +149,12 @@ export default function PaperwingPlay() {
     return () => { stopped = true; cancelAnimationFrame(frame); };
   }, [view, pauseFlight, persist, publish]);
 
-  const best = records[session?.run.mode ?? settings.mode].score;
-  return <main id="main-content" className={styles.page} data-vihar-embedded={vihar.embedded || undefined} data-paperwing-view={view}>
-    <PaperwingNav embedded={vihar.embedded}>
+  const best = Math.max(records[session?.run.mode ?? settings.mode].score, session?.run.score ?? 0);
+  return <main id="main-content" className={view === "choose" ? styles.page : styles.fullPlay} data-vihar-embedded={vihar.embedded || undefined} data-paperwing-view={view}>
+    {view === "choose" && <PaperwingNav embedded={vihar.embedded}>
       {vihar.embedded && <button className={styles.textButton} onClick={() => { pauseFlight(); vihar.exit(); }}>← Exit to Vihar</button>}
       <button className={styles.soundButton} onClick={() => updateSettings({ ...settings, sound: !settings.sound })} aria-pressed={settings.sound} aria-label={settings.sound ? "Turn sound off" : "Turn sound on"}>{settings.sound ? "Sound on" : "Sound off"}</button>
-      <button className={styles.textButton} onClick={() => { pauseFlight(); setRulesOpen(true); }}>How to fly <span aria-hidden="true">?</span></button>
-    </PaperwingNav>
+    </PaperwingNav>}
     {view === "choose" ? <section className={styles.choose} aria-labelledby="choose-title">
       <div className={styles.screenHeading}><p className={styles.eyebrow}>01 / PICK YOUR KIND OF SKY</p><h1 id="choose-title">Every flight starts<br /><span>with a little possibility.</span></h1><p>One tap. One opening. Your own quiet rhythm.</p></div>
       <fieldset className={styles.modeGrid}><legend className={styles.srOnly}>Choose a flight mode</legend>{(["standard", "practice"] as const).map((mode) => <label key={mode} className={styles.modeCard} data-selected={settings.mode === mode}>
@@ -169,27 +164,26 @@ export default function PaperwingPlay() {
       <div className={styles.chooseActions}><button className={styles.primary} onClick={() => requestFresh(settings.mode)}>Prepare a flight <span aria-hidden="true">↗</span></button>
         {previous && <button className={styles.textButton} onClick={() => { publish(previous, previous.run.status === "ended" ? "result" : previous.run.status === "ready" ? "ready" : "paused"); }}>{previous.run.status === "ended" ? "Your last flight" : "Resume saved flight"}<span aria-hidden="true">→</span></button>}
       </div><p className={styles.screenNote} role="status">{notice || vihar.notice || (!saving ? "Saving unavailable. Your flight stays in this tab." : "Saved on this device. Ready when you are.")}</p>
-    </section> : session && <section className={styles.flightLayout} aria-label={`${presets[session.run.mode].name} flight`}>
-      <div className={styles.flightColumn}><div className={styles.flightStatus}><span className={styles.eyebrow}>{presets[session.run.mode].name} / OPEN SKY</span><span>GATES <output aria-label="Gates passed">{session.run.score}</output><span className={styles.bestSmall}>BEST {best}</span></span></div>
-        <div className={styles.stageWrap}><FlightField run={session.run} moving={view === "flying"} onFlap={takeFlap} />
-          {(view === "ready" || view === "paused" || view === "countdown" || view === "result") && <div className={styles.overlay}>
-            <section className={styles.flightCard} aria-label={view === "result" ? "Flight result" : view === "ready" ? "Ready to fly" : "Paused flight"}>
-              {view === "countdown" ? <><p className={styles.eyebrow}>YOUR SKY IS RIGHT WHERE YOU LEFT IT</p><strong className={styles.countdown} role="status" aria-label={`Resuming in ${countdown}`}>{countdown}</strong><p>One breath. Then one flap.</p><button className={styles.textButton} onClick={pauseFlight}>Keep it paused</button></> : view === "result" ? <>
-                <Postmark small /><p className={styles.eyebrow}>A FLIGHT WORTH KEEPING</p><h1>{endingLabel[session.run.ending!]}</h1><p className={styles.resultScore}><strong>{session.run.score}</strong><span>gates passed</span></p>
-                <dl className={styles.resultDetails}><div><dt>Flight time</dt><dd>{timeLabel(session.run.elapsed)}</dd></div><div><dt>Personal best</dt><dd>{best} gates</dd></div><div><dt>Mode</dt><dd>{presets[session.run.mode].name}</dd></div></dl>
-                <button className={styles.primary} onClick={() => prepare(session.run.mode)}>Try again ↗</button><button className={styles.textButton} onClick={choose}>Choose a sky →</button>
-              </> : <><p className={styles.eyebrow}>{view === "ready" ? "02 / FIND YOUR WINGS" : "TAKE A LITTLE BREATH"}</p><h1>{view === "ready" ? "Ready for a little sky?" : "Your flight can wait."}</h1><p>{view === "ready" ? "Tap to rise. Find the openings. See where one more flap takes you." : "The bird, the gates, and your score are right where you left them."}</p>
-                <button className={styles.primary} disabled={vihar.paused} onClick={view === "ready" ? takeFlap : beginResume}>{view === "ready" ? "Take flight ↗" : "Resume flight →"}</button><button className={styles.textButton} onClick={choose}>Choose a sky</button>
-              </>}
-            </section>
-          </div>}
+    </section> : session && <>
+      <header className={styles.playHud} aria-label="Paperwing scoreboard">
+        <button className={styles.hudName} onClick={choose} aria-label="Paperwing — choose a flight mode">Paperwing</button>
+        <div className={styles.hudScores}><span>Points <output aria-label="Points">{session.run.score}</output></span><span>High score <output aria-label="High score">{best}</output></span></div>
+        <div className={styles.hudActions}>
+          {view === "flying" && <button className={styles.hudIcon} aria-label="Pause flight" onClick={pauseFlight}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14" /></svg></button>}
+          {vihar.embedded && <button className={styles.hudIcon} aria-label="Exit to Vihar" onClick={() => { pauseFlight(); vihar.exit(); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>}
         </div>
-        <div className={styles.flightControls}><button className={styles.primary} disabled={view !== "flying"} onClick={takeFlap}>Flap <span aria-hidden="true">↑</span></button><button className={styles.secondary} disabled={view !== "flying"} onClick={pauseFlight}>Pause <span aria-hidden="true">Ⅱ</span></button></div>
-        {(!saving || notice || vihar.notice) && <p className={styles.mobileNotice} role="status">{notice || vihar.notice || "Saving unavailable. Keep this tab open."}</p>}
-      </div><aside className={styles.flightAside}><Postmark /><p className={styles.eyebrow}>ONE SMALL FLAP AT A TIME</p><h2>Keep a little<br /><span>sky between us.</span></h2><p>Tap the flight area, or use<br /><kbd>Space</kbd> <kbd>↑</kbd> <kbd>W</kbd></p><div className={styles.asideRule} /><p>One gate. One point.<br />Your next opening is on the way.</p><button className={styles.textButton} onClick={choose}>← Choose a sky</button><Link className={styles.textButton} href="/" onClick={pauseFlight}>All games ↗</Link><p className={styles.saveStatus} role="status">{notice || vihar.notice || (saving ? "Your flight is saved here." : "Saving unavailable. Keep this tab open.")}</p></aside>
-    </section>}
-    <PaperwingFooter />
-    {rulesOpen && <Dialog title="How to fly" onClose={() => setRulesOpen(false)}><RulesBook dialog /></Dialog>}
+      </header>
+      <section className={styles.fullStage} aria-label={`${presets[session.run.mode].name} flight`}>
+        <FlightField run={session.run} moving={view === "flying"} onFlap={takeFlap} />
+        {view !== "flying" && <div className={styles.flightOverlay}>
+          {view === "countdown" ? <button className={styles.startIcon} aria-label={`Resuming in ${countdown}. Keep paused.`} onClick={pauseFlight}><span className={styles.resumeCount} role="status">{countdown}</span></button> : <button className={styles.startIcon} disabled={vihar.paused} aria-label={view === "result" ? "Try again" : view === "ready" ? "Take flight" : "Resume flight"} onClick={view === "result" ? () => prepare(session.run.mode) : view === "ready" ? takeFlap : beginResume}>
+            <svg viewBox="0 0 32 32" aria-hidden="true">{view === "result" ? <path d="M25 14a10 10 0 1 0-3 10M25 6v8h-8" /> : <path d="m12 7 14 9-14 9Z" />}</svg>
+          </button>}
+        </div>}
+      </section>
+      {(!saving || notice || vihar.notice) && <p className={styles.srOnly} role="status">{notice || vihar.notice || "Saving unavailable. Keep this tab open."}</p>}
+    </>}
+    {view === "choose" && <PaperwingFooter />}
     {confirm && <Dialog title="Start a fresh flight?" onClose={() => setConfirm(null)}><p>Your unfinished flight is saved here. Starting fresh replaces it with a new {presets[confirm].name.toLowerCase()} sky.</p><div className={styles.dialogActions}><button className={styles.primary} onClick={() => prepare(confirm)}>Start fresh ↗</button><button className={styles.secondary} onClick={() => setConfirm(null)}>Keep my flight</button></div></Dialog>}
   </main>;
 }

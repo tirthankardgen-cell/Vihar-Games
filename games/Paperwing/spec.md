@@ -29,15 +29,15 @@ Target session: 20 seconds–3 minutes. One local player, one continuous run, on
 - Show two seconds of clear flight before the first gate's leading edge reaches the bird. Gate leading edges remain 280 units apart in Standard and 300 in Practice.
 - Sample gap centres in `[210, 510]` using the run's generator. The first gap centre is 360; each later centre differs from the previous by at most 90 units. Reject any layout violating these constraints.
 - Standard and Practice remain at their preset speeds/gaps throughout a run. There is no hidden difficulty ramp or score-dependent shrinkage.
-- The run ends at first collision. Results show gates passed, active time, mode, and local best for that mode. Retry uses the same mode and a new seed.
+- The run ends at first collision. The score header keeps points and that mode's high score visible, including a new best reached during the current flight; an icon retries the same mode with a new seed. Active time and mode remain in the saved run.
 - No bonus for near misses or crossing a decorative ring. A personal record is local to the device.
 
 ## 4. Controls and interruption
 
-- Space, Up, or W flaps. Pointer/touch taps on the flight surface flap. Provide a labelled Flap control and a separate Pause action; Escape pauses.
+- Space, Up, or W flaps. Pointer/touch taps anywhere on the flight surface flap. The entire surface has an accessible Flap label; an icon provides Pause, and Escape also pauses.
 - Start consumes one intentional press as the initial flap. Resuming uses the shared three-count countdown and consumes the resume gesture without flapping.
 - Pause freezes bird velocity, gate positions, score flags, and generator. Clear held input and pending taps. Return from a hidden tab remains paused.
-- Maintain the same logical portrait view when screen dimensions change; use letterboxing rather than reducing visible flight bounds or approach time.
+- Fill the viewport below a compact score header. Scale both axes equally, keeping the complete vertical flight bounds visible. Wider displays extend the sky to the right and preview the same seeded future gates without advancing the simulation or its generator. Resizing preserves the bird, gate positions, scoring, collision geometry, and the two-second first approach.
 
 ## 5. Detailed 2D visual direction — Airmail Atelier
 
@@ -45,9 +45,9 @@ Target session: 20 seconds–3 minutes. One local player, one continuous run, on
 - Draw an original folded swallow with angular wings, one small ink eye, and navy fold lines. Keep its circular collision centre apparent through a discreet chest mark.
 - Gates are suspended flat fabric/postcard panels with diagonal postal edging. Their solid edges are clean and readable; decorative ropes remain outside the flight corridor and never collide.
 - Use quiet sky paper with one sparse cloud motif and no perspective layers. Never copy a pixel bird mascot, green pipes, or another game's score typography.
-- Overview is an open airmail card. Setup offers two stamp-shaped mode choices. Play places score above the corridor and Pause in a separate header. Results show a flat postmark and a small progress line of passed gates.
+- Overview is an open airmail card. Setup offers two stamp-shaped mode choices. The full-width play screen shows only Paperwing, points, and high score as visible text, with small accessible icons for Pause, Start, Resume, Retry, and embedded Exit as applicable. Clicking the game name returns to mode selection. The three-count resume countdown is the only temporary numeric overlay.
 - Flapping uses two planar wing poses and a limited angle change within the flat drawing. No camera shake, full-screen flash, or debris on collision. Reduced motion removes cloud drift and postmark drawing.
-- Mobile play centres the portrait surface. Wide layouts flank it with paper margins and concise instructions; no side panel reduces its visible world.
+- On phones and wide screens, the sky fills all available space below the header. There is no instruction side panel, footer, visible sound/rules link, Flap button row, postcard frame, or wording printed inside the field. Rules remain available from the overview and dedicated rules page; sound preferences remain in mode selection.
 - Optional sound: one soft paper flick per flap and a muted bell per passed gate, with visual score feedback.
 
 ## 6. State and shared requirements

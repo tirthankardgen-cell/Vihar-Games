@@ -1,7 +1,7 @@
 "use client";
 
-import { useId } from "react";
-import { WORLD, presets, type Run } from "@/games/paperwing/engine";
+import { useEffect, useId, useRef, useState } from "react";
+import { WORLD, presets, getVisibleGates, type Run } from "@/games/paperwing/engine";
 import styles from "./paperwing.module.css";
 
 export function Swallow({ folded = false }: { folded?: boolean }) {
@@ -40,19 +40,27 @@ export function CoverArt() {
 }
 export function FlightField({ run, moving, onFlap }: { run: Run; moving: boolean; onFlap: () => void }) {
   const id = useId().replace(/:/g, ""), p = presets[run.mode];
-  return <svg className={styles.flightField} viewBox="0 0 480 720" preserveAspectRatio="xMidYMid meet" role="img" tabIndex={0}
+  const ref = useRef<SVGSVGElement>(null), [width, setWidth] = useState<number>(WORLD.width);
+  useEffect(() => {
+    const observer = new ResizeObserver(([entry]) => {
+      const { width: pixels, height } = entry.contentRect;
+      if (pixels > 0 && height > 0) setWidth(pixels / height * (WORLD.bottom - WORLD.top));
+    });
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+  return <svg ref={ref} className={styles.flightField} viewBox={`0 ${WORLD.top} ${width} ${WORLD.bottom - WORLD.top}`} preserveAspectRatio="xMidYMid meet" role="img" tabIndex={0}
     aria-label={`Flight area. ${run.score} gates passed. Tap or press Space, Up, or W to flap.`} data-moving={moving} data-bird-y={run.y.toFixed(3)} data-velocity={run.velocity.toFixed(3)}
     onPointerDown={(event) => { if (event.button !== 0 || !event.isPrimary) return; event.preventDefault(); event.currentTarget.focus({ preventScroll: true }); onFlap(); }}>
     <defs>
-      <clipPath id={`${id}-flight`}><rect x="0" y="40" width="480" height="640" /></clipPath>
+      <clipPath id={`${id}-flight`}><rect x="0" y="40" width={width} height="640" /></clipPath>
       <pattern id={`${id}-post`} width="28" height="28" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="28" height="28" fill="#F8F1E4" /><rect width="9" height="28" fill="#B96054" /><rect x="14" width="9" height="28" fill="#2C445C" /></pattern>
     </defs>
-    <rect x="1" y="1" width="478" height="718" rx="6" fill="#F8F1E4" stroke="#2C445C" strokeWidth="2" />
-    <rect x="12" y="12" width="456" height="696" rx="2" fill="#D8E7EB" />
+    <rect x="0" y="40" width={width} height="640" fill="#D8E7EB" />
     <g clipPath={`url(#${id}-flight)`}>
-      <path className={styles.cloud} d="M-20 209h182q-5-17-26-16-2-33-32-30-22-17-40 11-27-4-29 18-34-7-55 17Zm338 238h195q-10-16-33-16-1-37-36-33-25-21-45 9-26-6-32 18-26-4-49 22Z" fill="#EAF1F2" />
-      <path d="M38 93h100m189 14h73M41 603h59m208-57h105" stroke="#A5BFC7" strokeWidth=".8" />
-      {run.gates.map((gate) => <g key={gate.id} data-gate-id={gate.id} data-centre={gate.centre} transform={`translate(${gate.x} 0)`}>
+      <path className={styles.cloud} d="M-20 209h182q-5-17-26-16-2-33-32-30-22-17-40 11-27-4-29 18-34-7-55 17Z" fill="#EAF1F2" />
+      <g transform={`translate(${width * .68} 110)`}><path className={styles.cloud} d="M0 238h195q-10-16-33-16-1-37-36-33-25-21-45 9-26-6-32 18-26-4-49 22Z" fill="#EAF1F2" /></g>
+      {getVisibleGates(run, width).map((gate) => <g key={gate.id} data-gate-id={gate.id} data-centre={gate.centre} transform={`translate(${gate.x} 0)`}>
         {[[40, gate.centre - p.gap / 2 - 40], [gate.centre + p.gap / 2, 680 - gate.centre - p.gap / 2]].map(([y, height], i) => <g key={i}>
           <rect x="0" y={y} width="64" height={height} fill="#F8F1E4" stroke="#2C445C" strokeWidth="1.6" />
           <rect x="2" y={y} width="7" height={height} fill={`url(#${id}-post)`} /><rect x="55" y={y} width="7" height={height} fill={`url(#${id}-post)`} />
@@ -61,8 +69,6 @@ export function FlightField({ run, moving, onFlap }: { run: Run; moving: boolean
       </g>)}
       <g className={styles.bird} transform={`translate(120 ${run.y}) rotate(${Math.max(-12, Math.min(18, run.velocity / 20))})`}><Swallow folded={run.velocity < 0} /></g>
     </g>
-    <path d={`M12 ${WORLD.top}h456M12 ${WORLD.bottom}h456`} stroke="#2C445C" strokeWidth="1.5" />
-    <text x="28" y="30" fill="#2C445C" fontSize="10" letterSpacing="2">PAPERWING / VIHAR AIRMAIL</text>
-    <text x="452" y="701" textAnchor="end" fill="#2C445C" fontSize="9" letterSpacing="2">KEEP A LITTLE SKY BETWEEN US</text>
+    <path d={`M0 ${WORLD.top}h${width}M0 ${WORLD.bottom}h${width}`} stroke="#2C445C" strokeWidth="1.5" />
   </svg>;
 }
