@@ -1,6 +1,7 @@
 # Paperwing
 
-**Status:** Planned; catalog and specification only.  
+**Status:** Playable local release; Standard and Practice, saves, personal records, published rules, and Vihar Quick Play integration.
+
 **Updated:** 14 November 2026  
 **Game ID:** `paperwing` · **Category:** Arcade · **Players:** One  
 **Page:** `/paperwing` · **API base:** `/api/games/paperwing`  
@@ -51,15 +52,23 @@ Target session: 20 seconds–3 minutes. One local player, one continuous run, on
 
 ## 6. State and shared requirements
 
-Follow [solo game standards](../../docs/SOLO_GAME_STANDARDS.md). Save bird height/velocity, mode, gates with gap centres/positions/scored flags, generator, next gate position, score, and active time. Validate separation, gap bounds, speed, and score flags. Restoring never changes an upcoming gate or resumes gravity automatically.
+Follow [solo game standards](../../docs/SOLO_GAME_STANDARDS.md). Save bird height/velocity, mode, gates with gap centres/positions/scored flags, generator, next gate ID/position, score, active time, and fixed-step remainder. The versioned session validates these invariants before loading. Validate separation, gap bounds, speed, and score flags. Restoring never changes an upcoming gate or resumes gravity automatically.
 
-## 7. Future asset handoff
+## 7. Implemented artwork and sound
 
-Original folded-swallow poses, postal panel edges, two mode stamps, static cloud print, result postmark, and optional flap/gate sounds. Custom screens, assets, and gameplay remain planned.
+Original flat SVG folded-swallow poses, postal panel edges, two mode stamps, cloud print, cover postcard, and result postmark are implemented in `src/components/paperwing/art.tsx`. Optional paper-flick and gate-bell sounds are synthesized locally with Web Audio in `audio.ts`. Sound is off on a fresh visit. No borrowed sprite or remote asset is required.
 
-## 8. Acceptance when implemented
+## 8. Release acceptance criteria
 
 - Single presses flap exactly once; held/repeated input and Pause/Resume never produce unintended flaps.
 - Generated gates stay reachable under the published gap, offset, and spacing rules.
 - Collision takes precedence over a simultaneous gate score; each gate scores once.
 - Resizing, frame rates, pause, and local save restoration preserve the logical flight world.
+
+## Mandatory single-viewport presentation
+
+Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.
+
+## Local implementation
+
+The pure engine and save validation live in `src/games/paperwing/`; interface, original SVG artwork, optional sound, and viewport styles live in `src/components/paperwing/`. Dedicated overview, play, and paged rules routes use `/paperwing`, `/paperwing/play`, and `/paperwing/how-to-play`. `/api/games/paperwing/info` advertises `availableModes: ["solo"]`, `soloPresets: ["standard", "practice"]`, `rulesVersion: "1.0.0"`, and embed protocol v1. `/rules` publishes the same rules used by the paged rules screen. All records are personal/local, and the game continues without storage or account services. A frame delay beyond the bounded catch-up budget pauses the flight rather than skipping unseen hazards.

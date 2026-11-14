@@ -131,3 +131,7 @@ The game should feel calm and thoughtful, like a simple strategy board in a quie
 ### 7.6. Planned artwork handoff
 
 Prepare the flat sage grid, charcoal/ivory disc symbols, player badges, legal-move dots, selection outlines, and one small optional leaf illustration. Use lightweight HTML/SVG or Canvas 2D graphics with accessible live text. Detailed botanical artwork remains a planned margin accent.
+
+## Mandatory single-viewport presentation
+
+Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.

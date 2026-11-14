@@ -128,3 +128,7 @@ The game should feel like a neatly printed Sudoku page in a quiet puzzle journal
 ### 7.6. Planned artwork and accessibility handoff
 
 Prepare the paper treatment, ruled grid, selection/conflict styles, keypad, and small note/erase control symbols. Use live text for every numeral, note, timer, and record; the visual style should not require puzzle images. Provide keyboard entry and navigation, visible focus, and accessible labels that distinguish fixed clues, editable cells, notes, and conflicts. Elaborate illustration assets are unnecessary.
+
+## Mandatory single-viewport presentation
+
+Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.

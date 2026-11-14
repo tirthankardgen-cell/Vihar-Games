@@ -136,3 +136,7 @@ Use lightweight flat SVG or equivalent 2D drawing paths for the grid, X/O marks,
 - Public metadata lists only the two implemented modes and rules version `1.0.0`. The rules page and public rules JSON share the same source. The rules page is indexed; play and invite URLs are not.
 - On 9 November 2026, the user explicitly requested that Firebase/backend work remain unchanged until they provide Firebase details. The online requirements in sections 4–6 remain the future contract; current room screens are interface preparation, not an operational online service.
 - Run `npm run check` for lint, types, meaningful engine/persistence tests, and a production build. Browser verification covers the hero, setup steps, local games, handover, rematches, reload, blocked storage, keyboard input, reduced motion, and prepared room forms.
+
+## Mandatory single-viewport presentation
+
+Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.

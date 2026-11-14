@@ -105,7 +105,7 @@ The game should feel like a tidy classic desktop puzzle with modern readability.
 - Carry the charcoal, grey, teal, and small pixel accents through the overview, preset selection, rules, grid, pause, and result screens.
 - Place preset, counter, and time above the grid, with Reveal/Flag and main actions nearby.
 - Keep New Board and Restart Same Board distinctly labelled. Preserve the required unfinished-run replacement confirmation.
-- Beginner can fit a phone-width grid. For larger presets, offer a navigable 2D board viewport with pan/scroll and optional zoom while keeping controls accessible.
+- Beginner can fit a phone-width grid. For larger presets, offer a navigable 2D board viewport with pan and optional zoom inside the fixed board area while keeping controls accessible.
 - Preserve useful cell sizes and legible numbers on Expert; a narrow screen must not compress all 30 columns into tiny targets.
 - On desktop, give the grid room to expand while keeping status and input mode visible during navigation.
 
@@ -125,8 +125,12 @@ The game should feel like a tidy classic desktop puzzle with modern readability.
 - A mine hit uses a static red outline and concise result text. Keep the board stable rather than shaking or replacing it with a large explosion.
 - Reveal, chord, and terminal-state evaluation remain atomic and independent of decorative animation. A mine hit retains precedence over victory.
 - Respect reduced-motion preferences by displaying the full accepted reveal region, flags, and result immediately.
-- Keep scrolling, mode controls, pause, and keyboard navigation responsive during larger-board reveals.
+- Keep board panning, mode controls, pause, and keyboard navigation responsive during larger-board reveals.
 
 ### 7.6. Planned artwork and accessibility handoff
 
 Prepare flat cell states, flag/mine symbols, numeral styles, counter panels, focus outlines, and a small pixel-title treatment. Use an HTML grid and accessible live text for counts and status. Provide mouse, explicit touch-mode, and keyboard actions with visible focus; the retro theme must not make a right mouse button necessary. Detailed background artwork is unnecessary.
+
+## Mandatory single-viewport presentation
+
+Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.

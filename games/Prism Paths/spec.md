@@ -67,3 +67,7 @@ Original mirror/emitter/receiver symbols, hatched walls, drafting frame, labelle
 - Closed loops terminate tracing; saves cannot fabricate receiver completion.
 - All shipped layouts have one validated solution with no unused rotatable mirror.
 - Input, undo, hints, zoom, and reduced-motion tracing preserve the logical result.
+
+## Mandatory single-viewport presentation
+
+Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.

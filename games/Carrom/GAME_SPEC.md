@@ -160,3 +160,7 @@ The board uses fixed 1/180-second steps, mass-aware elastic disc contacts, dissi
 Computer difficulty limits candidate search and adds aim/power execution error after selecting a shot. It submits ordinary shots to the same simulation; it cannot assign pocket lists or alter positions. Own-coin extra turns follow the published rules for either player.
 
 The guide tracks the striker center and marks its actual radius contact with the wall or first coin. It does not forecast outcomes after a coin collision. Sliding alone never fires; pulling back adds power; release fires; returning to the striker cancels. Pointer cancellation also cancels. Local saves contain only accepted settled states, including queen status, debts and pass-and-play handover.
+
+## Mandatory single-viewport presentation
+
+Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.

@@ -130,3 +130,7 @@ The board should feel like a cheerful illustrated family game printed on warm pa
 ### 7.6. Planned artwork handoff
 
 Prepare the numbered board, the fixed-map snake and ladder illustrations, four distinguishable token symbols, six flat die faces, and a small reusable set of margin motifs. Use SVG or Canvas 2D with readable text equivalents for positions and roll outcomes. Detailed illustrations remain planned assets.
+
+## Mandatory single-viewport presentation
+
+Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.

@@ -132,3 +132,7 @@ The game should feel like a quiet, traditional pool club viewed directly from ab
 ### 7.6. Planned artwork handoff
 
 Prepare flat table/cushion/pocket paths, subtle felt texture, cue and aim indicators, solid/striped numbered ball symbols, group indicators, and simple selection outlines. Use Canvas 2D or equivalent flat graphics for gameplay, with accessible live text for controls and outcomes. These are planned assets; this specification does not claim that artwork or gameplay has already been produced.
+
+## Mandatory single-viewport presentation
+
+Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.

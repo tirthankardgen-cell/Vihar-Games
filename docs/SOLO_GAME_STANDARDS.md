@@ -2,14 +2,14 @@
 
 **Updated:** 14 November 2026  
 **Scope:** The twelve solo additions in the [complete catalog](../GAME_CATALOG.md).  
-**Current delivery:** Catalog entries and design specifications. All twelve have `availability: "planned"`, `plannedModes: ["solo"]`, `availableModes: []`, `rulesVersion: null`, and `presentation: "2d"`.
+**Current delivery:** Paperwing is playable with Standard/Practice, local saves/records, original 2D artwork, optional sound, published rules, and Vihar embedding. The other eleven additions have `availability: "planned"`, `plannedModes: ["solo"]`, `availableModes: []`, and `rulesVersion: null`. All twelve remain `presentation: "2d"`.
 
-Each new game has a lowercase `spec.md` in its own `games/` folder. Its rules and visual direction are authoritative; this document supplies shared requirements for a later implementation. Existing games retain their `GAME_SPEC.md` files.
+Each new game has a lowercase `spec.md` in its own `games/` folder. Its rules and visual direction are authoritative; this document supplies shared requirements for current and later implementations. Existing games retain their `GAME_SPEC.md` files.
 
 ## 1. Catalog and page contract
 
 - Register explicit IDs in `src/lib/catalog/registry.ts`; the homepage, overview, play/rules placeholders, launch redirect, info API, and overview sitemap entries use that allowlist.
-- Keep the new entries labelled **Coming soon**. `/play` and `/how-to-play` remain placeholders; `/rules` returns `404 RULES_NOT_AVAILABLE` until actual rules are published. Written design rules in Git do not claim a shipped engine or published rules API.
+- Keep the eleven unimplemented entries labelled **Coming soon**. Paperwing has published play/rules screens and a versioned rules API. For the other eleven additions, `/play` and `/how-to-play` remain placeholders; `/rules` returns `404 RULES_NOT_AVAILABLE` until actual rules are published. Written design rules in Git do not claim a shipped engine or published rules API.
 - All twelve games are for one local player. Pass-and-play and online player limits are `null`. There are no rooms, bots, competitive leaderboards, accounts, or gameplay API requests in these designs.
 - Future overview, setup, rules, play, pause, and results screens carry each game's own palette, motif, wording, and illustrations. Shared navigation and status placement remain familiar.
 - Catalog IDs are stable. Use `/<id>`, `/<id>/play`, `/<id>/how-to-play`, and `/api/games/<id>` on `games.vihar.online`.
@@ -22,7 +22,7 @@ Each new game has a lowercase `spec.md` in its own `games/` folder. Its rules an
 - No 3D, semi-3D, perspective transforms, raised boards, beveled pieces, or spatial card flips. Paper grain, water, rain, and stars are flat decorative graphics outside essential play information.
 - Use the existing local Hind font for body text and Yatra One for display where appropriate. Any future font needs a bundled licence. Keep numbers, clues, scores, and labels selectable/readable as live text.
 - Decorative motion never changes collisions, moves, clues, randomness, timers, or scoring. Reduced motion removes decoration while retaining necessary gameplay feedback and equivalent rules.
-- Sound is optional and muted initially. Give each game a distinct small sound palette, with visible equivalents for every meaningful cue. Asset generation and sound production are later tasks.
+- Sound is optional and muted initially. Give each game a distinct small sound palette, with visible equivalents for every meaningful cue. Artwork and sound for the unimplemented games remain later tasks; Paperwing supplies native SVG art and local synthesized sound.
 
 ## 3. Input and accessibility
 
@@ -60,6 +60,10 @@ Each new game has a lowercase `spec.md` in its own `games/` folder. Its rules an
 
 ## 7. Scope and later acceptance
 
-This delivery adds names, descriptions, categories, routes through the existing scaffold, rules, and visual handoffs. It adds no engines, custom game screens, generated artwork, playable modes, new SDK events, or dependencies.
+The original catalog phase added names, descriptions, categories, placeholder routes, rules, and visual handoffs. Paperwing is now implemented locally; the other eleven additions remain in that planning phase. Shared dependencies and SDK conventions are retained.
 
 When implementation is requested, verify each game's acceptance criteria as well as input equivalence, pause/resume, save validation, same-origin isolation, responsive legibility, and reduced motion. Gameplay checks in each `spec.md` are future requirements, not evidence that the game is currently playable.
+
+## Mandatory single-viewport presentation
+
+Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.

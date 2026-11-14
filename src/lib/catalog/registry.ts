@@ -1,6 +1,7 @@
 import { RULES_VERSION, ticTacToeModes } from "@/games/tic-tac-toe/rules";
 import { CHESS_RULES_VERSION, chessModes, computerPersona } from "@/games/chess/rules";
 import { CARROM_RULES_VERSION, carromModes } from "@/games/carrom/rules";
+import { PAPERWING_RULES_VERSION, paperwingModes } from "@/games/paperwing/rules";
 
 export type PlayMode =
   | "computer"
@@ -243,6 +244,7 @@ export const games: readonly Game[] = [
     description: "Help a paper swallow find its rhythm and fly through open sky gates.",
     symbol: "⋏",
     playersLabel: "Solo flying bird",
+    availability: "playable",
   },
   {
     ...plannedSolo,
@@ -335,11 +337,17 @@ export function getGameInfo(game: Game) {
     availability: game.availability,
     presentation: game.presentation,
     plannedModes: game.plannedModes,
-    availableModes: game.id === "chess" ? chessModes : game.id === "tic-tac-toe" ? ticTacToeModes : game.id === "carrom" ? carromModes : [],
+    availableModes: game.id === "chess" ? chessModes : game.id === "tic-tac-toe" ? ticTacToeModes : game.id === "carrom" ? carromModes : game.id === "paperwing" ? paperwingModes : [],
     playerLimits: game.playerLimits,
-    rulesVersion: game.id === "chess" ? CHESS_RULES_VERSION : game.id === "tic-tac-toe" ? RULES_VERSION : game.id === "carrom" ? CARROM_RULES_VERSION : null,
+    rulesVersion: game.id === "chess" ? CHESS_RULES_VERSION : game.id === "tic-tac-toe" ? RULES_VERSION : game.id === "carrom" ? CARROM_RULES_VERSION : game.id === "paperwing" ? PAPERWING_RULES_VERSION : null,
+    ...(game.id === "paperwing" ? { soloPresets: ["standard", "practice"] } : {}),
     ...(game.availability === "playable" ? { embedVersion: 1 } : {}),
     ...(game.id === "chess" ? { computerPersona } : {}),
     roomActions: [],
   };
+}
+
+// Stable ordering keeps the familiar order within each availability group.
+export function getCatalogGames() {
+  return [...games.filter((game) => game.availability === "playable"), ...games.filter((game) => game.availability === "planned")];
 }

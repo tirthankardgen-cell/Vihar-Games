@@ -5,20 +5,21 @@
 **Project:** Vihar Games  
 **Updated:** 14 November 2026
 **Hosting:** One Next.js application in one Vercel project.  
-**Status:** 24 catalog entries, including twelve new solo puzzle/arcade designs. Chess, Tic Tac Toe, and Carrom are `playable` in computer and pass-and-play modes; Carrom also supports practice, with their courtyard/notebook screens and published rules. Private-room screens are prepared but backend integration is deferred. The other 21 games remain `planned`; catalog/launch/info APIs serve the whole collection.
+**Status:** 24 catalog entries, including twelve new solo puzzle/arcade designs. Chess, Tic Tac Toe, and Carrom are `playable` in computer and pass-and-play modes; Carrom also supports practice. Paperwing is `playable` in solo Standard/Practice. All four have original screens and published rules, and appear first in the catalog. Private-room screens are prepared but backend integration is deferred. The other 20 games remain `planned`; catalog/launch/info APIs serve the whole collection.
 
 **Presentation:** Every game is 2D only, using flat boards, pieces, cards, dice, and planar transitions.
 
 ## Included games and endpoints
 
-All production paths below use `https://games.vihar.online`. A browser visit to a game's `GET` launch API redirects to its overview. Chess, Tic Tac Toe, and Carrom open their courtyard and notebook heroes and have implemented `/play`, `/how-to-play`, and `/rules` paths. The other 21 games retain their overview and play/rules placeholders. Every game has an implemented `/info` API.
+All production paths below use `https://games.vihar.online`. A browser visit to a game's `GET` launch API redirects to its overview. Chess, Tic Tac Toe, Carrom, and Paperwing open their own themed overviews and have implemented `/play`, `/how-to-play`, and `/rules` paths. The other 20 games retain their overview and play/rules placeholders. Every game has an implemented `/info` API.
 
 | Game specification | Game page | Launch API / API base | Solo | Pass-and-play people | Online room people |
 | --- | --- | --- | --- | --- | --- |
 | [Chess](./games/Chess/GAME_SPEC.md) | `/chess` | `/api/games/chess` | Acharya Dev: Easy / Medium / Hard | 2 | 2 |
 | [Carrom](./games/Carrom/GAME_SPEC.md) | `/carrom` | `/api/games/carrom` | Computer opponent or practice | 2 | 2 |
-| [Billiards](./games/Billiards/GAME_SPEC.md) | `/billiards` | `/api/games/billiards` | Computer opponent or practice | 2 | 2 |
 | [Tic-Tac-Toe](./games/Tic-Tac-Toe/GAME_SPEC.md) | `/tic-tac-toe` | `/api/games/tic-tac-toe` | Computer opponent | 2 | 2 |
+| [Paperwing](./games/Paperwing/spec.md) | `/paperwing` | `/api/games/paperwing` | Flying bird | — | — |
+| [Billiards](./games/Billiards/GAME_SPEC.md) | `/billiards` | `/api/games/billiards` | Computer opponent or practice | 2 | 2 |
 | [Ludo](./games/Ludo/GAME_SPEC.md) | `/ludo` | `/api/games/ludo` | 1 human + 1–3 bots | 2–4 | 2–4 |
 | [Snakes and Ladders](./games/Snakes%20and%20Ladders/GAME_SPEC.md) | `/snakes-and-ladders` | `/api/games/snakes-and-ladders` | 1 human + 1–3 bots | 2–4 | 2–4 |
 | [Connect Four](./games/Connect%20Four/GAME_SPEC.md) | `/connect-four` | `/api/games/connect-four` | Computer opponent | 2 | 2 |
@@ -30,7 +31,6 @@ All production paths below use `https://games.vihar.online`. A browser visit to 
 | [Silk Trail](./games/Silk%20Trail/spec.md) | `/silk-trail` | `/api/games/silk-trail` | Snake | — | — |
 | [Monsoon Blocks](./games/Monsoon%20Blocks/spec.md) | `/monsoon-blocks` | `/api/games/monsoon-blocks` | Falling blocks | — | — |
 | [Dune Dash](./games/Dune%20Dash/spec.md) | `/dune-dash` | `/api/games/dune-dash` | Endless runner | — | — |
-| [Paperwing](./games/Paperwing/spec.md) | `/paperwing` | `/api/games/paperwing` | Flying bird | — | — |
 | [Lantern Logic](./games/Lantern%20Logic/spec.md) | `/lantern-logic` | `/api/games/lantern-logic` | Nonogram | — | — |
 | [Mosaic Shift](./games/Mosaic%20Shift/spec.md) | `/mosaic-shift` | `/api/games/mosaic-shift` | Sliding tiles | — | — |
 | [Prism Paths](./games/Prism%20Paths/spec.md) | `/prism-paths` | `/api/games/prism-paths` | Light routing | — | — |
@@ -42,7 +42,7 @@ All production paths below use `https://games.vihar.online`. A browser visit to 
 
 Select any game from the shared homepage at `/`. The 24 entries above are the complete Vihar Games catalog for this phase. Ten retain planned multiplayer support; Sudoku, Minesweeper, and the twelve additions are exclusively solo.
 
-The mode and player columns describe the full approved designs. Chess and Tic Tac Toe metadata reports `availability: "playable"`, `availableModes: ["computer", "pass-and-play"]`, and `rulesVersion: "1.0.0"`; online modes remain planned. Carrom also reports `availability: "playable"`, `availableModes: ["computer", "practice", "pass-and-play"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. Other games report `planned` availability and no available modes or rules version. All room actions remain deferred.
+The mode and player columns describe the full approved designs. Chess and Tic Tac Toe metadata reports `availability: "playable"`, `availableModes: ["computer", "pass-and-play"]`, and `rulesVersion: "1.0.0"`; online modes remain planned. Carrom also reports `availability: "playable"`, `availableModes: ["computer", "practice", "pass-and-play"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. Paperwing reports `playable`, `availableModes: ["solo"]`, `soloPresets: ["standard", "practice"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. The other twenty games report `planned` availability and no available modes or rules version. All room actions remain deferred.
 
 ## New solo games and original styles
 
@@ -61,7 +61,7 @@ The mode and player columns describe the full approved designs. Chess and Tic Ta
 | [Rangoli Loops](./games/Rangoli%20Loops/spec.md) | Loop deduction | Chalk Threshold: dotted limestone grid and rangoli corners |
 | [Orbit Breaker](./games/Orbit%20Breaker/spec.md) | Brick breaker | Celestial Instrument: comet, chart tiles, gold paddle |
 
-Each new `spec.md` defines exact rules, controls, presets, scoring/progress, endings, local state, artwork, sound direction, and future acceptance criteria. [Shared solo standards](./docs/SOLO_GAME_STANDARDS.md) cover premium flat 2D presentation, accessibility, pause/resume, local saves, and later Quick Play integration. These twelve additions ship catalog entries and specifications; engines, artwork, and custom game interfaces remain future work. Their `/play` and `/how-to-play` pages stay **Coming soon**, and `/rules` returns `404 RULES_NOT_AVAILABLE` until actual rules are published.
+Each new `spec.md` defines exact rules, controls, presets, scoring/progress, endings, local state, artwork, sound direction, and future acceptance criteria. [Shared solo standards](./docs/SOLO_GAME_STANDARDS.md) cover premium flat 2D presentation, accessibility, pause/resume, local saves, and later Quick Play integration. Paperwing now ships its local engine, original airmail artwork, sound, saves, and game screens. The other eleven additions retain catalog entries and specifications; their implementation remains future work. The other eleven additions' `/play` and `/how-to-play` pages stay **Coming soon**, and `/rules` returns `404 RULES_NOT_AVAILABLE` until actual rules are published.
 
 ## Shared play flow
 

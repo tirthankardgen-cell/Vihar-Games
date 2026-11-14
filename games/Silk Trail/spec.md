@@ -64,3 +64,7 @@ Original snake head/segment SVGs, mulberry leaf, silk border repeat, preset mark
 - Leaves always occupy a valid empty cell; growth and score advance once per leaf.
 - A full board ends cleanly at length 400/score 397.
 - Input, pause, save restoration, and movement rate agree across keyboard, touch, resizing, and different refresh rates.
+
+## Mandatory single-viewport presentation
+
+Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.

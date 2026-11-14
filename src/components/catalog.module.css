@@ -1,0 +1,47 @@
+:global(body):has(.catalogPage) { height:100svh; height:100dvh; overflow:hidden; display:grid; grid-template-rows:76px minmax(0,1fr) 42px; }
+:global(body):has(.catalogPage) > :global(.site-header) { padding-block:12px; }
+:global(body):has(.catalogPage) > :global(.site-footer) { padding-block:8px; }
+.catalogPage { height:100%; min-height:0; width:min(1160px,calc(100% - 64px)); margin:auto; padding-block:15px 12px; display:grid; grid-template-rows:94px 58px minmax(0,1fr) 50px; gap:15px; }
+.eyebrow { font-size:9px; letter-spacing:.13em; text-transform:uppercase; color:#6b7266; }
+.intro { display:flex; align-items:center; justify-content:space-between; gap:24px; border-bottom:1px solid #dbd2bf; padding-bottom:15px; }
+.intro h1 { font-size:38px; margin:7px 0; }
+.intro > div > p:last-child { color:#62695b; font-size:14px; }
+.introArt { width:79px; height:79px; flex-shrink:0; color:#293d35; }
+.introArt svg { height:100%; width:100%; }
+.collectionHeading { min-width:0; display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.collectionHeading h2 { font-size:25px; }
+.collectionHeading p { font-size:12px; color:#62695b; margin-top:5px; }
+.collectionNote { font-size:11px; color:#62695b; text-align:right; }
+.cards { min-height:0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; grid-auto-rows:minmax(0,1fr); }
+.cards > li { min-width:0; min-height:0; }
+.card { height:100%; min-height:0; display:flex; flex-direction:column; padding:15px 18px; border:1px solid #dbd2bf; border-radius:5px; background:#fdf8ee; gap:9px; }
+.card:hover { border-color:#af6443; background:#f7edde; }
+.cardHeader { display:flex; gap:12px; align-items:center; min-width:0; }
+.symbol { width:39px; height:40px; flex-shrink:0; display:grid; place-items:center; background:#f5e6c5; border:1px solid #dbd2bf; border-radius:4px; font:27px Georgia,"Segoe UI Symbol",serif; }
+.card h3 { font-size:24px; line-height:1.15; margin-top:3px; }
+.number { margin-left:auto; color:#7a8070; font-size:10px; align-self:start; }
+.description { color:#62695b; font-size:14px; line-height:1.45; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; }
+.players { margin-top:auto; font-size:11px; color:#475443; }
+.cardBottom { display:flex; align-items:center; justify-content:space-between; padding-top:7px; border-top:1px solid #dbd2bf; }
+.badge { padding:2px 8px; border-radius:3px; border:1px solid #c9c7b4; background:#eeeddf; color:#475443; font-size:10px; }
+.card[data-availability="playable"] .badge { background:#293d35; border-color:#293d35; color:#f5e6c5; }
+.pagination { display:flex; align-items:center; justify-content:space-between; gap:16px; border-top:1px solid #dbd2bf; padding-top:9px; }
+.pagination button { border:1px solid #dbd2bf; border-radius:4px; background:#fdf8ee; color:#293d35; font:13px var(--font-hind),sans-serif; min-height:44px; padding:8px 17px; cursor:pointer; }
+.pagination button:disabled { opacity:.4; cursor:not-allowed; }
+.pagination button:focus-visible { outline:3px solid #af6443; outline-offset:3px; }
+.pagination > span { text-align:center; font-size:12px; }
+.pagination small { display:block; color:#7a8070; font-size:8px; letter-spacing:.1em; }
+@media (min-width:700px) and (max-height:719px) { .cards > li:nth-child(n+4) { display:none; } }
+@media (max-width:699px) {
+  :global(body):has(.catalogPage) { grid-template-rows:62px minmax(0,1fr) 34px; }.catalogPage { width:calc(100% - 36px); grid-template-rows:85px 58px minmax(0,1fr) 52px; gap:13px; padding-block:10px; }.intro h1 { font-size:28px; max-width:320px; }.introArt { width:54px; height:54px; }.intro > div > p:last-child { font-size:12px; }.collectionHeading h2 { font-size:24px; }.collectionNote { display:none; }.cards { grid-template-columns:repeat(2,minmax(0,1fr)); }.card { padding:15px; }.card h3 { font-size:22px; }.cardHeader { gap:10px; }.cardHeader > div { min-width:0; }.number { display:none; }
+}
+@media (min-width:560px) and (max-width:699px) and (max-height:719px) { .cards > li:nth-child(n+3) { display:none; } }
+@media (max-width:559px) { .cards { grid-template-columns:1fr; }.cards > li:nth-child(n+3) { display:none; }.intro h1 { font-size:27px; }.introArt { display:none; }.description { font-size:15px; }.card { gap:12px; padding:20px; }.card h3 { font-size:27px; }.symbol { height:47px; width:47px; font-size:32px; }.cardHeader .eyebrow { font-size:10px; }.players { font-size:12px; }.badge { font-size:11px; } }
+@media (max-width:559px) and (max-height:719px) { .cards > li:nth-child(n+2) { display:none; } }
+@media (max-height:480px) {
+  :global(body):has(.catalogPage) { grid-template-rows:48px minmax(0,1fr) 28px; }.catalogPage { grid-template-rows:42px 31px minmax(0,1fr) 46px; gap:7px; padding-block:5px; }.intro { padding-bottom:6px; }.intro h1 { font-size:24px; margin:0; }.intro .eyebrow,.intro > div > p:last-child,.introArt { display:none; }.collectionHeading h2 { font-size:18px; }.collectionHeading p { font-size:9px; margin:0; }.collectionHeading { align-items:center; }.collectionHeading > div { display:flex; gap:15px; align-items:center; }.collectionNote { display:none; }.card { gap:6px; padding:12px; }.symbol { width:31px; height:32px; font-size:22px; }.card h3 { font-size:20px; }.card .eyebrow { font-size:7px; }.cardHeader { gap:8px; }.description { font-size:11px; -webkit-line-clamp:2; }.players { font-size:9px; }.badge { font-size:9px; padding:1px 6px; }.cardBottom { padding-top:4px; }.pagination { padding-top:3px; }.pagination button { padding:6px 12px; font-size:11px; }.pagination > span { font-size:10px; }.pagination small { font-size:6px; }
+}
+@media (max-height:480px) { .card { gap:5px; padding-block:10px; }.card h3 { font-size:18px; } }
+@media (max-height:299px), (max-width:400px) and (max-height:430px) {
+  .catalogPage { overflow:auto; display:flex; flex-direction:column; }.intro,.collectionHeading,.pagination { flex-shrink:0; }.cards { flex-shrink:0; grid-auto-rows:auto; }.card { min-height:160px; }
+}

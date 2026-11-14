@@ -127,3 +127,7 @@ The game should feel like a familiar childhood board game with cheerful colours 
 ### 7.6. Planned artwork handoff
 
 Prepare a flat frame/slot treatment, two patterned disc symbols, player badges, column-preview indicators, and winning outlines. Build the board with lightweight HTML/SVG graphics and accessible live text controls. The theme needs simple reusable shapes rather than elaborate background artwork.
+
+## Mandatory single-viewport presentation
+
+Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.

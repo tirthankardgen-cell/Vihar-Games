@@ -62,3 +62,7 @@ Original fox poses/run cycle, two sandstone sets, swift bird, field-note border,
 - Generated hazards meet opening, gap, visibility, and speed rules on phone and desktop.
 - Fast movement cannot skip collision; score derives from distance once.
 - Pause/resume and save restoration freeze motion and preserve the same obstacle sequence.
+
+## Mandatory single-viewport presentation
+
+Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.

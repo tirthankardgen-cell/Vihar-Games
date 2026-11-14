@@ -108,7 +108,7 @@ The game should feel like opening a small collection of friendly picture cards. 
 - Carry the cream paper, muted illustration palette, and back pattern through the overview, difficulty setup, rules, board, pause, and results.
 - Use a friendly title with readable live text for difficulty, attempts, active time, player names, points, and turn status.
 - In solo, place attempts and active time above the cards. In multiplayer, use a compact 2–4-player row with pair totals and an active-player underline.
-- On phones, choose a grid arrangement that keeps pictures and touch targets readable. Allow vertical scrolling for larger presets while preserving card order and indices.
+- On phones, choose a grid arrangement that keeps pictures and touch targets readable. Fit larger presets into a fixed board area with zoom/pan where necessary, preserving card order and indices and keeping controls visible.
 - On wider screens, give the grid more columns and generous space; responsive rearrangement must retain each card's identity and logical position.
 - Use accessible labels such as "Card 7, face down" until a legitimate reveal makes its picture name available.
 
@@ -134,3 +134,7 @@ The game should feel like opening a small collection of friendly picture cards. 
 ### 7.6. Planned artwork handoff
 
 Prepare a consistent set of at least 15 flat illustrations, one universal card-back pattern, cream card outlines, and selection/match markers. Use lightweight SVG illustrations within accessible HTML/SVG card controls. Keep the concealed card-index-to-identity mapping private online; expose a card's identity and accessible picture name only after a legitimate reveal or match. These picture assets remain future production work.
+
+## Mandatory single-viewport presentation
+
+Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.

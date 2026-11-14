@@ -131,3 +131,7 @@ The game should feel like a traditional checkerboard printed on a neatly spread 
 ### 7.6. Planned artwork handoff
 
 Prepare the flat checkerboard, a narrow block-print border, subtle cloth texture, two counter treatments, crown symbols, and selection/capture markers. Use lightweight HTML/SVG or Canvas 2D graphics. Textile artwork is a planned accent and must not obscure the board or resemble additional counters.
+
+## Mandatory single-viewport presentation
+
+Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.

@@ -67,3 +67,7 @@ Original lantern outlines, three size motifs, tassel frame, initial abstract ste
 - Every shipped puzzle has derived clues and one verified solution.
 - Mark tools, drag undo, keyboard labels, clue alignment, and zoom preserve grid state.
 - Hints mark assistance; reload/pause preserves progress without exposing the answer.
+
+## Mandatory single-viewport presentation
+
+Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.

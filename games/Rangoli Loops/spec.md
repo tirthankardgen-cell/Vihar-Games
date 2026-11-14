@@ -68,3 +68,7 @@ Original dotted-grid/chalk styles, cross and focus marks, three corner-pattern f
 - Separate loops, endpoints, intersections, and unmet clues cannot report completion.
 - Each shipped clue layout has exactly one verified loop solution.
 - Touch edge selection, keyboard navigation, drag undo, hints, pause, and save validation preserve the graph.
+
+## Mandatory single-viewport presentation
+
+Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.

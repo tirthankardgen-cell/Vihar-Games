@@ -182,3 +182,7 @@ Run searches in a browser worker, cancel obsolete work on restart/navigation, an
 The planned portrait asset is `/art/chess/acharya-dev.svg` or an equivalently optimized flat image within Vihar Games. Keep the name in live text and show an accessible initials/name fallback while an asset is unavailable. This document defines the avatar handoff; it does not generate the portrait now.
 
 The public Chess metadata may identify the persona and supported levels. Solo moves remain browser-local; Acharya Dev never occupies a private online-room seat in this release. Verify all levels, both human sides, first-move behavior, save/resume, avatar fallback, and worker cancellation alongside the existing chess rules checks.
+
+## Mandatory single-viewport presentation
+
+Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.
