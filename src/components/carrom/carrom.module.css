@@ -337,3 +337,11 @@
   .resultCard h2 { grid-column:2; grid-row:1; font-size:20px; margin:0; }.resultCard > p:not(.eyebrow) { grid-column:1/-1; font-size:11px; line-height:1.4; }
   .resultCard .primary { grid-column:1/-1; min-height:36px; padding:8px; margin:0; font-size:12px; }
 }
+
+/* The live table keeps only a quiet brand and its two menu actions. */
+.previewPage { padding-inline:clamp(10px,2vw,24px); }
+.nav.compactNav { min-height:48px; border-color:transparent; }
+.compactNav .brandMark { width:27px; height:27px; font-size:21px; outline-offset:3px; }
+.compactNav .brand { gap:9px; }.compactNav .brand > span:last-child { font-size:18px; }.compactNav .brand small { display:none; }
+.compactNav .navActions > div button { min-height:36px; padding:7px; border-color:transparent; border-radius:50%; background:transparent; }
+@media (max-height:460px) and (orientation:landscape) { .nav.compactNav { min-height:40px; } }

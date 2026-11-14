@@ -1,7 +1,11 @@
-type IconName = "arrow" | "back" | "book" | "people" | "sun" | "room" | "check" | "target" | "reset" | "close" | "user" | "spark" | "trophy" | "lock" | "save" | "sliders" | "hand" | "cup";
+type IconName = "arrow" | "back" | "book" | "people" | "sun" | "room" | "check" | "target" | "reset" | "close" | "user" | "spark" | "trophy" | "lock" | "save" | "sliders" | "hand" | "cup" | "pause" | "play" | "more" | "crown";
 
 export function Icon({ name }: { name: IconName }) {
   const paths: Record<IconName, React.ReactNode> = {
+    pause: <><path d="M8 5v14M16 5v14" strokeWidth="3" /></>,
+    play: <path d="m8 4 12 8-12 8Z" />,
+    more: <><circle cx="5" cy="12" r="1.5" fill="currentColor" /><circle cx="12" cy="12" r="1.5" fill="currentColor" /><circle cx="19" cy="12" r="1.5" fill="currentColor" /></>,
+    crown: <><path d="m3 7 5 5 4-9 4 9 5-5-2 12H5L3 7Zm3 15h12" /><circle cx="3" cy="5" r="1" /><circle cx="21" cy="5" r="1" /></>,
     close: <path d="m6 6 12 12M6 18 18 6" />,
     arrow: <path d="M4 12h15m-6-6 6 6-6 6" />,
     back: <path d="M20 12H5m6-6-6 6 6 6" />,

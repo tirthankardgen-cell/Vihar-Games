@@ -26,7 +26,7 @@ export default function CarromPlay({ initialRoom }: { initialRoom?: string }) {
   const live = useRef<Session | null>(null);
   const mainRef = useRef<HTMLElement>(null);
   const previousScreen = useRef(screen);
-  const inRound = screen === "game" && Boolean(session && !session.match.result);
+  const inRound = screen === "game" && Boolean(session && !session.match.result && !(session.mode === "practice" && session.match.pieces.length === 0));
   const play = useViharPlay("carrom", inRound, inRound && !session?.handover && !replace);
 
   useEffect(() => {
@@ -64,7 +64,7 @@ export default function CarromPlay({ initialRoom }: { initialRoom?: string }) {
   }, [screen]);
 
   return <main ref={mainRef} id="main-content" className={`${styles.page} ${screen === "game" ? styles.previewPage : ""}`} {...(play.embedded ? { "data-vihar-embedded": true } : {})}>
-    <CarromNav embedded={play.embedded} controls={<ViharPlayControls play={play} inRound={inRound} />} />
+    {screen !== "game" && <CarromNav embedded={play.embedded} controls={<ViharPlayControls play={play} inRound={inRound} />} />}
     {screen === "choose" && <section className={`${styles.content} ${styles.choose}`} aria-labelledby="mode-title">
       <div className={styles.screenHeading}>
         <p className={styles.eyebrow}>01 <span aria-hidden="true">/</span> FIND YOUR KIND OF EVENING</p>
@@ -119,7 +119,7 @@ export default function CarromPlay({ initialRoom }: { initialRoom?: string }) {
         <div className={styles.formBottom}><button className={styles.primary} type="submit"><Coin color="striker" />Let’s play<Icon name="arrow" /></button><p><Icon name="save" />Your board saves here. Pick up where you left off.</p></div>
       </form>
     </section>}
-    {screen === "game" && session && <LocalGame key={session.id} session={session} onChange={commit} onBack={() => setScreen("choose")} onAgain={again} saved={saved} paused={play.paused} />}
+    {screen === "game" && session && <LocalGame key={session.id} session={session} onChange={commit} onBack={() => setScreen("choose")} onAgain={again} saved={saved} play={play} />}
     {replace && <Dialog title="Start a fresh board?" onClose={() => setReplace(false)}><p>This replaces your unfinished saved board. Your new settings apply to the fresh board.</p><div className={styles.dialogActions}><button className={styles.primary} onClick={start}>Start fresh</button><button className={styles.textButton} onClick={() => setReplace(false)}>Keep my saved board</button></div></Dialog>}
     <CarromFooter />
   </main>;

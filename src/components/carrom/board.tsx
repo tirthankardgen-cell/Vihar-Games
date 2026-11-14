@@ -124,6 +124,6 @@ export function Board({ match, shot, frame, orientation, locked, onAim, onShoot,
   }
   return <div className={styles.liveBoard} data-orientation={orientation}>
     <BoardArt showPieces={false} />
-    <canvas ref={canvas} className={styles.canvas} role="img" aria-label={`Carrom board. ${match.pieces.filter((p) => p.kind === "cream").length} cream and ${match.pieces.filter((p) => p.kind === "ink").length} dark coins remaining. Queen ${match.queen}. Slide the striker on your baseline, pull back to aim and power, release to strike. Keyboard controls are in Board options.`} onPointerDown={begin} onPointerMove={move} onPointerUp={release} onPointerCancel={cancel} onLostPointerCapture={cancel} />
+    <canvas ref={canvas} className={styles.canvas} role="img" aria-label={`Carrom board. ${match.pieces.filter((p) => p.kind === "cream").length} cream and ${match.pieces.filter((p) => p.kind === "ink").length} dark coins remaining. Queen ${match.queen}. Slide the striker on your baseline, pull back to aim and power, release to strike. Return to the striker to cancel.`} onPointerDown={begin} onPointerMove={move} onPointerUp={release} onPointerCancel={cancel} onLostPointerCapture={cancel} />
   </div>;
 }
