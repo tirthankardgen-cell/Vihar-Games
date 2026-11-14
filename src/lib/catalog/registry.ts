@@ -2,6 +2,7 @@ import { RULES_VERSION, ticTacToeModes } from "@/games/tic-tac-toe/rules";
 import { CHESS_RULES_VERSION, chessModes, computerPersona } from "@/games/chess/rules";
 import { CARROM_RULES_VERSION, carromModes } from "@/games/carrom/rules";
 import { PAPERWING_RULES_VERSION, paperwingModes } from "@/games/paperwing/rules";
+import { SUDOKU_RULES_VERSION, sudokuModes } from "@/games/sudoku/rules";
 
 export type PlayMode =
   | "computer"
@@ -182,7 +183,7 @@ export const games: readonly Game[] = [
     playersLabel: "Solo puzzle",
     plannedModes: ["solo"],
     playerLimits: soloLimits,
-    availability: "planned",
+    availability: "playable",
     presentation: "2d",
   },
   {
@@ -337,10 +338,11 @@ export function getGameInfo(game: Game) {
     availability: game.availability,
     presentation: game.presentation,
     plannedModes: game.plannedModes,
-    availableModes: game.id === "chess" ? chessModes : game.id === "tic-tac-toe" ? ticTacToeModes : game.id === "carrom" ? carromModes : game.id === "paperwing" ? paperwingModes : [],
+    availableModes: game.id === "chess" ? chessModes : game.id === "tic-tac-toe" ? ticTacToeModes : game.id === "carrom" ? carromModes : game.id === "paperwing" ? paperwingModes : game.id === "sudoku" ? sudokuModes : [],
     playerLimits: game.playerLimits,
-    rulesVersion: game.id === "chess" ? CHESS_RULES_VERSION : game.id === "tic-tac-toe" ? RULES_VERSION : game.id === "carrom" ? CARROM_RULES_VERSION : game.id === "paperwing" ? PAPERWING_RULES_VERSION : null,
+    rulesVersion: game.id === "chess" ? CHESS_RULES_VERSION : game.id === "tic-tac-toe" ? RULES_VERSION : game.id === "carrom" ? CARROM_RULES_VERSION : game.id === "paperwing" ? PAPERWING_RULES_VERSION : game.id === "sudoku" ? SUDOKU_RULES_VERSION : null,
     ...(game.id === "paperwing" ? { soloPresets: ["standard", "practice"] } : {}),
+    ...(game.id === "sudoku" ? { soloPresets: ["easy", "medium", "hard"] } : {}),
     ...(game.availability === "playable" ? { embedVersion: 1 } : {}),
     ...(game.id === "chess" ? { computerPersona } : {}),
     roomActions: [],

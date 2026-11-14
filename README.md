@@ -4,7 +4,7 @@
 
 **One project, twenty-four browser games, one Vercel deployment.** The homepage lists every included game. Selecting Chess opens `/chess`; selecting Carrom opens `/carrom`. The other games use their documented paths on the same domain.
 
-**Status:** Chess, Tic Tac Toe, and Carrom support computer play, pass-and-play, saved local games, and published rules. Carrom also offers practice, drag-to-strike controls, and a cushion/coin contact guide. Paperwing offers solo Standard/Practice flights, local saves and records, original airmail artwork, and published rules. Chess keeps its Indian courtyard and Acharya Dev mentor; Tic Tac Toe keeps its ruled notebook. All four integrate with Vihar's embedded player, Exit, pause and activity SDK. Private online rooms remain coming soon; the other 20 games retain their planned pages and visual specifications. Playable games appear first in the paged catalog.
+**Status:** Chess, Tic Tac Toe, and Carrom support computer play, pass-and-play, saved local games, and published rules. Carrom also offers practice, drag-to-strike controls, and a cushion/coin contact guide. Paperwing offers solo Standard/Practice flights, local saves and records, original airmail artwork, and published rules. Sudoku offers solo Easy/Medium/Hard puzzles with notes, help, local saves and labelled records. Chess keeps its Indian courtyard and Acharya Dev mentor; Tic Tac Toe keeps its ruled notebook. All five integrate with Vihar's embedded player, Exit, pause and activity SDK. Private online rooms remain coming soon; the other 19 games retain their planned pages and visual specifications. Playable games appear first in the paged catalog.
 
 **Presentation:** All twenty-four games are 2D only. Boards, pieces, cards, dice, and transitions use flat graphics; 3D, semi-3D, raised or tilted boards, and perspective effects are excluded.
 
@@ -58,6 +58,8 @@ The production dependency audit reports zero vulnerabilities. The full npm audit
 
 ## Included games
 
+Sudoku is playable at `/sudoku`, with Easy/Medium/Hard setup, 18 uniquely solvable puzzles rated by solving techniques, pencil notes, undo/redo, conflict explanations, hints/checks, and active-time pause/resume. Saves and labelled assisted/unassisted/restarted records stay on this device. Its flat Puzzle Journal screens fit one dynamic viewport; Larger grid allows internal panning on small screens. No gameplay service is required. Prepare and validate the bank offline with `node --experimental-strip-types scripts/prepare-sudoku-bank.ts`; no runtime solver or generation ships in the player.
+
 Chess, Carrom, Billiards, Tic-Tac-Toe, Ludo, Snakes and Ladders, Connect Four, Checkers, Reversi, Sudoku, Minesweeper, Memory Match, Silk Trail, Monsoon Blocks, Dune Dash, Paperwing, Lantern Logic, Mosaic Shift, Prism Paths, Crate Courtyard, Tide Turn, Pebble Solitaire, Rangoli Loops, and Orbit Breaker.
 
 The eleven unimplemented solo additions are **Coming soon** catalog entries with individual lowercase `spec.md` files. Their exact rules and original visual styles are documented. Paperwing is fully playable; the other eleven additions remain planned. The [solo design standards](./docs/SOLO_GAME_STANDARDS.md) cover their shared requirements.
@@ -76,7 +78,7 @@ No account registration, visible sign-in, or download is required. All ten multi
 
 ## Page paths and API endpoints
 
-The homepage and all overview, play, and how-to-play paths resolve. Chess, Tic Tac Toe, Carrom, and Paperwing have playable local modes and published rules; the other 20 games retain **Coming soon** pages. Catalog, launch, and `/info` APIs are implemented, along with all four playable games' `/rules` JSON. Firebase authentication, room creation, online actions, and room cleanup remain later work.
+The homepage and all overview, play, and how-to-play paths resolve. Chess, Tic Tac Toe, Carrom, Sudoku, and Paperwing have playable local modes and published rules; the other 19 games retain **Coming soon** pages. Catalog, launch, and `/info` APIs are implemented, along with all five playable games' `/rules` JSON. Firebase authentication, room creation, online actions, and room cleanup remain later work.
 
 | Purpose | Chess example | Carrom example |
 | --- | --- | --- |
@@ -156,11 +158,11 @@ Vihar Games/
     Orbit Breaker/spec.md
 ```
 
-Each `games/` folder contains its Markdown specification. Chess, Tic Tac Toe, Carrom, and Paperwing engines, workers, local persistence, rules, and tests live in their matching `src/games/` directories. Their interfaces live in matching `src/components/` directories. Other engines will follow the same module boundary. Online room helpers remain deferred. The shared allowlisted registry is `src/lib/catalog/registry.ts`.
+Each `games/` folder contains its Markdown specification. Chess, Tic Tac Toe, Carrom, Sudoku, and Paperwing engines, workers, local persistence, rules, and tests live in their matching `src/games/` directories. Their interfaces live in matching `src/components/` directories. Other engines will follow the same module boundary. Online room helpers remain deferred. The shared allowlisted registry is `src/lib/catalog/registry.ts`.
 
 Tailwind CSS 4 uses `postcss.config.mjs` and the CSS theme in `src/app/globals.css`; a separate `tailwind.config.js` is not required. Hind, Yatra One, and Tic Tac Toe's handwritten Caveat font are bundled locally from [Google Fonts](https://github.com/google/fonts), with their SIL Open Font License files beside them. Builds and visitors do not need to fetch fonts from Google.
 
-The current sitemap includes the homepage, twenty-four overview pages, and Chess/Tic Tac Toe/Carrom's published rules pages. Play URLs are `noindex`. The other 20 rules placeholders remain `noindex` until their rules are published. API responses carry `X-Robots-Tag: noindex`.
+The current sitemap includes the homepage, twenty-four overview pages, and all five playable games' published rules pages. Play URLs are `noindex`. The other 19 rules placeholders remain `noindex` until their rules are published. API responses carry `X-Robots-Tag: noindex`.
 
 ## Documents and authority
 
@@ -204,7 +206,7 @@ Chess, Carrom, and Ludo adapt the Indian courtyard artwork style inspected in Gu
 | Rangoli Loops | Chalk Threshold: dotted limestone grid and rangoli corners | [Rangoli Loops specification](./games/Rangoli%20Loops/spec.md) |
 | Orbit Breaker | Celestial Instrument: comet, chart tiles, gold paddle | [Orbit Breaker specification](./games/Orbit%20Breaker/spec.md) |
 
-All twenty-four games have an approved visual handoff in their own specifications. Each handoff covers palette, artwork, text, board/piece treatment, pages, interaction states, animation, responsive layout, accessibility, and planned asset requirements. Keep mode selection, player names, turn indicators, scores, and main actions consistently organised across the collection while using each game's theme throughout its screens. Chess's original flat SVG courtyard, pieces, and mentor portrait and Tic Tac Toe's notebook graphics are implemented, along with Carrom's courtyard and Canvas 2D board and Paperwing's airmail SVG interface; the other 20 games remain planned. The earlier 3D/semi-3D request is superseded by the latest 2D-only direction.
+All twenty-four games have an approved visual handoff in their own specifications. Each handoff covers palette, artwork, text, board/piece treatment, pages, interaction states, animation, responsive layout, accessibility, and planned asset requirements. Keep mode selection, player names, turn indicators, scores, and main actions consistently organised across the collection while using each game's theme throughout its screens. Chess's original flat SVG courtyard, pieces, and mentor portrait and Tic Tac Toe's notebook graphics are implemented, along with Carrom's courtyard and Canvas 2D board and Paperwing's airmail SVG interface and Sudoku's Puzzle Journal; the other 19 games remain planned. The earlier 3D/semi-3D request is superseded by the latest 2D-only direction.
 
 Chess solo mode offers **Easy, Medium, and Hard** against **Acharya Dev (आचार्य देव)**, Vihar's fictional Indian chess mentor. He has a dedicated flat 2D portrait and a consistent identity at all levels. The [Chess computer-opponent handoff](./games/Chess/GAME_SPEC.md#8-solo-computer-opponent--acharya-dev) defines his avatar, level behavior, and local play flow.
 

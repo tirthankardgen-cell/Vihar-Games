@@ -1,0 +1,191 @@
+// Prepared by scripts/prepare-sudoku-bank.ts; all puzzles uniquely solvable.
+import type { Difficulty, Technique } from "./solver.ts";
+export type Puzzle = { id: string; difficulty: Difficulty; clues: string; solution: string; techniques: readonly Technique[] };
+export const puzzleBank: readonly Puzzle[] = [
+  {
+    "id": "journal-easy-01",
+    "difficulty": "easy",
+    "techniques": [
+      "naked singles"
+    ],
+    "clues": "020810074138470000764000318900280140802300700403097582007508001600009035080060020",
+    "solution": "529813674138476259764952318976285143852341796413697582297538461641729835385164927"
+  },
+  {
+    "id": "journal-easy-02",
+    "difficulty": "easy",
+    "techniques": [
+      "naked singles"
+    ],
+    "clues": "050608400800470090040520603010957026700062104086143975030094208000000061508000740",
+    "solution": "952638417863471592147529683314957826795862134286143975631794258479285361528316749"
+  },
+  {
+    "id": "journal-easy-03",
+    "difficulty": "easy",
+    "techniques": [
+      "naked singles"
+    ],
+    "clues": "500300290143092007006050013090475100004030960000869074070023605000140029209586700",
+    "solution": "587314296143692857926758413698475132754231968312869574471923685865147329239586741"
+  },
+  {
+    "id": "journal-easy-04",
+    "difficulty": "easy",
+    "techniques": [
+      "naked singles"
+    ],
+    "clues": "302010800070400032084239000030000500018045327409023100903072080720580403060094071",
+    "solution": "392617854176458932584239716237861549618945327459723168943172685721586493865394271"
+  },
+  {
+    "id": "journal-easy-05",
+    "difficulty": "easy",
+    "techniques": [
+      "naked singles"
+    ],
+    "clues": "095070400207000900846300107529000304604002871000643059008405792000180500400927600",
+    "solution": "395271486217864935846359127529718364634592871781643259168435792972186543453927618"
+  },
+  {
+    "id": "journal-easy-06",
+    "difficulty": "easy",
+    "techniques": [
+      "naked singles"
+    ],
+    "clues": "600008050108700206009030041074265300200803009003974560386090020091007083520380090",
+    "solution": "632148957148759236759632841974265318265813479813974562386491725491527683527386194"
+  },
+  {
+    "id": "journal-hard-01",
+    "difficulty": "hard",
+    "techniques": [
+      "naked singles",
+      "hidden singles",
+      "locked candidates",
+      "naked pairs"
+    ],
+    "clues": "010040200309072800070600040067030000900004060204000039005100020000085600000400007",
+    "solution": "618349275349572816572618943867931452931254768254867139785196324423785691196423587"
+  },
+  {
+    "id": "journal-hard-02",
+    "difficulty": "hard",
+    "techniques": [
+      "hidden singles",
+      "locked candidates",
+      "naked pairs",
+      "naked singles"
+    ],
+    "clues": "310400009070000030009381000900070020040000090006003000000050960720000800000040005",
+    "solution": "318427659472596138569381742931874526847265391256913487184752963725639814693148275"
+  },
+  {
+    "id": "journal-hard-03",
+    "difficulty": "hard",
+    "techniques": [
+      "hidden singles",
+      "naked singles",
+      "locked candidates",
+      "naked pairs"
+    ],
+    "clues": "000317000000000700000000859041000000000005060300000008709040000410006000020000301",
+    "solution": "598317426264958713137624859641892537982735164375461298759143682413286975826579341"
+  },
+  {
+    "id": "journal-hard-04",
+    "difficulty": "hard",
+    "techniques": [
+      "naked singles",
+      "hidden singles",
+      "locked candidates",
+      "naked pairs"
+    ],
+    "clues": "000000008000754200003010000000200000000048000010000690005600704000470950001000000",
+    "solution": "574923168186754239293816547357269481629148375418537692935682714862471953741395826"
+  },
+  {
+    "id": "journal-hard-05",
+    "difficulty": "hard",
+    "techniques": [
+      "naked singles",
+      "hidden singles",
+      "locked candidates",
+      "naked pairs"
+    ],
+    "clues": "060000400802600005000082010095000000013965000720000000150800002004010800007000060",
+    "solution": "361759428842631795579482613695278134413965287728143956156897342234516879987324561"
+  },
+  {
+    "id": "journal-hard-06",
+    "difficulty": "hard",
+    "techniques": [
+      "naked singles",
+      "hidden singles",
+      "locked candidates",
+      "naked pairs"
+    ],
+    "clues": "400000000000740080903002004000000032079003000030456070000000800048230016015000003",
+    "solution": "457398621126745389983612754564987132879123465231456978392561847748239516615874293"
+  },
+  {
+    "id": "journal-medium-01",
+    "difficulty": "medium",
+    "techniques": [
+      "hidden singles",
+      "naked singles"
+    ],
+    "clues": "098052300043000001000640000400027035500400000907030600210000000000000560005804010",
+    "solution": "798152346643798251152643897486927135531486729927531684219365478874219563365874912"
+  },
+  {
+    "id": "journal-medium-02",
+    "difficulty": "medium",
+    "techniques": [
+      "naked singles",
+      "hidden singles"
+    ],
+    "clues": "000000002500040890896200000000003079304006001670002050900800020060504007020000000",
+    "solution": "743698512512347896896215743281453679354976281679182354937861425168524937425739168"
+  },
+  {
+    "id": "journal-medium-03",
+    "difficulty": "medium",
+    "techniques": [
+      "naked singles",
+      "hidden singles"
+    ],
+    "clues": "567004030400900570200670410070106020000320057030709600050467000020000764040080300",
+    "solution": "567814239481932576293675418975146823614328957832759641359467182128593764746281395"
+  },
+  {
+    "id": "journal-medium-04",
+    "difficulty": "medium",
+    "techniques": [
+      "naked singles",
+      "hidden singles"
+    ],
+    "clues": "004208000080590013000010200809000000000700085320000000006307029400000050000000307",
+    "solution": "134278596782596413965413278859164732641732985327985164516347829473829651298651347"
+  },
+  {
+    "id": "journal-medium-05",
+    "difficulty": "medium",
+    "techniques": [
+      "naked singles",
+      "hidden singles"
+    ],
+    "clues": "061000050002950800300000000000000600004006081050000942087090163500060270106000594",
+    "solution": "861724359472953816395618427718249635924536781653187942287495163549361278136872594"
+  },
+  {
+    "id": "journal-medium-06",
+    "difficulty": "medium",
+    "techniques": [
+      "naked singles",
+      "hidden singles"
+    ],
+    "clues": "270030489150080060940060500820050040004000150610300008761003804500000610402716000",
+    "solution": "276135489153984762948267531827651943394872156615349278761593824539428617482716395"
+  }
+];

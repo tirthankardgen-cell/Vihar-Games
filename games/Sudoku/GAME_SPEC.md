@@ -6,7 +6,7 @@
 
 # Sudoku — Game specification
 
-**Status:** Documentation for a planned Vihar Games module; implementation has not started.  
+**Status:** Playable local release: Easy/Medium/Hard, 18 validated puzzles, Puzzle Journal screens, notes, undo/redo, hints/checks, pause, local saves/records, and Vihar embedding.
 **Platform:** Browser on mobile, tablet, and desktop.  
 **Access:** No account, visible sign-in, or download.  
 **Players:** One.  

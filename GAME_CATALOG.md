@@ -5,13 +5,13 @@
 **Project:** Vihar Games  
 **Updated:** 14 November 2026
 **Hosting:** One Next.js application in one Vercel project.  
-**Status:** 24 catalog entries, including twelve new solo puzzle/arcade designs. Chess, Tic Tac Toe, and Carrom are `playable` in computer and pass-and-play modes; Carrom also supports practice. Paperwing is `playable` in solo Standard/Practice. All four have original screens and published rules, and appear first in the catalog. Private-room screens are prepared but backend integration is deferred. The other 20 games remain `planned`; catalog/launch/info APIs serve the whole collection.
+**Status:** 24 catalog entries, including twelve new solo puzzle/arcade designs. Chess, Tic Tac Toe, and Carrom are `playable` in computer and pass-and-play modes; Carrom also supports practice. Paperwing is `playable` in solo Standard/Practice. Sudoku is `playable` in solo Easy/Medium/Hard. All five have original screens and published rules, and appear first in the catalog. Private-room screens are prepared but backend integration is deferred. The other 19 games remain `planned`; catalog/launch/info APIs serve the whole collection.
 
 **Presentation:** Every game is 2D only, using flat boards, pieces, cards, dice, and planar transitions.
 
 ## Included games and endpoints
 
-All production paths below use `https://games.vihar.online`. A browser visit to a game's `GET` launch API redirects to its overview. Chess, Tic Tac Toe, Carrom, and Paperwing open their own themed overviews and have implemented `/play`, `/how-to-play`, and `/rules` paths. The other 20 games retain their overview and play/rules placeholders. Every game has an implemented `/info` API.
+All production paths below use `https://games.vihar.online`. A browser visit to a game's `GET` launch API redirects to its overview. Chess, Tic Tac Toe, Carrom, Sudoku, and Paperwing open their own themed overviews and have implemented `/play`, `/how-to-play`, and `/rules` paths. The other 19 games retain their overview and play/rules placeholders. Every game has an implemented `/info` API.
 
 | Game specification | Game page | Launch API / API base | Solo | Pass-and-play people | Online room people |
 | --- | --- | --- | --- | --- | --- |
@@ -42,7 +42,7 @@ All production paths below use `https://games.vihar.online`. A browser visit to 
 
 Select any game from the shared homepage at `/`. The 24 entries above are the complete Vihar Games catalog for this phase. Ten retain planned multiplayer support; Sudoku, Minesweeper, and the twelve additions are exclusively solo.
 
-The mode and player columns describe the full approved designs. Chess and Tic Tac Toe metadata reports `availability: "playable"`, `availableModes: ["computer", "pass-and-play"]`, and `rulesVersion: "1.0.0"`; online modes remain planned. Carrom also reports `availability: "playable"`, `availableModes: ["computer", "practice", "pass-and-play"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. Paperwing reports `playable`, `availableModes: ["solo"]`, `soloPresets: ["standard", "practice"]`, `rulesVersion: "2.0.0"`, and `embedVersion: 1`. The other twenty games report `planned` availability and no available modes or rules version. All room actions remain deferred.
+The mode and player columns describe the full approved designs. Chess and Tic Tac Toe metadata reports `availability: "playable"`, `availableModes: ["computer", "pass-and-play"]`, and `rulesVersion: "1.0.0"`; online modes remain planned. Carrom also reports `availability: "playable"`, `availableModes: ["computer", "practice", "pass-and-play"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. Paperwing reports `playable`, `availableModes: ["solo"]`, `soloPresets: ["standard", "practice"]`, `rulesVersion: "2.0.0"`, and `embedVersion: 1`. The other nineteen games report `planned` availability and no available modes or rules version. All room actions remain deferred.
 
 ## New solo games and original styles
 
@@ -89,6 +89,8 @@ Accounts, email addresses, passwords, visible sign-in, and downloads are not req
 - Chess retains local solo play against Acharya Dev (आचार्य देव), a fictional Indian chess mentor with his own 2D avatar and selectable Easy, Medium, or Hard difficulty. His identity is distinct from human multiplayer seats.
 
 ## Planning documents
+
+Sudoku now reports `availability: "playable"`, `availableModes: ["solo"]`, `soloPresets: ["easy", "medium", "hard"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. Its journal screens and public rules are implemented; gameplay and personal records remain local.
 
 - [Project overview and document map](./README.md)
 - [Project architecture, room lifecycle, and implementation boundaries](./docs/PROJECT_SPEC.md)
