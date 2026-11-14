@@ -2,7 +2,7 @@
 
 **Status:** Playable local release; Standard and Practice, saves, personal records, published rules, and Vihar Quick Play integration.
 
-**Updated:** 14 November 2026  
+**Updated:** 15 November 2026
 **Game ID:** `paperwing` · **Category:** Arcade · **Players:** One  
 **Page:** `/paperwing` · **API base:** `/api/games/paperwing`  
 **Style:** Airmail Atelier · **Inspiration:** One-button flying bird
@@ -53,8 +53,9 @@ Target session: 20 seconds–3 minutes. One local player, one continuous run, on
 - Overview is an open airmail card. Play starts immediately; mode selection is available by clicking Paperwing and offers two stamp-shaped choices with a single Start flight action. The full-width game shows only Paperwing, points, and high score as visible text, with accessible icons for Pause, Resume, Retry, and embedded Exit. The three-count resume countdown is the only temporary numeric overlay. No fresh-flight dialog or large modal appears.
 - Shutters use muted blue slats, gold opening edges and small motion chevrons. Wax seals are original coral medallions with navy boundaries and a cream folded-envelope mark. Draw both using their actual collision geometry; decorative motion must not change collision timing.
 - Flapping uses two planar wing poses and a limited angle change within the flat drawing. No camera shake, full-screen flash, or debris on collision. Reduced motion removes cloud drift and postmark drawing.
-- On phones and wide screens, the sky fills all available space below the header. There is no instruction side panel, footer, visible sound/rules link, Flap button row, postcard frame, or wording printed inside the field. Rules remain available from the overview and dedicated rules page; sound preferences remain in mode selection.
-- Optional sound: one soft paper flick per flap and a muted bell per passed gate, with visual score feedback.
+- On phones and wide screens, the sky fills all available space below the header. There is no instruction side panel, footer, visible sound/rules link, Flap button row, postcard frame, or wording printed inside the field. Rules remain available from the overview and dedicated rules page; sound preferences are available in mode selection and through the gameplay speaker icon.
+- Optional audio: an original eight-bar instrumental waltz at 96 BPM, with soft stereo plucks, held chords, and bass. A paper flick marks each flap, a rising two-note bell marks a passed gate, and a short descending chime marks landing. The compact speaker icon controls music and effects together and retains the preference locally. Fresh visits are muted; saved enabled audio unlocks on the first gameplay gesture, following browser autoplay rules.
+- Music plays only during active flight. Pause, countdown, lost focus, hidden tabs, menus, and host pause stop it. Resume continues its musical position; a fresh flight or replay resets the tune. Mute stops both music and effects immediately. Exit silences all sources; navigation disposes sources and the audio context. Audio rendering runs separately from the flight clock, with no music timers driving gameplay.
 
 ## 6. State and shared requirements
 
@@ -64,7 +65,7 @@ Rules `2.0.0` derive obstacle types, shutter phase and current speed from gate I
 
 ## 7. Implemented artwork and sound
 
-Original flat SVG folded-swallow poses, postal panels, moving slatted shutters, wax seals, mode stamps, cloud print and cover postcard are implemented in `src/components/paperwing/art.tsx`. Optional paper-flick and gate-bell sounds are synthesized locally with Web Audio in `audio.ts`. Sound is off on a fresh visit. No borrowed sprite or remote asset is required.
+Original flat SVG folded-swallow poses, postal panels, moving slatted shutters, wax seals, mode stamps, cloud print and cover postcard are implemented in `src/components/paperwing/art.tsx`. The original waltz and flap, score, and landing sounds are synthesized locally with Web Audio in `audio.ts`. Offline rendering prepares one reusable stereo loop without blocking simulation; native audio playback loops it without application timers. Sound is off on a fresh visit. No borrowed sprite, licensed recording, or remote asset is required.
 
 ## 8. Release acceptance criteria
 
@@ -75,6 +76,7 @@ Original flat SVG folded-swallow poses, postal panels, moving slatted shutters, 
 - Speed rises smoothly at ten seconds and reaches its cap at sixty, without position jumps. Pausing freezes speed progression and moving shutters.
 - Shutter and seal collisions use their true moving/round shapes. Wide-screen previews match the upcoming generated obstacles without advancing the saved generator.
 - Fresh navigation, Start flight, and Retry require no confirmation or second Start action. Current saved flights restore paused; previous high scores survive the rules upgrade.
+- Music and effects become audible after enabling audio and a browser gesture. Mute/pause/host visibility/navigation stop the appropriate sources; retries never stack loops. Both modes retain their audio preference, Space controls, and viewport layout. Browsers without audio support continue gameplay quietly.
 
 ## Mandatory single-viewport presentation
 
