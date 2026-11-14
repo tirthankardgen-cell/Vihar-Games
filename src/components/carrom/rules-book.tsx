@@ -12,7 +12,7 @@ const pages = carromRules.flatMap((chapter, chapterIndex) => chapter.items.flatM
   const passages: string[] = [];
   for (const word of text.split(" ")) {
     const last = passages.length - 1;
-    if (last < 0 || passages[last].length + word.length + 1 > 230) passages.push(word);
+    if (last < 0 || passages[last].length + word.length + 1 > 195) passages.push(word);
     else passages[last] += ` ${word}`;
   }
   return passages.map((passage) => ({ title: chapter.title, text: passage, chapterIndex }));

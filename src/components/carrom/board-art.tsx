@@ -1,5 +1,5 @@
 import styles from "./carrom.module.css";
-import { pockets, pocketRadius } from "@/games/carrom/geometry";
+import { boardEdge, boardFarEdge, pockets, pocketRadius } from "@/games/carrom/geometry";
 
 export function Coin({ color = "cream" }: { color?: "cream" | "ink" | "queen" | "striker" }) {
   const fill = { cream: "#fff1ce", ink: "#293d35", queen: "#a83538", striker: "#dfb36d" }[color];
@@ -19,7 +19,7 @@ export function BoardArt({ position = 0, angle = 0, power = 50, aiming = false, 
     <rect x="2" y="2" width="596" height="596" rx="11" fill="#804528" stroke="#b97845" strokeWidth="3" />
     <rect x="8" y="8" width="584" height="584" rx="7" fill="none" stroke="#ba7742" strokeWidth="1.5" />
     <rect x="23" y="23" width="554" height="554" rx="25" fill="#533a29" stroke="#c28650" strokeWidth="2" />
-    <rect x="29" y="29" width="542" height="542" rx="23" fill="#eac795" />
+    <rect x={boardEdge} y={boardEdge} width={boardFarEdge - boardEdge} height={boardFarEdge - boardEdge} rx={pocketRadius} fill="#eac795" />
     <g fill="none" stroke="#a06c40" strokeWidth=".6" opacity=".12">{Array.from({ length: 65 }, (_, i) => <path key={i} d={`M55 ${40 + i * 8}q100 -4 240 0t250 0`} />)}</g>
     <g fill="none" stroke="#ecbd79" strokeWidth=".6" opacity=".26">{[0, 90, 180, 270].map((r) => <g key={r} transform={`rotate(${r} 300 300)`}><path d="M20 13Q200 6 580 15M40 18Q300 25 560 18M100 10Q200 15 420 10" /><path d="m4 4 25 25m542 0 25-25" stroke="#3f2c20" /></g>)}</g>
     {[0, 90, 180, 270].map((rotation) => <g key={rotation} transform={`rotate(${rotation} 300 300)`} fill="none" stroke="#5b4935" strokeWidth="1.8">

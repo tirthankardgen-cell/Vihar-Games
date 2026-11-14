@@ -37,7 +37,7 @@ export function RaviPortrait({ mood = "welcome" }: { mood?: Mood }) {
 
 export function Opponent({ remark, difficulty, paused = false }: { remark: Remark; difficulty: string; paused?: boolean }) {
   return <div className={styles.opponentPanel} data-paused={paused}>
-    <div className={styles.opponentIdentity}><div className={styles.opponentAvatar}><RaviPortrait mood={remark.mood} /></div><div><strong>{opponentName}</strong><span>Courtyard regular <i>·</i> {difficulty}</span><small><span className={styles.presenceDot} />Computer opponent</small></div><span className={styles.opponentMotif} aria-hidden="true">✦</span></div>
+    <div className={styles.opponentIdentity}><div className={styles.opponentAvatar}><RaviPortrait mood={remark.mood} /></div><div><strong>{opponentName}</strong><span>Veranda regular <i>·</i> {difficulty}</span><small><span className={styles.presenceDot} />Computer opponent</small></div><span className={styles.opponentMotif} aria-hidden="true">✦</span></div>
     <p key={remark.text} className={styles.opponentQuote} aria-live="polite">“{remark.text}”</p>
   </div>;
 }

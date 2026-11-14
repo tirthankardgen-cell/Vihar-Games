@@ -1,6 +1,6 @@
 import { coinRadius, strikerPosition, strikerRadius, type Match, type Shot } from "./engine.ts";
 import { pocketCaptureRadius } from "./physics.ts";
-import { pockets as openings } from "./geometry.ts";
+import { boardEdge, boardFarEdge, pockets as openings } from "./geometry.ts";
 
 type Point = { x: number; y: number };
 export type GuidePoint = Point & { contact?: Point };
@@ -13,7 +13,7 @@ export function aimGuide(match: Match, shot: Shot): GuidePoint[] {
   const direction = match.turn === "cream" ? 1 : -1, angle = shot.angle * Math.PI / 180;
   let dx = Math.sin(angle) * direction, dy = -Math.cos(angle) * direction;
   let distance = (100 + shot.power * 7.5) ** 2 / 350;
-  const points: GuidePoint[] = [{ ...point }], low = 29 + strikerRadius, high = 571 - strikerRadius;
+  const points: GuidePoint[] = [{ ...point }], low = boardEdge + strikerRadius, high = boardFarEdge - strikerRadius;
   const intersection = (center: Point, r: number) => {
     const x = point.x - center.x, y = point.y - center.y, b = x * dx + y * dy;
     const discriminant = b * b - (x * x + y * y - r * r);
@@ -34,7 +34,7 @@ export function aimGuide(match: Match, shot: Shot): GuidePoint[] {
       const length = Math.hypot(coinHit.coin.x - point.x, coinHit.coin.y - point.y);
       contact = { x: point.x + (coinHit.coin.x - point.x) / length * strikerRadius, y: point.y + (coinHit.coin.y - point.y) / length * strikerRadius };
     } else if (travel === tx || travel === ty) {
-      contact = { x: travel === tx ? dx > 0 ? 571 : 29 : point.x, y: travel === ty ? dy > 0 ? 571 : 29 : point.y };
+      contact = { x: travel === tx ? dx > 0 ? boardFarEdge : boardEdge : point.x, y: travel === ty ? dy > 0 ? boardFarEdge : boardEdge : point.y };
     }
     points.push({ ...point, ...(contact ? { contact } : {}) });
     if (travel === hit || travel === distance) break;

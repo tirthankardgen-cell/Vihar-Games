@@ -1,5 +1,5 @@
 import { radius, strikerPosition, validateShot, type Match, type Outcome, type Piece, type Shot } from "./engine.ts";
-import { pockets, pocketRadius } from "./geometry.ts";
+import { boardEdge, boardFarEdge, pockets, pocketRadius } from "./geometry.ts";
 
 export type Frame = { id: string; x: number; y: number }[];
 export type Simulation = { outcome: Outcome; frames: Frame[]; duration: number };
@@ -25,10 +25,10 @@ export function simulate(match: Match, shot: Shot, record = true): Simulation {
       body.x += body.vx * DT; body.y += body.vy * DT;
       const r = radius(body);
       if (pockets.some(([x, y]) => Math.hypot(body.x - x, body.y - y) < pocketCaptureRadius(r))) { body.alive = false; pocketed.push(body.id); continue; }
-      if (body.x < 29 + r) { body.x = 29 + r; body.vx = Math.abs(body.vx) * .86; }
-      if (body.x > 571 - r) { body.x = 571 - r; body.vx = -Math.abs(body.vx) * .86; }
-      if (body.y < 29 + r) { body.y = 29 + r; body.vy = Math.abs(body.vy) * .86; }
-      if (body.y > 571 - r) { body.y = 571 - r; body.vy = -Math.abs(body.vy) * .86; }
+      if (body.x < boardEdge + r) { body.x = boardEdge + r; body.vx = Math.abs(body.vx) * .86; }
+      if (body.x > boardFarEdge - r) { body.x = boardFarEdge - r; body.vx = -Math.abs(body.vx) * .86; }
+      if (body.y < boardEdge + r) { body.y = boardEdge + r; body.vy = Math.abs(body.vy) * .86; }
+      if (body.y > boardFarEdge - r) { body.y = boardFarEdge - r; body.vy = -Math.abs(body.vy) * .86; }
     }
     // Multiple contact passes separate a tightly packed starting arrangement.
     for (let pass = 0; pass < 3; pass++) for (let i = 0; i < bodies.length; i++) for (let j = i + 1; j < bodies.length; j++) {
@@ -60,7 +60,7 @@ export function simulate(match: Match, shot: Shot, record = true): Simulation {
   // tiny offsets without changing any pocket event or consuming another turn.
   for (let pass = 0; pass < 60; pass++) {
     let overlap = false;
-    for (const body of bodies) if (body.alive) { const r = radius(body); body.x = Math.max(29 + r, Math.min(571 - r, body.x)); body.y = Math.max(29 + r, Math.min(571 - r, body.y)); }
+    for (const body of bodies) if (body.alive) { const r = radius(body); body.x = Math.max(boardEdge + r, Math.min(boardFarEdge - r, body.x)); body.y = Math.max(boardEdge + r, Math.min(boardFarEdge - r, body.y)); }
     for (let i = 0; i < bodies.length; i++) for (let j = i + 1; j < bodies.length; j++) {
       const a = bodies[i], b = bodies[j]; if (!a.alive || !b.alive) continue;
       const distance = Math.hypot(b.x - a.x, b.y - a.y), contact = radius(a) + radius(b);

@@ -74,7 +74,8 @@
 .cardTop { display:flex; align-items:center; gap:10px; }.cardNumber { font-size:10px; opacity:.65; padding-right:10px; border-right:1px solid currentColor; }.cardKicker { font-size:8px; letter-spacing:.11em; opacity:.75; }
 .cardArt { display:flex; align-items:center; }.cardArt > svg { width:49px; height:49px; stroke-width:1.1; }
 .computerCard .cardArt { position:absolute; right:20px; top:46px; width:101px; height:110px; }.computerCard .cardArt > svg { width:100%; height:100%; }
-.computerCard::before { content:"✦"; position:absolute; top:70px; left:27px; color:#dec086; font-size:28px; }
+.computerCard::before { content:""; position:absolute; top:72px; left:29px; width:24px; height:24px; border:1px solid #dec086; border-radius:50%; }
+.computerCard .cardCopy { grid-row:3; }.computerCard .cardFoot { grid-row:4; }
 .cardCopy { display:flex; flex-direction:column; gap:8px; }.cardCopy strong { font:27px var(--font-yatra),serif; line-height:1.2; }.cardCopy > span { font-size:13px; line-height:1.55; opacity:.8; }
 .cardFoot { display:flex; align-items:center; justify-content:space-between; gap:8px; padding-top:13px; border-top:1px solid #36554826; font-size:12px; }.computerCard .cardFoot { border-color:#ddc18b35; }.cardFoot > svg { width:17px; height:17px; transition:transform 180ms; }.modeCard:hover .cardFoot > svg { transform:translateX(4px); }
 .onlineCard { grid-column:1/-1; display:flex; align-items:center; gap:16px; padding:13px 20px; border:1px dashed #b6b79840; border-radius:11px; background:#173a39c9; color:#d7cdb6; cursor:default; }
@@ -84,7 +85,7 @@
 .resume { width:min(660px,100%); align-self:center; display:flex; align-items:center; justify-content:space-between; gap:20px; padding-inline:4px; font-size:12px; flex-shrink:0; }.resume > span { display:flex; align-items:center; gap:11px; min-width:0; }.resume > span > svg { width:17px; height:17px; color:#bdb696; flex-shrink:0; }.resume small { display:block; color:#b7bca5; font-size:10px; overflow-wrap:anywhere; }.resume .textButton { flex-shrink:0; color:#edd09c; }
 .screenNote { color:#bbb79d; text-align:center; font-size:11px; flex-shrink:0; }
 
-/* Form rows remain in flow; the screen scrolls before content can overlap. */
+/* Compact form rows remain in flow at every breakpoint. */
 .setup { display:grid; grid-template-columns:1fr 1fr; align-items:safe center; gap:clamp(35px,6vw,88px); }
 .setupIntro { min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:25px; }.setupIntro > .textButton { color:#dfcca7; }
 .setupIntro > div > h1 { margin:13px 0; font-size:clamp(31px,3.8vw,50px); line-height:1.25; white-space:pre-line; }
@@ -112,7 +113,7 @@
 
 /* Board, companion and shot controls. */
 .previewPage { grid-template-rows:auto minmax(0,1fr); }.previewPage > .footer { display:none; }
-.boardPreview { display:grid; grid-template-columns:minmax(0,1fr) minmax(270px,330px); align-items:safe center; gap:clamp(22px,4vw,65px); width:min(1200px,100%); margin:auto; height:100%; min-height:0; padding:16px 4px; overflow:auto; scrollbar-width:thin; }
+.boardPreview { display:grid; grid-template-columns:minmax(0,1fr) minmax(270px,330px); grid-template-rows:minmax(0,1fr); align-items:safe center; gap:clamp(22px,4vw,65px); width:min(1200px,100%); margin:auto; height:100%; min-height:0; padding:16px 4px; overflow:auto; scrollbar-width:thin; }
 .boardColumn { min-width:0; width:min(100%,calc(100dvh - 208px)); justify-self:center; }
 .liveBoard { position:relative; width:100%; aspect-ratio:1; }.liveBoard[data-orientation="ink"] { transform:rotate(180deg); }
 .canvas { position:absolute; inset:0; width:100%; height:100%; touch-action:none; cursor:grab; }.canvas:active { cursor:grabbing; }
@@ -185,6 +186,7 @@
   .heroBoard { width:min(57vw,27dvh); flex-shrink:0; }.boardCaption,.boardSeal { display:none; }.heroBoard figcaption { font-size:6px; gap:8px; margin-top:11px; letter-spacing:.12em; white-space:nowrap; }
   .choose { gap:16px; }.screenHeading h1 { font-size:29px; max-width:310px; margin:9px auto; }.screenHeading > p:last-child { font-size:12px; }.screenHeading .eyebrow { font-size:8px; letter-spacing:.12em; }
   .modeGrid { grid-template-columns:1fr 1fr; gap:11px; }.modeCard { padding:16px 15px 12px; gap:11px; grid-template-rows:auto 39px 1fr auto; border-radius:11px; }.computerCard { grid-column:1/-1; grid-template-rows:auto 1fr auto; padding-right:126px; min-height:171px; }.computerCard .cardArt { right:18px; top:24px; width:93px; height:117px; }.computerCard::before { display:none; }.computerCard .cardFoot { grid-column:1; }
+  .computerCard .cardCopy { grid-row:2; }.computerCard .cardFoot { grid-row:3; }
   .cardArt > svg { width:34px; height:34px; }.cardTop { gap:6px; }.cardNumber { padding-right:6px; font-size:8px; }.cardKicker { font-size:6px; letter-spacing:.07em; }.cardCopy { gap:5px; }.cardCopy strong { font-size:23px; }.cardCopy > span { font-size:11px; }.cardFoot { padding-top:9px; font-size:10px; }
   .onlineCard { padding:12px 13px; gap:11px; flex-wrap:wrap; }.onlineIcon { width:31px; height:31px; border:0; }.onlineCard strong { font-size:13px; }.onlineCard p { font-size:10px; }.comingSoon { font-size:8px; padding:4px 7px 2px; gap:4px; }.comingSoon svg { width:10px; height:10px; }.onlineCard > div { flex-basis:105px; }
   .resume { gap:10px; font-size:11px; }.resume .textButton { font-size:11px; }.screenNote { font-size:10px; }
@@ -215,4 +217,123 @@
 @media (prefers-reduced-motion:reduce) {
   .shell *,.shell *::before,.shell *::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; }
   .resultConfetti,.pocketPulse { display:none; }
+}
+
+/* Fit each screen to the available viewport; essential controls stay in view. */
+.content,.hero,.boardPreview { overflow:clip; scrollbar-width:none; }
+.hero { height:100%; padding-block:14px; }
+.hero h1 { font-size:clamp(82px,min(11.5vw,20dvh),176px); line-height:1.23; margin:0 0 -8px; }
+.englishTitle { margin-bottom:clamp(12px,2.5dvh,24px); }
+.heroActions { margin-top:clamp(14px,2.5dvh,24px); }
+.heroBoard { max-width:min(460px,calc(100dvh - 220px)); }
+@media (min-width:701px) and (max-height:800px) { .emblem { display:none; }.heroEyebrow { margin-bottom:6px; } }
+@media (min-width:701px) and (max-height:700px) {
+  .content { padding-block:15px; }.choose { gap:14px; }.screenHeading h1 { font-size:33px; margin-block:8px; }.screenHeading > p:last-child { font-size:13px; }
+  .modeCard { grid-template-rows:auto 36px 1fr auto; gap:9px; padding:16px 20px 13px; }.computerCard .cardArt { top:34px; height:84px; width:78px; }.computerCard::before { top:59px; }.cardCopy strong { font-size:25px; }.cardCopy > span { font-size:12px; }.onlineCard { padding-block:10px; }
+  .paper { gap:14px; padding:20px 25px 16px; }.choice { min-height:72px; }.coinChoices .choice { min-height:61px; }.setupIntro { gap:17px; }
+}
+@media (max-width:700px) and (orientation:portrait) {
+  .content { padding-block:13px; }.hero { padding-block:12px; gap:12px; }.hero h1 { font-size:clamp(82px,min(25vw,14dvh),120px); }.heroBoard { width:min(42vw,22dvh); max-width:none; }.englishTitle { margin-bottom:12px; }.heroActions { margin-top:14px; }.heroDescription { margin-top:8px; }.previewNote { margin-top:11px; }
+  .choose { gap:11px; }.modeCard { gap:8px; padding:13px; grid-template-rows:auto 30px 1fr auto; }.computerCard { grid-template-rows:auto 1fr auto; min-height:133px; padding-right:112px; }.computerCard .cardArt { top:19px; width:82px; height:99px; }.cardCopy strong { font-size:22px; }.cardCopy > span { font-size:10px; }.onlineCard { padding-block:9px; }.resume .textButton { min-height:34px; }
+  .setup { gap:12px; }.setupIntro { gap:5px; }.setupIntro > div > h1 { font-size:27px; margin-block:7px; }.setupIntro .intro { display:none; }.paper { padding:19px 20px 16px; gap:13px; }.choice { min-height:67px; }.coinChoices .choice { min-height:58px; }
+  .boardPreview { justify-content:center; padding-block:7px; gap:6px; }.boardColumn { width:min(100%,calc(100dvh - 325px)); }.boardPreview[data-mode="computer"] .boardColumn { width:min(100%,calc(100dvh - 383px)); }.playerStrip { min-height:30px; }.playerStrip .tag { font-size:8px; padding:3px 7px 1px; }.playerStrip small { font-size:7px; }
+  .previewControls { gap:6px; }.gameStatus h1 { font-size:17px; }.opponentPanel { padding:7px 10px; gap:10px; }.opponentAvatar { width:31px; height:36px; }.opponentIdentity strong { font-size:12px; }.opponentIdentity > div > span { display:none; }.opponentIdentity small { font-size:7px; }.opponentQuote { font-size:10px; line-height:1.35; }
+  .controlPaper { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:9px; padding:9px 12px; }.aimHint { display:none; }.powerHeading output { font-size:25px; }.powerHeading strong { font-size:10px; }.powerHeading .eyebrow { font-size:7px; }.powerHeading { margin-bottom:1px; }.powerTrack { height:28px; }.powerTrack::before,.powerTicks { inset-block:5.5px; }.powerScale { font-size:8px; }.powerScale i { font-size:6px; margin-inline:1px; }
+  .shotButtons { display:flex; flex-direction:column; gap:3px; }.shotButtons > .primary { min-height:36px; padding:7px 10px; font-size:11px; gap:5px; }.shotButtons > .primary svg { width:17px; height:17px; }.shotButtons > .textButton { min-height:26px; font-size:9px; gap:5px; }.shotButtons > .textButton svg { width:12px; height:12px; }
+  .controlPaper > .primary { grid-column:1/-1; min-height:39px; padding:8px; font-size:12px; }.boardPreview[data-handover="true"] .powerMeter { display:none; }
+  .shotReport { display:flex; align-items:center; gap:8px; font-size:10px; line-height:1.4; }.shotReport > p { flex:1; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }.shotReport .textButton { flex-shrink:0; font-size:9px; min-height:24px; }.shotReport .textButton svg { display:none; }
+  .previewActions { padding-top:2px; }.previewActions .textButton { min-height:31px; font-size:10px; }.saveNote[data-saved="true"] { display:none; }
+  .resultCard { padding:16px; }.resultCard > svg { width:30px; height:30px; margin-bottom:5px; }.resultCard h2 { font-size:24px; margin-block:5px; }.resultCard .primary { margin-top:12px; min-height:40px; padding:9px; font-size:13px; }
+  .rules { gap:13px; }.rulePaper { min-height:0; flex:1; padding:20px; }.ruleText { min-height:0; }.ruleArt { height:clamp(45px,12dvh,100px); margin:11px 0; }.ruleText p { font-size:13px; }.rulesIntro h1 { font-size:27px; margin-bottom:10px; }
+}
+@media (max-width:700px) and (max-height:700px) and (orientation:portrait) {
+  .heroDescription { display:none; }.heroBoard { width:min(41vw,21dvh); }.hero h2 { font-size:21px; }
+  .screenHeading .eyebrow { display:none; }.screenHeading h1 { font-size:26px; margin-block:5px; }.screenHeading > p:last-child { font-size:11px; }.cardCopy strong { font-size:21px; }
+  .setupIntro { display:grid; grid-template-columns:34px 1fr; align-items:center; gap:10px; }.setupIntro > .textButton { font-size:0; width:34px; min-height:34px; }.setupIntro > .textButton svg { width:19px; height:19px; }.setupIntro > div > .eyebrow { display:none; }.setupIntro > div > h1 { font-size:25px; line-height:1.2; margin:0; }
+  .paperHeading { display:none; }.paper { padding:17px 19px; gap:12px; }.formBottom > p { display:none; }.formBottom { padding-top:0; }.choice { min-height:62px; }.coinChoices .choice { min-height:55px; }
+  .rulesIntro > .eyebrow { display:none; }.rulesIntro h1 { font-size:25px; }.ruleArt { height:53px; margin-block:8px; }.ruleText h2 { font-size:23px; }.pagination { padding-top:10px; margin-top:12px; }
+}
+@media (max-width:700px) and (max-height:610px) and (orientation:portrait) {
+  .nav { min-height:57px; }.content { padding-block:8px; }.footer { min-height:29px; }.hero .previewNote { display:none; }.heroBoard { width:min(38vw,20dvh); }
+  .screenHeading > p:last-child { display:none; }.screenHeading h1 { font-size:24px; }.choose { gap:9px; }.modeCard { grid-template-rows:auto 21px 1fr auto; padding:10px 12px; gap:6px; }.computerCard { grid-template-rows:auto 1fr auto; min-height:113px; padding-right:99px; }.computerCard .cardArt { top:14px; width:75px; height:91px; right:13px; }.cardArt > svg { width:24px; height:24px; }.cardCopy strong { font-size:19px; }.cardCopy > span { font-size:9px; }.cardFoot { padding-top:7px; font-size:9px; }.onlineCard { padding-block:7px; }.resume { font-size:10px; }.resume small { font-size:9px; }
+  .setup { gap:8px; }.setupIntro > div > h1 { font-size:24px; }.paper { padding:12px; gap:10px; }.fieldset legend { font-size:12px; margin-bottom:4px; }.levelBars { display:none; }.choice { min-height:44px; padding:6px 10px; gap:0; }.choice strong { font-size:12px; }.choice small { font-size:8px; }.coinChoices .choice { min-height:44px; }.coinChoices .choice > svg { width:28px; height:28px; }.field { gap:4px; font-size:12px; }.field input { height:37px; }.formBottom .primary { min-height:42px; padding:8px; }
+  .boardPreview[data-mode="computer"] .boardColumn { width:min(100%,calc(100dvh - 367px)); }.boardPreview .boardColumn { width:min(100%,calc(100dvh - 314px)); }
+  .rulesIntro h1 { font-size:23px; }.chapters button { min-height:28px; font-size:10px; }.rules { gap:10px; }.rulePaper { padding:15px 18px; }.ruleArt { height:43px; margin:5px 0; }.ruleText h2 { font-size:21px; margin-bottom:8px; }.ruleText p { font-size:12px; line-height:1.55; }.pagination { margin-top:10px; padding-top:9px; }.pagination .iconButton { width:36px; min-height:36px; padding:8px; }
+}
+@media (max-height:580px) and (orientation:landscape) {
+  .hero h1 { font-size:clamp(68px,20dvh,107px); }.hero h2 { font-size:19px; }.heroDescription { font-size:11px; line-height:1.4; margin-top:7px; }.heroActions { margin-top:12px; }.heroActions .primary { min-height:48px; padding:8px 14px; }.heroActions .primary small { font-size:9px; margin-top:2px; }.previewNote { font-size:8px; margin-top:8px; }.heroBoard { width:min(36vw,calc(100dvh - 144px)); max-width:none; }.boardCaption { padding-bottom:9px; }
+  .setup { align-items:center; grid-template-columns:.78fr 1.22fr; gap:24px; }.setupIntro { position:static; gap:13px; }.setupIntro > div > h1 { font-size:29px; }.setupOpponent,.setupCoins { display:none; }
+  .paper { display:grid; grid-template-columns:1fr 1fr; align-content:center; gap:11px; padding:15px; }.paperHeading { display:none; }.paper[data-mode="computer"] > .fieldset:first-of-type { grid-column:1/-1; }.paper > .nameFields { grid-column:1; }.paper > .fieldset:last-of-type { grid-column:2; }.paper .nameFields { grid-template-columns:1fr; gap:7px; }.paper .formBottom { grid-column:1/-1; gap:0; }.formBottom > p { display:none; }.choice { min-height:60px; padding:8px 10px; }.coinChoices .choice { min-height:43px; padding:5px 7px; gap:5px; }.coinChoices .choice > svg { width:25px; height:25px; }.coinChoices small { display:none; }.coinChoices strong { font-size:11px; }.choiceCheck { width:12px; height:12px; right:4px; top:4px; }.field input { height:38px; }.fieldset legend,.field { font-size:11px; }.fieldset legend { margin-bottom:6px; }.formBottom .primary { min-height:40px; padding:8px; }
+  .boardPreview { align-items:center; }.boardColumn { position:static; }.previewControls { gap:7px; }.gameStatus .eyebrow { display:none; }.gameStatus h1 { font-size:18px; margin:0 0 3px; }.queenStatus { font-size:9px; }.queenStatus > svg { width:16px; height:16px; }
+  .opponentPanel { display:grid; grid-template-columns:110px 1fr; gap:8px; align-items:center; padding:8px 10px; }.opponentAvatar { width:31px; height:36px; }.opponentIdentity { gap:6px; }.opponentIdentity strong { font-size:12px; }.opponentIdentity > div > span,.opponentMotif { display:none; }.opponentIdentity small { font-size:7px; }.opponentQuote { border-top:0; border-left:1px solid #d9bd823a; margin:0; padding:0 0 0 8px; min-height:0; font-size:10px; line-height:1.3; }
+  .controlPaper { padding:9px 12px; gap:6px; }.aimHint { display:none; }.powerHeading strong { font-size:11px; }.powerHeading output { font-size:25px; }.powerHeading .eyebrow { font-size:7px; }.powerHeading { margin-bottom:0; }.powerTrack { height:27px; }.powerTrack::before,.powerTicks { inset-block:5px; }.powerScale { font-size:8px; }.shotButtons > .primary { min-height:35px; padding:7px; font-size:12px; }.shotButtons > .textButton { font-size:10px; }
+  .shotReport { display:flex; align-items:center; gap:8px; font-size:10px; line-height:1.35; }.shotReport > p { flex:1; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }.shotReport .textButton { font-size:9px; flex-shrink:0; min-height:24px; }.shotReport .textButton svg { display:none; }.previewActions { padding-top:2px; }.previewActions .textButton { min-height:29px; font-size:10px; }.saveNote[data-saved="true"] { display:none; }
+  .resultCard { padding:12px 16px; }.resultCard > svg { width:28px; height:28px; margin-bottom:4px; }.resultCard h2 { font-size:23px; margin-block:5px; }.resultCard .primary { margin-top:10px; min-height:37px; padding:8px; font-size:12px; }
+  .rules { align-items:center; gap:26px; }.rulesIntro h1 { font-size:26px; margin:8px 0; }.rulesIntro > .textButton { min-height:32px; font-size:11px; }.chapters { margin:12px 0 6px; }.chapters button { min-height:29px; font-size:11px; padding-block:3px; }.rulePaper { height:100%; min-height:0; padding:18px 22px; }.ruleArt { height:42px; margin:8px 0; }.ruleText h2 { font-size:24px; margin-bottom:8px; }.ruleText p { font-size:12px; line-height:1.5; }.pagination { padding-top:10px; margin-top:12px; }.pagination .iconButton { width:35px; min-height:35px; padding:8px; }
+}
+@media (max-height:460px) and (orientation:landscape) {
+  .content { padding-block:9px; }.choose { gap:8px; }.screenHeading > .eyebrow,.screenHeading > p:last-child { display:none; }.screenHeading h1 { font-size:25px; margin:0; }.modeGrid { gap:10px; }.modeCard { grid-template-rows:auto 1fr auto; padding:12px 14px; gap:7px; }.modeCard .cardArt,.computerCard::before { display:none; }.computerCard .cardCopy { grid-row:2; }.computerCard .cardFoot { grid-row:3; }.cardCopy strong { font-size:22px; }.cardCopy > span { font-size:10px; }.cardCopy { gap:4px; }.cardFoot { padding-top:8px; font-size:10px; }.onlineCard { padding:7px 13px; }.onlineIcon { width:29px; height:29px; }.onlineCard strong { font-size:12px; }.onlineCard p { font-size:10px; }.comingSoon { font-size:9px; }.resume { font-size:10px; }.resume small { display:none; }.resume .textButton { min-height:27px; font-size:10px; }.screenNote { font-size:9px; }
+  .setupIntro > div > h1 { font-size:26px; }.setupIntro .intro { font-size:11px; }.rulesIntro .eyebrow,.ruleArt { display:none; }.chapters { display:grid; grid-template-columns:1fr 1fr; gap:2px 8px; }.chapters button { font-size:10px; }.ruleText { display:flex; flex-direction:column; justify-content:center; }
+}
+
+@media (min-width:701px) and (max-height:700px) {
+  .rulesIntro h1 { font-size:39px; margin-block:12px; }.rulesIntro .chapters { margin:16px 0 8px; }
+  .activeGame .saveNote[data-saved="true"] { display:none; }
+}
+@media (max-height:460px) and (orientation:landscape) {
+  .hero { padding-block:9px; }.choose { padding-block:5px; gap:7px; }
+}
+.dialog { overflow:clip; }
+@media (max-height:580px) and (orientation:landscape) {
+  .dialog { padding:17px 20px; }.dialogHeading { margin-bottom:10px; }.dialogHeading h2 { font-size:23px; }.dialogHeading .iconButton { width:35px; min-height:35px; padding:8px; }
+  .dialog p { font-size:12px; line-height:1.5; margin-block:9px; }.dialogActions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }.dialogActions :is(.primary,.textButton) { min-height:36px; padding:7px 9px; font-size:12px; }
+  .keyboardControls { display:grid; grid-template-columns:1fr 1fr; gap:12px; }.keyboardControls .slider { font-size:12px; gap:4px; }.keyboardControls .powerMeter,.keyboardControls > .primary { grid-column:1/-1; }.keyboardControls > .primary { min-height:38px; padding:8px; font-size:13px; }
+}
+
+.queenStatus > span { min-width:0; overflow-wrap:anywhere; }
+@media (max-width:700px) and (orientation:portrait) {
+  .gameStatus { display:grid; grid-template-columns:1fr 1.15fr; gap:6px; }.gameStatus .queenStatus { justify-content:flex-end; line-height:1.3; }.gameStatus h1 { font-size:16px; line-height:1.25; }
+  .resume > span { flex:1; }.resume > span > span { min-width:0; }.resume small { max-width:150px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .resultCard { display:grid; grid-template-columns:27px 1fr; align-items:center; gap:6px; padding:11px 13px; text-align:left; }.resultCard > .eyebrow { display:none; }.resultCard > svg { grid-column:1; grid-row:1; width:25px; height:25px; margin:0; }.resultCard h2 { grid-column:2; grid-row:1; font-size:20px; margin:0; }.resultCard > p:not(.eyebrow) { grid-column:1/-1; font-size:10px; line-height:1.4; }.resultCard .primary { grid-column:1/-1; min-height:36px; padding:8px; margin:0; font-size:12px; }
+}
+@media (max-width:700px) and (max-height:700px) and (orientation:portrait) {
+  .onlineCard p { display:none; }.onlineCard { gap:9px; }.onlineIcon { display:grid; width:27px; height:27px; }.onlineCard > div { flex-basis:90px; }.resume small { max-width:124px; }
+}
+@media (max-width:360px) and (max-height:700px) and (orientation:portrait) {
+  .cardCopy strong { font-size:17px; }.computerCard .cardCopy strong { font-size:20px; }.onlineCard { padding:7px 11px; }.resume small { max-width:100px; }
+}
+@media (max-height:580px) and (orientation:landscape) {
+  .gameStatus { display:grid; grid-template-columns:1fr 1.1fr; gap:7px; align-items:center; }.gameStatus h1 { font-size:17px; margin:0; }.gameStatus .queenStatus { justify-content:flex-end; line-height:1.3; }
+  .controlPaper { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:9px; }.shotButtons { display:flex; flex-direction:column; gap:4px; }.shotButtons > .primary { min-height:35px; padding:7px 9px; font-size:11px; gap:5px; }.shotButtons > .primary svg { width:17px; height:17px; }.shotButtons > .textButton { min-height:25px; font-size:9px; gap:5px; }.shotButtons > .textButton svg { width:12px; height:12px; }.controlPaper > .primary { grid-column:1/-1; }.boardPreview[data-handover="true"] .powerMeter { display:none; }
+}
+
+/* Let the board take the space left by the controls, including results and long remarks. */
+@media (max-width:700px) and (orientation:portrait) {
+  .boardPreview { display:grid; grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(0,1fr) auto; }
+  .boardPreview[data-mode] .boardColumn { container-type:size; width:100%; height:100%; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .boardColumn .liveBoard,.boardColumn .playerStrip { width:min(440px,100cqw,calc(100cqh - 64px)); flex-shrink:0; }
+  .boardColumn .playerStrip { height:32px; min-height:32px; }
+}
+@media (max-width:700px) and (max-height:700px) and (orientation:portrait) {
+  .modeGrid { grid-template-columns:1fr; gap:8px; }
+  .modeCard { grid-template-columns:42px minmax(0,1fr); grid-template-rows:auto auto; align-items:center; min-height:68px; padding:10px 13px; gap:3px 12px; }
+  .modeCard .cardTop,.modeCard .cardCopy > span { display:none; }
+  .modeCard .cardArt { position:static; grid-column:1; grid-row:1/3; display:flex; justify-content:center; width:42px; height:46px; }
+  .modeCard .cardArt > svg { width:34px; height:34px; }.computerCard .cardArt > svg { width:42px; height:46px; }
+  .modeCard .cardCopy { grid-column:2; grid-row:1; }.modeCard .cardCopy strong { font-size:21px; }
+  .modeCard .cardFoot { grid-column:2; grid-row:2; padding:0; border:0; font-size:10px; }
+}
+@media (min-width:701px) and (min-height:581px) and (max-height:770px) {
+  .previewControls { gap:9px; }.gameStatus .eyebrow { display:none; }
+  .opponentPanel { display:grid; grid-template-columns:130px 1fr; align-items:center; gap:10px; padding:11px; }
+  .opponentIdentity { gap:8px; }.opponentIdentity strong { font-size:14px; }.opponentIdentity > div > span,.opponentMotif { display:none; }
+  .opponentAvatar { width:36px; height:41px; }.opponentIdentity small { font-size:8px; }
+  .opponentQuote { border-top:0; border-left:1px solid #d9bd823a; margin:0; padding:0 0 0 10px; min-height:0; font-size:11px; line-height:1.4; }
+  .controlPaper { padding:13px 15px; gap:8px; }.aimHint { display:none; }
+}
+@media (max-height:770px) {
+  .resultCard { display:grid; grid-template-columns:27px 1fr; align-items:center; gap:6px; padding:11px 13px; text-align:left; }
+  .resultCard > .eyebrow { display:none; }.resultCard > svg { grid-column:1; grid-row:1; width:25px; height:25px; margin:0; }
+  .resultCard h2 { grid-column:2; grid-row:1; font-size:20px; margin:0; }.resultCard > p:not(.eyebrow) { grid-column:1/-1; font-size:11px; line-height:1.4; }
+  .resultCard .primary { grid-column:1/-1; min-height:36px; padding:8px; margin:0; font-size:12px; }
 }

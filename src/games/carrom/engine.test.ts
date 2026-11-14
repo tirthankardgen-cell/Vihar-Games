@@ -5,6 +5,8 @@ import { aimGuide } from "./aim-guide.ts";
 import { simulate } from "./physics.ts";
 import { chooseShot } from "./computer.ts";
 import { defaults, newSession, parseSession, rematch, saveSession } from "./persistence.ts";
+import { boardEdge, boardFarEdge, pocketRadius, pockets } from "./geometry.ts";
+import { opponentName, opponentRemark } from "./opponent.ts";
 
 function pocket(match: Match, ids: string[] = [], foul = false, ejected: string[] = []): Match {
   const outcome: Outcome = { pieces: match.pieces.filter((p) => !ids.includes(p.id) && !ejected.includes(p.id)), pockets: ids, strikerPocketed: foul, ejected };
@@ -177,5 +179,54 @@ test("pockets exert no attraction and a nearby stationary coin stays outside the
   for (const frame of result.frames) {
     const coin = frame.find(p => p.id === "c0");
     assert.deepEqual(coin, {id: "c0", x: 80, y: 56});
+  }
+});
+
+test("all four rail-touching openings accept a real shot and agree with the guide", () => {
+  for (const [x, y] of pockets) {
+    assert.equal(Math.min(x - boardEdge, boardFarEdge - x), pocketRadius);
+    assert.equal(Math.min(y - boardEdge, boardFarEdge - y), pocketRadius);
+    const turn = y < 300 ? "cream" : "ink", direction = turn === "cream" ? 1 : -1;
+    const sx = x < 300 ? 160 : 440, sy = turn === "cream" ? 482 : 118;
+    const shot = { position: (sx - 300) / 1.4 * direction, angle: Math.atan2((x - sx) * direction, (sy - y) * direction) * 180 / Math.PI, power: 75 };
+    const match = createMatch(turn);
+    match.pieces = [{ id: "c0", kind: "cream", x: sx + (x - sx) * .65, y: sy + (y - sy) * .65 }];
+    assert.deepEqual(simulate(match, shot).outcome.pockets, ["c0"]);
+    match.pieces = [];
+    const end = aimGuide(match, shot).at(-1)!;
+    assert.ok(Math.hypot(end.x - x, end.y - y) < pocketRadius);
+    assert.equal(end.contact, undefined);
+    assert.equal(simulate(match, shot).outcome.strikerPocketed, true);
+  }
+});
+
+test("old computer saves gain Ravi's identity without changing the player or settled match", () => {
+  for (const humanSide of ["cream", "ink"] as const) {
+    const old = newSession("computer", { ...defaults, coins: humanSide, names: ["Tirtha", ""] }, "legacy-rival");
+    const computerSide = humanSide === "cream" ? "ink" : "cream";
+    old.players[computerSide] = "Computer";
+    const restored = parseSession(JSON.stringify(old))!;
+    assert.equal(restored.players[humanSide], "Tirtha");
+    assert.equal(restored.players[computerSide], opponentName);
+    assert.deepEqual(restored.match, old.match);
+  }
+  const local = newSession("pass-and-play", { ...defaults, names: ["Tirtha", "Computer"] }, "local-friend");
+  assert.deepEqual(parseSession(JSON.stringify(local)), local);
+});
+
+test("Ravi reacts to fouls, a pending cover and the actual winner on either side", () => {
+  for (const humanSide of ["cream", "ink"] as const) {
+    const rival = humanSide === "cream" ? "ink" : "cream";
+    const foul = pocket(createMatch(humanSide), [], true);
+    assert.match(opponentRemark(foul, humanSide, true, false).text, /softer touch/);
+    const ownFoul = pocket(createMatch(rival), [], true);
+    assert.match(opponentRemark(ownFoul, humanSide, false, false).text, /my striker/);
+    const pending = createMatch(humanSide);
+    pending.revision = 2; pending.queen = "pending"; pending.coverSide = humanSide;
+    assert.match(opponentRemark(pending, humanSide, false, false).text, /yours to cover/);
+    pending.result = { winner: humanSide, reason: "cleared" };
+    assert.equal(opponentRemark(pending, humanSide, false, false).mood, "impressed");
+    pending.result.winner = rival;
+    assert.equal(opponentRemark(pending, humanSide, false, false).mood, "delighted");
   }
 });

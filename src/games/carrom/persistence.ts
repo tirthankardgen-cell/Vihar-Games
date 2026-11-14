@@ -1,6 +1,7 @@
 import { coinRadius, createMatch, opposite, type Match, type Side } from "./engine.ts";
 import type { Difficulty } from "./computer.ts";
 import { opponentName } from "./opponent.ts";
+import { boardEdge, boardFarEdge } from "./geometry.ts";
 
 export const SESSION_KEY = "vihar-games:carrom:session:v1";
 export const SETTINGS_KEY = "vihar-games:carrom:settings:v1";
@@ -32,7 +33,7 @@ export function parseSession(raw: string | null): Session | null {
     const expected = new Map(createMatch().pieces.map((p) => [p.id, p.kind]));
     const ids: string[] = [];
     for (const p of m.pieces) {
-      if (!p || expected.get(p.id) !== p.kind || ![p.x, p.y].every((v) => Number.isFinite(v) && v >= 29 + coinRadius - .02 && v <= 571 - coinRadius + .02)) return null;
+      if (!p || expected.get(p.id) !== p.kind || ![p.x, p.y].every((v) => Number.isFinite(v) && v >= boardEdge + coinRadius - .02 && v <= boardFarEdge - coinRadius + .02)) return null;
       ids.push(p.id);
     }
     for (const color of ["cream", "ink"] as const) for (const id of m.pocketed[color]) { if (expected.get(id) !== color) return null; ids.push(id); }

@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { coinRadius, strikerRadius, strikerPosition, type Match, type Shot, type Side } from "@/games/carrom/engine";
 import type { Frame } from "@/games/carrom/physics";
 import { aimGuide } from "@/games/carrom/aim-guide";
+import { pockets } from "@/games/carrom/geometry";
 import { BoardArt } from "./board-art";
 import styles from "./carrom.module.css";
 
@@ -10,7 +11,9 @@ export const snapPosition = (position: number) => Math.abs(position) > 80 ? Math
 
 export function Board({ match, shot, frame, orientation, locked, onAim, onShoot, onPull }: { match: Match; shot: Shot; frame: Frame | null; orientation: Side; locked: boolean; onAim: (shot: Shot) => void; onShoot: (shot: Shot) => void; onPull: (pulling: boolean) => void }) {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const gesture = useRef<{ shot: Shot; pulling: boolean; x: number; y: number } | null>(null);
+  const gesture = useRef<{ shot: Shot; pulling: boolean; x: number; y: number; pointerId: number } | null>(null);
+  const previousFrame = useRef<Frame | null>(null);
+  const pocketRipples = useRef<{ x: number; y: number; time: number }[]>([]);
   useEffect(() => {
     const element = canvas.current;
     if (!element) return;
@@ -21,6 +24,20 @@ export function Board({ match, shot, frame, orientation, locked, onAim, onShoot,
     ctx.scale(scale, scale);
     const striker = strikerPosition(match.turn, shot);
     const bodies = frame ?? [...match.pieces, ...(!match.result ? [{ id: "striker", ...striker }] : [])];
+    const now = performance.now();
+    if (frame && previousFrame.current) {
+      for (const body of previousFrame.current) if (!frame.some((next) => next.id === body.id)) {
+        const [x, y] = pockets.reduce((closest, pocket) => Math.hypot(body.x - pocket[0], body.y - pocket[1]) < Math.hypot(body.x - closest[0], body.y - closest[1]) ? pocket : closest);
+        pocketRipples.current.push({ x, y, time: now });
+      }
+    }
+    previousFrame.current = frame;
+    pocketRipples.current = frame ? pocketRipples.current.filter((ripple) => now - ripple.time < 550) : [];
+    for (const ripple of pocketRipples.current) {
+      const progress = (now - ripple.time) / 550;
+      ctx.strokeStyle = `rgba(223, 179, 109, ${1 - progress})`; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(ripple.x, ripple.y, 16 + progress * 23, 0, Math.PI * 2); ctx.stroke();
+    }
     if (!frame && !locked && !match.result) {
       const guide = aimGuide(match, shot);
       ctx.strokeStyle = "#2b4a42"; ctx.lineWidth = 2; ctx.setLineDash([5, 5]);
@@ -48,7 +65,7 @@ export function Board({ match, shot, frame, orientation, locked, onAim, onShoot,
     for (const body of bodies) {
       const kind = body.id === "striker" ? "striker" : body.id === "q" ? "queen" : body.id.startsWith("c") ? "cream" : "ink";
       const r = kind === "striker" ? strikerRadius : coinRadius;
-      ctx.fillStyle = { striker: "#dfb36d", queen: "#af6443", cream: "#fff5df", ink: "#293d35" }[kind];
+      ctx.fillStyle = { striker: "#dfb36d", queen: "#a83538", cream: "#fff5df", ink: "#293d35" }[kind];
       ctx.strokeStyle = kind === "ink" ? "#a99a77" : "#6d6146"; ctx.lineWidth = 1.3;
       ctx.beginPath(); ctx.arc(body.x, body.y, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
       ctx.beginPath(); ctx.arc(body.x, body.y, r * .7, 0, Math.PI * 2); ctx.lineWidth = .7; ctx.stroke();
@@ -66,19 +83,19 @@ export function Board({ match, shot, frame, orientation, locked, onAim, onShoot,
     return { x, y };
   }
   function begin(event: React.PointerEvent<HTMLCanvasElement>) {
-    if (locked) return;
+    if (locked || gesture.current || !event.isPrimary || event.button !== 0) return;
     const { x, y } = point(event), start = strikerPosition(match.turn, shot);
     if (Math.abs(y - start.y) > 30 || x < 140 || x > 460) return;
     event.preventDefault();
     event.currentTarget.setPointerCapture(event.pointerId);
     const position = snapPosition(Math.max(-100, Math.min(100, (x - 300) / 1.4 * (match.turn === "cream" ? 1 : -1))));
     const next = { ...shot, position };
-    gesture.current = { shot: next, pulling: false, x, y };
+    gesture.current = { shot: next, pulling: false, x, y, pointerId: event.pointerId };
     onAim(next);
   }
   function move(event: React.PointerEvent<HTMLCanvasElement>) {
     const drag = gesture.current;
-    if (!drag || locked) return;
+    if (!drag || locked || event.pointerId !== drag.pointerId) return;
     const { x, y } = point(event), direction = match.turn === "cream" ? 1 : -1;
     const start = strikerPosition(match.turn, drag.shot);
     if (!drag.pulling && (y - drag.y) * direction > 14) { drag.pulling = true; onPull(true); }
@@ -94,12 +111,15 @@ export function Board({ match, shot, frame, orientation, locked, onAim, onShoot,
   }
   function release(event: React.PointerEvent<HTMLCanvasElement>) {
     const drag = gesture.current;
-    if (!drag) return;
+    if (!drag || event.pointerId !== drag.pointerId) return;
     move(event);
     gesture.current = null; onPull(false);
     if (!locked && drag.pulling && drag.shot.power >= 14) onShoot(drag.shot);
   }
-  function cancel() {
+  function cancel(event: React.PointerEvent<HTMLCanvasElement>) {
+    const drag = gesture.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    if (drag.pulling) onAim({ ...drag.shot, power: 0 });
     gesture.current = null; onPull(false);
   }
   return <div className={styles.liveBoard} data-orientation={orientation}>
