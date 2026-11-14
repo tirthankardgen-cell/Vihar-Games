@@ -22,7 +22,11 @@ export function parseSession(raw: string | null): Session | null {
 export function loadSession(storage: StorageLike): { session: Session | null; damaged: boolean } {
   try {
     const raw = storage.getItem(SESSION_KEY), session = parseSession(raw);
-    if (raw && !session) { storage.removeItem(SESSION_KEY); return { session: null, damaged: true }; }
+    if (raw && !session) {
+      let legacy = false;
+      try { legacy = JSON.parse(raw).rulesVersion === "1.0.0"; } catch { /* Corrupt saves still report recovery. */ }
+      storage.removeItem(SESSION_KEY); return { session: null, damaged: !legacy };
+    }
     return { session, damaged: false };
   } catch { return { session: null, damaged: false }; }
 }
@@ -38,8 +42,8 @@ export function loadSettings(storage: StorageLike): Settings {
 export function loadRecords(storage: StorageLike): Records {
   try {
     const r = JSON.parse(storage.getItem(RECORDS_KEY) ?? "null") as Records;
-    if (r.version !== 1 || r.rulesVersion !== RULES_VERSION || ![r.standard, r.practice].every((v) => v && Number.isSafeInteger(v.score) && v.score >= 0 && Number.isFinite(v.elapsed) && v.elapsed >= 0 && v.elapsed <= 31536000)) return emptyRecords();
-    return r;
+    if (r.version !== 1 || ![RULES_VERSION, "1.0.0"].includes(r.rulesVersion) || ![r.standard, r.practice].every((v) => v && Number.isSafeInteger(v.score) && v.score >= 0 && Number.isFinite(v.elapsed) && v.elapsed >= 0 && v.elapsed <= 31536000)) return emptyRecords();
+    return { ...r, rulesVersion: RULES_VERSION };
   } catch { return emptyRecords(); }
 }
 export function recordResult(records: Records, run: Run): Records {

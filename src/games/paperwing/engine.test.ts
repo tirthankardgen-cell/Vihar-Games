@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createRun, flap, step, validRun, sweepCircle, presets, STEP, WORLD, type Run } from "./engine.ts";
+import { createRun, flap, step, validRun, sweepCircle, presets, STEP, WORLD, RULES_VERSION, speedAt, distanceAt, obstacleKind, gateOpening, getVisibleGates, type Run } from "./engine.ts";
 import { newSession, parseSession, saveSession, loadSession, loadSettings, loadRecords, emptyRecords, recordResult, SESSION_KEY, RECORDS_KEY, SETTINGS_KEY } from "./persistence.ts";
 
 test("ready worlds use exact presets, a safe first opening, bounded reproducible gates", () => {
@@ -110,4 +110,70 @@ test("personal bests stay separate by mode and never record unfinished flights",
   const updated = recordResult(records, end);
   assert.equal(updated.standard.score, 7); assert.equal(updated.practice.score, 0);
   assert.equal(records.standard.score, 0); assert.equal(recordResult(updated, { ...end, score: 6 }), updated);
+});
+
+test("speed rises by active time after ten seconds and caps at sixty seconds", () => {
+  assert.equal(speedAt("standard", 0), 140); assert.equal(speedAt("standard", 10), 140);
+  assert.equal(speedAt("standard", 35), 190); assert.equal(speedAt("standard", 60), 240); assert.equal(speedAt("standard", 100), 240);
+  assert.equal(speedAt("practice", 35), 140); assert.equal(speedAt("practice", 60), 170);
+  assert.equal(distanceAt("standard", 35), 5525); assert.equal(distanceAt("standard", 70), 13300);
+  assert.equal(distanceAt("practice", 35), 4225); assert.equal(distanceAt("practice", 70), 9800);
+  for (const elapsed of [9.997, 10, 35, 59.997, 60]) {
+    const run = { ...flap(createRun("standard", 42)), elapsed, velocity: 0 };
+    const next = step(run);
+    assert.ok(Math.abs(run.gates[0].x - next.gates[0].x - (distanceAt(run.mode, next.elapsed) - distanceAt(run.mode, elapsed))) < 1e-8);
+  }
+});
+
+test("shutters move continuously and seals add real circular hazards", () => {
+  const base = flap(createRun("standard", 42)), shutter = { ...base.gates[0], id: 4, x: 90 };
+  assert.equal(obstacleKind(base.gates[0]), "panel"); assert.equal(obstacleKind(shutter), "shutter");
+  const opening = gateOpening(shutter, "standard", 0);
+  assert.equal(opening.gap, 200); assert.equal(opening.velocity, 16);
+  assert.ok(Math.abs(gateOpening(shutter, "standard", 2.999).centre - gateOpening(shutter, "standard", 3.001).centre) < 1e-8);
+  const tangentY = opening.centre - opening.gap / 2 + WORLD.radius;
+  const advancingEdge = step({ ...base, y: tangentY, velocity: 0, gates: [shutter, ...base.gates.slice(1)] });
+  assert.equal(advancingEdge.ending, "panel"); assert.equal(advancingEdge.elapsed, 0);
+  const keepingAhead = step({ ...base, y: tangentY, velocity: 16, gates: [shutter, ...base.gates.slice(1)] });
+  assert.equal(keepingAhead.status, "flying");
+  const seal = { ...shutter, id: 6 }, wax = gateOpening(seal, "standard", 0);
+  assert.equal(wax.kind, "seal"); assert.equal(wax.gap, 280);
+  const sealed = step({ ...base, y: wax.sealY, gates: [seal, ...base.gates.slice(1)] });
+  assert.equal(sealed.ending, "seal"); assert.equal(sealed.elapsed, 0); assert.equal(sealed.score, 0);
+  const safe = step({ ...base, y: wax.sealY - wax.sealRadius - WORLD.radius, gates: [seal, ...base.gates.slice(1)] });
+  assert.equal(safe.status, "flying");
+});
+
+test("new obstacle previews preserve the run and match actual future gates", () => {
+  let run = flap(createRun("standard", 314));
+  const before = JSON.stringify(run), preview = getVisibleGates(run, 2200);
+  assert.equal(JSON.stringify(run), before);
+  assert.ok(preview.some((g) => obstacleKind(g) === "shutter")); assert.ok(preview.some((g) => obstacleKind(g) === "seal"));
+  let sawShutter = false, sawSeal = false;
+  for (let i = 0; i < 9600 && run.status !== "ended"; i++) {
+    const nextGate = run.gates.find((g) => g.x + WORLD.gateWidth >= WORLD.birdX - WORLD.radius)!;
+    const opening = gateOpening(nextGate, run.mode, run.elapsed);
+    const target = opening.centre + (opening.kind === "seal" ? -Math.sign(opening.sealY - opening.centre) * 36 : 0);
+    if (run.y > target + 40 && run.velocity > -160 || run.y > target + 8 && run.velocity > 100) run = flap(run);
+    run = step(run);
+    assert.ok(validRun(run), `invalid flight at ${run.elapsed}`);
+    for (const g of run.gates) if (g.id < preview.length) assert.equal(g.centre, preview[g.id].centre);
+    if (nextGate.x < 180) { sawShutter ||= opening.kind === "shutter"; sawSeal ||= opening.kind === "seal"; }
+  }
+  assert.ok(run.elapsed > 60, `flight ended too early at ${run.elapsed}`);
+  assert.ok(sawShutter && sawSeal);
+  const session = { ...newSession(run.mode, 314, "progressive-flight"), run };
+  const restored = parseSession(JSON.stringify(session)); assert.ok(restored);
+  assert.deepEqual(step(restored.run), step(run));
+});
+
+test("the rules upgrade retains personal bests and replaces obsolete flights", () => {
+  const values = new Map<string,string>();
+  const storage = { getItem:(k:string)=>values.get(k)??null, setItem:(k:string,v:string)=>{values.set(k,v);}, removeItem:(k:string)=>{values.delete(k);} };
+  const oldRecords = { ...emptyRecords(), rulesVersion:"1.0.0", standard:{score:5,elapsed:15} };
+  values.set(RECORDS_KEY,JSON.stringify(oldRecords));
+  assert.equal(loadRecords(storage).standard.score,5); assert.equal(loadRecords(storage).rulesVersion,RULES_VERSION);
+  values.set(SESSION_KEY,JSON.stringify({ ...newSession("standard",1,"old"), rulesVersion:"1.0.0" }));
+  assert.deepEqual(loadSession(storage),{session:null,damaged:false});
+  assert.equal(values.has(SESSION_KEY),false); assert.equal(loadRecords(storage).standard.score,5);
 });

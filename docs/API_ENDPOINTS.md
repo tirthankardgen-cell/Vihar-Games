@@ -183,4 +183,4 @@ Implementation checks must verify the twenty-four launch redirects and metadata/
 
 ## Paperwing local release
 
-Paperwing reports `availability: "playable"`, `availableModes: ["solo"]`, `soloPresets: ["standard", "practice"]`, `rulesVersion: "1.0.0"`, `embedVersion: 1`, and null multiplayer limits. Its `/rules` JSON matches the published postcard rules pages. It has no rooms or actions. `/api/games` returns the four playable entries first (Chess, Carrom, Tic-Tac-Toe, Paperwing), followed by the twenty planned entries in their original relative order.
+Paperwing reports `availability: "playable"`, `availableModes: ["solo"]`, `soloPresets: ["standard", "practice"]`, `rulesVersion: "2.0.0"`, `embedVersion: 1`, and null multiplayer limits. Its `/rules` JSON matches the published postcard rules pages, including immediate starts, speed progression by active time, moving shutters and wax seals. It has no rooms or actions. `/api/games` returns the four playable entries first (Chess, Carrom, Tic-Tac-Toe, Paperwing), followed by the twenty planned entries in their original relative order.

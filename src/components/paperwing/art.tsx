@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { WORLD, presets, getVisibleGates, type Run } from "@/games/paperwing/engine";
+import { WORLD, gateOpening, speedAt, getVisibleGates, type Run } from "@/games/paperwing/engine";
 import styles from "./paperwing.module.css";
 
 export function Swallow({ folded = false }: { folded?: boolean }) {
@@ -39,7 +39,7 @@ export function CoverArt() {
   </svg>;
 }
 export function FlightField({ run, moving, onFlap }: { run: Run; moving: boolean; onFlap: () => void }) {
-  const id = useId().replace(/:/g, ""), p = presets[run.mode];
+  const id = useId().replace(/:/g, "");
   const ref = useRef<SVGSVGElement>(null), [width, setWidth] = useState<number>(WORLD.width);
   useEffect(() => {
     const observer = new ResizeObserver(([entry]) => {
@@ -50,23 +50,32 @@ export function FlightField({ run, moving, onFlap }: { run: Run; moving: boolean
     return () => observer.disconnect();
   }, []);
   return <svg ref={ref} className={styles.flightField} viewBox={`0 ${WORLD.top} ${width} ${WORLD.bottom - WORLD.top}`} preserveAspectRatio="xMidYMid meet" role="img" tabIndex={0}
-    aria-label={`Flight area. ${run.score} gates passed. Tap or press Space, Up, or W to flap.`} data-moving={moving} data-bird-y={run.y.toFixed(3)} data-velocity={run.velocity.toFixed(3)}
+    aria-label={`Flight area. ${run.score} gates passed. Tap or press Space, Up, or W to flap.`} data-moving={moving} data-bird-y={run.y.toFixed(3)} data-velocity={run.velocity.toFixed(3)} data-elapsed={run.elapsed.toFixed(3)} data-speed={speedAt(run.mode, run.elapsed).toFixed(3)}
     onPointerDown={(event) => { if (event.button !== 0 || !event.isPrimary) return; event.preventDefault(); event.currentTarget.focus({ preventScroll: true }); onFlap(); }}>
     <defs>
       <clipPath id={`${id}-flight`}><rect x="0" y="40" width={width} height="640" /></clipPath>
       <pattern id={`${id}-post`} width="28" height="28" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="28" height="28" fill="#F8F1E4" /><rect width="9" height="28" fill="#B96054" /><rect x="14" width="9" height="28" fill="#2C445C" /></pattern>
+      <pattern id={`${id}-shutter`} width="64" height="18" patternUnits="userSpaceOnUse"><rect width="64" height="18" fill="#B8CDD2" /><path d="M8 6h48M8 9h48" stroke="#2C445C" strokeWidth=".7" opacity=".45" /></pattern>
     </defs>
     <rect x="0" y="40" width={width} height="640" fill="#D8E7EB" />
     <g clipPath={`url(#${id}-flight)`}>
       <path className={styles.cloud} d="M-20 209h182q-5-17-26-16-2-33-32-30-22-17-40 11-27-4-29 18-34-7-55 17Z" fill="#EAF1F2" />
       <g transform={`translate(${width * .68} 110)`}><path className={styles.cloud} d="M0 238h195q-10-16-33-16-1-37-36-33-25-21-45 9-26-6-32 18-26-4-49 22Z" fill="#EAF1F2" /></g>
-      {getVisibleGates(run, width).map((gate) => <g key={gate.id} data-gate-id={gate.id} data-centre={gate.centre} transform={`translate(${gate.x} 0)`}>
-        {[[40, gate.centre - p.gap / 2 - 40], [gate.centre + p.gap / 2, 680 - gate.centre - p.gap / 2]].map(([y, height], i) => <g key={i}>
-          <rect x="0" y={y} width="64" height={height} fill="#F8F1E4" stroke="#2C445C" strokeWidth="1.6" />
+      {getVisibleGates(run, width).map((gate) => {
+        const opening = gateOpening(gate, run.mode, run.elapsed);
+        return <g key={gate.id} data-gate-id={gate.id} data-centre={opening.centre} data-gap={opening.gap} data-kind={opening.kind} data-seal-y={opening.kind === "seal" ? opening.sealY : undefined} transform={`translate(${gate.x} 0)`}>
+        {[[40, opening.centre - opening.gap / 2 - 40], [opening.centre + opening.gap / 2, 680 - opening.centre - opening.gap / 2]].map(([y, height], i) => <g key={i}>
+          <rect x="0" y={y} width="64" height={height} fill={opening.kind === "shutter" ? `url(#${id}-shutter)` : "#F8F1E4"} stroke="#2C445C" strokeWidth="1.6" />
           <rect x="2" y={y} width="7" height={height} fill={`url(#${id}-post)`} /><rect x="55" y={y} width="7" height={height} fill={`url(#${id}-post)`} />
-          <path d={`M12 ${i ? y + 2 : y + height - 2}h40`} stroke="#B96054" strokeWidth="3" />
+          <path d={`M12 ${i ? y + 2 : y + height - 2}h40`} stroke={opening.kind === "shutter" ? "#B39357" : "#B96054"} strokeWidth="3" />
         </g>)}
-      </g>)}
+        {opening.kind === "shutter" && <path d={`m26 ${opening.centre - 12} 6-6 6 6m-12 24 6 6 6-6`} stroke="#B39357" strokeWidth="1.6" fill="none" opacity=".65" />}
+        {opening.kind === "seal" && <g data-seal="true" transform={`translate(32 ${opening.sealY})`}>
+          <circle r={opening.sealRadius} fill="#B96054" stroke="#2C445C" strokeWidth="1.6" /><circle r="16" fill="none" stroke="#F8F1E4" strokeWidth="1" />
+          <path d="m-10-5 11-2 10 4-12 5Zm9-2v9m-9-7 10 14 1-7" fill="none" stroke="#F8F1E4" strokeWidth="1.2" strokeLinejoin="round" />
+        </g>}
+      </g>;
+      })}
       <g className={styles.bird} transform={`translate(120 ${run.y}) rotate(${Math.max(-12, Math.min(18, run.velocity / 20))})`}><Swallow folded={run.velocity < 0} /></g>
     </g>
     <path d={`M0 ${WORLD.top}h${width}M0 ${WORLD.bottom}h${width}`} stroke="#2C445C" strokeWidth="1.5" />

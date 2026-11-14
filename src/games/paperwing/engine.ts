@@ -1,9 +1,9 @@
-export const RULES_VERSION = "1.0.0";
+export const RULES_VERSION = "2.0.0";
 export const STEP = 1 / 120;
 export const WORLD = { width: 480, height: 720, top: 40, bottom: 680, birdX: 120, radius: 12, gateWidth: 64 } as const;
 export const presets = {
-  standard: { name: "Standard", speed: 140, gap: 180, spacing: 280 },
-  practice: { name: "Practice", speed: 110, gap: 220, spacing: 300 },
+  standard: { name: "Standard", speed: 140, maxSpeed: 240, gap: 180, spacing: 280 },
+  practice: { name: "Practice", speed: 110, maxSpeed: 170, gap: 220, spacing: 300 },
 } as const;
 export type Mode = keyof typeof presets;
 export type Gate = { id: number; x: number; centre: number; scored: boolean };
@@ -11,10 +11,37 @@ export type Run = {
   mode: Mode; seed: number; random: number; nextId: number;
   status: "ready" | "flying" | "ended";
   y: number; velocity: number; elapsed: number; score: number;
-  gates: Gate[]; ending: "ceiling" | "floor" | "panel" | null;
+  gates: Gate[]; ending: "ceiling" | "floor" | "panel" | "seal" | null;
 };
 type Polynomial = number[];
 const EPS = 1e-9;
+export const RAMP = { start: 10, duration: 50 } as const;
+export type ObstacleKind = "panel" | "shutter" | "seal";
+export function speedAt(mode: Mode, time: number): number {
+  const p = presets[mode], ramp = Math.max(0, Math.min(RAMP.duration, time - RAMP.start));
+  return p.speed + (p.maxSpeed - p.speed) * ramp / RAMP.duration;
+}
+export function distanceAt(mode: Mode, time: number): number {
+  const p = presets[mode], rate = (p.maxSpeed - p.speed) / RAMP.duration;
+  const ramp = Math.max(0, Math.min(RAMP.duration, time - RAMP.start));
+  return p.speed * time + .5 * rate * ramp * ramp + (p.maxSpeed - p.speed) * Math.max(0, time - RAMP.start - RAMP.duration);
+}
+export function obstacleKind(gate: Gate): ObstacleKind {
+  return gate.id < 4 || gate.id % 2 ? "panel" : gate.id % 4 === 0 ? "shutter" : "seal";
+}
+export function gateOpening(gate: Gate, mode: Mode, time: number) {
+  const kind = obstacleKind(gate), p = presets[mode];
+  const amplitude = mode === "standard" ? 24 : 16, rawPhase = (time + gate.id * 1.5) % 6;
+  const phase = Math.abs(rawPhase - 3) < EPS ? 3 : rawPhase < EPS || 6 - rawPhase < EPS ? 0 : rawPhase;
+  const offset = phase < 3 ? -amplitude + amplitude * 2 * phase / 3 : amplitude * 3 - amplitude * 2 * phase / 3;
+  return {
+    kind, centre: gate.centre + (kind === "shutter" ? offset : 0),
+    gap: p.gap + (kind === "shutter" ? 20 : kind === "seal" ? 100 : 0),
+    velocity: kind === "shutter" ? (phase < 3 ? 1 : -1) * amplitude * 2 / 3 : 0,
+    nextTurn: kind === "shutter" ? (phase < 3 - EPS ? 3 - phase : 6 - phase) : Infinity,
+    sealY: gate.centre + (gate.id % 8 === 6 ? 56 : -56), sealRadius: 22,
+  };
+}
 const evaluate = (p: Polynomial, x: number): number => p.reduceRight((sum, c) => sum * x + c, 0);
 const square = (p: Polynomial): Polynomial => {
   const result = Array<number>(p.length * 2 - 1).fill(0);
@@ -104,8 +131,8 @@ export function flap(run: Run): Run {
 
 // A segment ends at terminal-velocity onset. Times are normalized to [0,1]
 // for root isolation, then converted back to seconds for chronological scoring.
-function segment(run: Run, duration: number, gravity: number): Run {
-  const preset = presets[run.mode];
+function segment(run: Run, duration: number, gravity: number, acceleration: number): Run {
+  const speed = speedAt(run.mode, run.elapsed);
   const y = [run.y, run.velocity * duration, .5 * gravity * duration * duration];
   let contact = 1, ending: Run["ending"] = null;
   for (const [p, reason] of [
@@ -116,29 +143,47 @@ function segment(run: Run, duration: number, gravity: number): Run {
     if (hit !== null && hit <= contact) { contact = hit; ending = reason; }
   }
   for (const gate of run.gates) {
-    const x = [WORLD.birdX - gate.x, preset.speed * duration];
-    for (const [top, bottom] of [[WORLD.top, gate.centre - preset.gap / 2], [gate.centre + preset.gap / 2, WORLD.bottom]]) {
-      const hit = sweepCircle(x, y, { left: 0, right: WORLD.gateWidth, top, bottom });
+    const opening = gateOpening(gate, run.mode, run.elapsed);
+    const x = [WORLD.birdX - gate.x, speed * duration, .5 * acceleration * duration * duration];
+    const relativeY = [run.y - opening.centre, (run.velocity - opening.velocity) * duration, y[2]];
+    for (const [top, bottom] of [[-WORLD.height * 2, -opening.gap / 2], [opening.gap / 2, WORLD.height * 2]]) {
+      const hit = sweepCircle(x, relativeY, { left: 0, right: WORLD.gateWidth, top, bottom });
       if (hit !== null && hit <= contact) { contact = hit; ending = "panel"; }
+    }
+    if (opening.kind === "seal") {
+      const sealX = [x[0] - WORLD.gateWidth / 2, ...x.slice(1)];
+      const sealY = [run.y - opening.sealY, ...y.slice(1)], distance = sum(square(sealX), square(sealY));
+      distance[0] -= (WORLD.radius + opening.sealRadius) ** 2;
+      const hit = firstNegative(distance);
+      if (hit !== null && hit <= contact) { contact = hit; ending = "seal"; }
     }
   }
   const time = duration * contact;
   let score = run.score;
   const gates = run.gates.map((gate) => {
-    const passing = (gate.x + WORLD.gateWidth - WORLD.birdX) / preset.speed;
+    const distance = gate.x + WORLD.gateWidth - WORLD.birdX;
+    const passing = distance < 0 || acceleration === 0 ? distance / speed : 2 * distance / (speed + Math.sqrt(speed * speed + 2 * acceleration * distance));
     const passed = !gate.scored && passing >= -EPS && passing <= time + EPS && (!ending || passing < time - EPS);
     if (passed) score++;
-    return { ...gate, x: gate.x - preset.speed * time, scored: gate.scored || passed };
+    return { ...gate, x: gate.x - speed * time - .5 * acceleration * time * time, scored: gate.scored || passed };
   }).filter((gate) => gate.x + WORLD.gateWidth >= 0);
   return populate({ ...run, y: evaluate(y, contact), velocity: Math.min(360, run.velocity + gravity * time), elapsed: run.elapsed + time,
     gates, score, status: ending ? "ended" : "flying", ending });
 }
 export function step(run: Run): Run {
   if (run.status !== "flying") return run;
-  const untilCap = Math.max(0, (360 - run.velocity) / 900);
-  if (untilCap >= STEP) return segment(run, STEP, 900);
-  const first = untilCap > EPS ? segment(run, untilCap, 900) : run;
-  return first.status === "ended" ? first : segment({ ...first, velocity: 360 }, STEP - untilCap, 0);
+  let remaining = STEP, next = run;
+  while (remaining > EPS && next.status === "flying") {
+    const t = next.elapsed, rampEnd = RAMP.start + RAMP.duration;
+    const untilSpeedChange = t < RAMP.start - EPS ? RAMP.start - t : t < rampEnd - EPS ? rampEnd - t : Infinity;
+    const gravity = next.velocity >= 360 - EPS ? 0 : 900;
+    const untilCap = gravity ? (360 - next.velocity) / 900 : Infinity;
+    const turns = next.gates.map((g) => gateOpening(g, next.mode, t).nextTurn).filter((time) => time > EPS);
+    const duration = Math.min(remaining, untilSpeedChange, untilCap, ...turns);
+    const acceleration = t >= RAMP.start - EPS && t < rampEnd - EPS ? (presets[next.mode].maxSpeed - presets[next.mode].speed) / RAMP.duration : 0;
+    next = segment(next, duration, gravity, acceleration); remaining -= duration;
+  }
+  return next;
 }
 
 export function validRun(value: unknown): value is Run {
@@ -149,14 +194,14 @@ export function validRun(value: unknown): value is Run {
   if (![r.y, r.velocity, r.elapsed, r.score, r.seed, r.random, r.nextId].every(Number.isFinite)) return false;
   if (r.y < 52 - 1e-6 || r.y > 668 + 1e-6 || r.velocity < -280 || r.velocity > 360 || r.elapsed < 0 || r.elapsed > 31536000) return false;
   if (![r.seed, r.random].every((n) => Number.isInteger(n) && n >= 0 && n <= 4294967295) || !Number.isSafeInteger(r.nextId) || r.nextId < 1) return false;
-  if (!Number.isSafeInteger(r.score) || r.score < 0 || r.score >= r.nextId || r.score > Math.floor(r.elapsed * presets[r.mode].speed / presets[r.mode].spacing) + 1) return false;
-  if ((r.status === "ended") !== ["ceiling", "floor", "panel"].includes(r.ending ?? "") || (r.status !== "ended" && r.ending !== null)) return false;
+  if (!Number.isSafeInteger(r.score) || r.score < 0 || r.score >= r.nextId || r.score > Math.floor(distanceAt(r.mode, r.elapsed) / presets[r.mode].spacing) + 1) return false;
+  if ((r.status === "ended") !== ["ceiling", "floor", "panel", "seal"].includes(r.ending ?? "") || (r.status !== "ended" && r.ending !== null)) return false;
   if (!Array.isArray(r.gates) || r.gates.length < 2 || r.gates.length > 5) return false;
   const preset = presets[r.mode];
   for (let i = 0; i < r.gates.length; i++) {
     const g = r.gates[i], prev = r.gates[i - 1];
     if (!g || !Number.isInteger(g.id) || g.id < 0 || !Number.isFinite(g.x) || g.x < -64 - 1e-6 || g.x > WORLD.width + preset.spacing * 2 + 1e-6 || !Number.isInteger(g.centre) || g.centre < 210 || g.centre > 510 || typeof g.scored !== "boolean") return false;
-    const expectedX = WORLD.birdX + WORLD.radius + preset.speed * 2 + g.id * preset.spacing - r.elapsed * preset.speed;
+    const expectedX = WORLD.birdX + WORLD.radius + preset.speed * 2 + g.id * preset.spacing - distanceAt(r.mode, r.elapsed);
     if (Math.abs(g.x - expectedX) > 1e-4 || (prev && (g.id !== prev.id + 1 || Math.abs(g.centre - prev.centre) > 90))) return false;
     const shouldScore = g.x + WORLD.gateWidth < WORLD.birdX - 1e-6;
     if (g.scored !== shouldScore && Math.abs(g.x + WORLD.gateWidth - WORLD.birdX) > 1e-6) return false;
@@ -176,16 +221,24 @@ export function validRun(value: unknown): value is Run {
   if (r.score !== passed) return false;
   if (r.status === "ready" && (r.elapsed !== 0 || r.score !== 0 || r.y !== 360 || r.velocity !== 0)) return false;
   if (r.ending === "ceiling" && Math.abs(r.y - 52) > 1e-6 || r.ending === "floor" && Math.abs(r.y - 668) > 1e-6) return false;
-  let panelContact = false;
+  let panelContact = false, sealContact = false;
   for (const g of r.gates) {
-    for (const [top, bottom] of [[WORLD.top, g.centre - preset.gap / 2], [g.centre + preset.gap / 2, WORLD.bottom]]) {
+    const opening = gateOpening(g, r.mode, r.elapsed);
+    for (const [top, bottom] of [[WORLD.top, opening.centre - opening.gap / 2], [opening.centre + opening.gap / 2, WORLD.bottom]]) {
       const dx = WORLD.birdX - Math.max(g.x, Math.min(g.x + WORLD.gateWidth, WORLD.birdX));
       const dy = r.y - Math.max(top, Math.min(bottom, r.y));
       const distance = dx * dx + dy * dy;
       if (distance < WORLD.radius * WORLD.radius - 1e-7 && r.status !== "ended") return false;
       if (distance <= WORLD.radius * WORLD.radius + 1e-5) panelContact = true;
     }
+    if (opening.kind === "seal") {
+      const distance = (WORLD.birdX - g.x - WORLD.gateWidth / 2) ** 2 + (r.y - opening.sealY) ** 2;
+      const radius = (WORLD.radius + opening.sealRadius) ** 2;
+      if (distance < radius - 1e-7 && r.status !== "ended") return false;
+      if (distance <= radius + 1e-5) sealContact = true;
+    }
   }
   if (r.ending === "panel" && !panelContact) return false;
+  if (r.ending === "seal" && !sealContact) return false;
   return true;
 }

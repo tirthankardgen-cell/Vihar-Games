@@ -42,7 +42,7 @@ All production paths below use `https://games.vihar.online`. A browser visit to 
 
 Select any game from the shared homepage at `/`. The 24 entries above are the complete Vihar Games catalog for this phase. Ten retain planned multiplayer support; Sudoku, Minesweeper, and the twelve additions are exclusively solo.
 
-The mode and player columns describe the full approved designs. Chess and Tic Tac Toe metadata reports `availability: "playable"`, `availableModes: ["computer", "pass-and-play"]`, and `rulesVersion: "1.0.0"`; online modes remain planned. Carrom also reports `availability: "playable"`, `availableModes: ["computer", "practice", "pass-and-play"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. Paperwing reports `playable`, `availableModes: ["solo"]`, `soloPresets: ["standard", "practice"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. The other twenty games report `planned` availability and no available modes or rules version. All room actions remain deferred.
+The mode and player columns describe the full approved designs. Chess and Tic Tac Toe metadata reports `availability: "playable"`, `availableModes: ["computer", "pass-and-play"]`, and `rulesVersion: "1.0.0"`; online modes remain planned. Carrom also reports `availability: "playable"`, `availableModes: ["computer", "practice", "pass-and-play"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. Paperwing reports `playable`, `availableModes: ["solo"]`, `soloPresets: ["standard", "practice"]`, `rulesVersion: "2.0.0"`, and `embedVersion: 1`. The other twenty games report `planned` availability and no available modes or rules version. All room actions remain deferred.
 
 ## New solo games and original styles
 
