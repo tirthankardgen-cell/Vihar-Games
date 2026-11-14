@@ -11,6 +11,8 @@ import { Setup } from "./setup";
 import styles from "./notebook.module.css";
 import { useViharPlay } from "@/lib/use-vihar-play";
 import { ViharPlayControls } from "../vihar-play-controls";
+import { useGameAudio } from "@/lib/use-game-audio";
+import { GameAudioControls } from "../game-audio-controls";
 
 type Screen = "choose" | "setup" | "game" | "create" | "join";
 
@@ -25,6 +27,8 @@ export default function TicTacToePlay({ initialRoomCode }: { initialRoomCode?: s
   const active = useRef<LocalSession | null>(null);
   const inRound = screen === "game" && session?.match.status === "playing";
   const vihar = useViharPlay("tic-tac-toe", inRound, inRound && !session?.handover);
+  const audio = useGameAudio("tic-tac-toe", inRound && !session?.handover, vihar.paused);
+  const { cue } = audio;
 
   useEffect(() => {
     let cancelled = false;
@@ -42,11 +46,17 @@ export default function TicTacToePlay({ initialRoomCode }: { initialRoomCode?: s
 
   const commit = useCallback((next: LocalSession, expectedRevision?: number) => {
     if (expectedRevision !== undefined && (!active.current || active.current.id !== next.id || active.current.match.revision !== expectedRevision)) return false;
+    const before = active.current;
+    if (before?.id === next.id) {
+      if (before.match.round !== next.match.round) cue("start");
+      else if (before.match.status === "playing" && next.match.status === "finished") cue(next.match.winner === null ? "draw" : "complete");
+      else if (next.match.board.some((cell, i) => cell !== before.match.board[i])) cue("move");
+    }
     active.current = next;
     setSession(next); setPrevious(next);
     try { setCanSave(saveSession(window.localStorage, next)); } catch { setCanSave(false); }
     return true;
-  }, []);
+  }, [cue]);
 
   function choose(chosen: LocalMode) { setMode(chosen); setScreen("setup"); setNotice(""); }
 
@@ -63,7 +73,7 @@ export default function TicTacToePlay({ initialRoomCode }: { initialRoomCode?: s
   function backToChoose() { active.current = null; setSession(null); setScreen("choose"); }
 
   return <main id="main-content" className={styles.page} data-vihar-embedded={vihar.embedded || undefined}>
-    <NotebookNav embedded={vihar.embedded} controls={<ViharPlayControls play={vihar} inRound={inRound} />} />
+    <NotebookNav embedded={vihar.embedded} controls={<div className={styles.audioNav}><GameAudioControls audio={audio} /><ViharPlayControls play={{ ...vihar, exit: () => { audio.stop(); vihar.exit(); } }} inRound={inRound} /></div>} />
     {screen === "choose" && <section className={`${styles.content} ${styles.chooseContent}`}>
       <Steps step={1} />
       <h1 className={styles.screenTitle}>Who&apos;s on the other side?</h1>

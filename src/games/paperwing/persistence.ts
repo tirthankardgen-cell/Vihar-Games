@@ -8,7 +8,7 @@ export type Settings = { mode: Mode; sound: boolean };
 export type RecordValue = { score: number; elapsed: number };
 export type Records = { version: 1; rulesVersion: string; standard: RecordValue; practice: RecordValue };
 type StorageLike = Pick<Storage, "getItem" | "setItem" | "removeItem">;
-export const defaultSettings: Settings = { mode: "standard", sound: false };
+export const defaultSettings: Settings = { mode: "standard", sound: true };
 export const emptyRecords = (): Records => ({ version: 1, rulesVersion: RULES_VERSION, standard: { score: 0, elapsed: 0 }, practice: { score: 0, elapsed: 0 } });
 export const newSession = (mode: Mode, seed: number, id: string): Session => ({ version: 1, rulesVersion: RULES_VERSION, id, run: createRun(mode, seed), remainder: 0 });
 export function parseSession(raw: string | null): Session | null {

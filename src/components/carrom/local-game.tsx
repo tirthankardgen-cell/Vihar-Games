@@ -17,6 +17,8 @@ import { PowerMeter } from "./power-meter";
 import { ShotCelebration } from "./shot-feedback";
 import styles from "./carrom.module.css";
 import table from "./table.module.css";
+import { useGameAudio } from "@/lib/use-game-audio";
+import { GameAudioControls } from "../game-audio-controls";
 
 const defaultShot: Shot = { position: 0, angle: 0, power: 0 };
 const FEEDBACK_MS = 1900;
@@ -39,6 +41,15 @@ export function LocalGame({ session, onChange, onBack, onAgain, saved, play }: P
   const thinking = session.mode === "computer" && match.turn !== session.humanSide && !finishCard;
   const busy = Boolean(command || thinking);
   const locked = Boolean(paused || busy || session.handover || finishCard || dialog);
+  const audio = useGameAudio("carrom", !finishCard && !session.handover, paused || dialog !== null);
+  const { cue } = audio;
+  const lastAudioMatch = useRef(match);
+  useEffect(() => {
+    const before = lastAudioMatch.current; lastAudioMatch.current = match;
+    if (match.revision <= before.revision) return;
+    if (finishCard) cue("complete");
+    else if (match.pieces.length < before.pieces.length) cue("pocket");
+  }, [match, finishCard, cue]);
   const yourTurn = !thinking && !session.handover && !finishCard;
   useEffect(() => { live.current = session; }, [session]);
 
@@ -80,6 +91,7 @@ export function LocalGame({ session, onChange, onBack, onAgain, saved, play }: P
         };
         const animate = () => {
           if (stopped) return;
+          cue("strike");
           setShot(acceptedShot); setError("");
           if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { finish(); return; }
           const start = performance.now();
@@ -99,7 +111,7 @@ export function LocalGame({ session, onChange, onBack, onAgain, saved, play }: P
       worker.postMessage({ id: current.id, match: current.match, practice: current.mode === "practice", difficulty: current.difficulty, ...(command ? { shot: command } : {}) });
     } catch { queueMicrotask(() => fail("The shot could not start. Your board is safe. Try again.")); }
     return () => { stopped = true; worker?.terminate(); window.clearTimeout(timeout); window.clearTimeout(playbackTimer); cancelAnimationFrame(animation); };
-  }, [session, match, command, thinking, paused, dialog, retry, onChange]);
+  }, [session, match, command, thinking, paused, dialog, retry, onChange, cue]);
 
   function shoot(input: Shot) {
     if (locked) return;
@@ -126,7 +138,8 @@ export function LocalGame({ session, onChange, onBack, onAgain, saved, play }: P
 
   return <>
     <CarromNav compact embedded={play.embedded} controls={<div className={table.gameButtons} aria-label="Game menu">
-      {play.embedded && <button className={table.menuButton} aria-label="Exit to Vihar" title="Exit to Vihar" onClick={play.exit}><Icon name="back" /></button>}
+      <GameAudioControls audio={audio} />
+      {play.embedded && <button className={table.menuButton} aria-label="Exit to Vihar" title="Exit to Vihar" onClick={() => { audio.stop(); play.exit(); }}><Icon name="back" /></button>}
       {!finishCard && <button className={table.menuButton} aria-label={play.manualPause ? "Resume game" : "Pause game"} title={play.manualPause ? "Resume game" : "Pause game"} aria-pressed={play.manualPause} onClick={play.togglePause}><Icon name={play.manualPause ? "play" : "pause"} /></button>}
       <button className={table.menuButton} aria-label="Board options" title="Board options" onClick={() => setDialog("options")}><Icon name="more" /></button>
     </div>} />

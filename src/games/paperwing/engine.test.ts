@@ -100,7 +100,7 @@ test("storage is optional and only Paperwing keys are read or removed", () => {
   const blocked = { getItem() { throw Error("blocked"); }, setItem() { throw Error("blocked"); }, removeItem() { throw Error("blocked"); } };
   assert.equal(saveSession(blocked, newSession("standard", 0, "two")), false);
   assert.equal(loadSession(blocked).session, null);
-  assert.equal(loadSettings(blocked).sound, false); assert.deepEqual(loadRecords(blocked), emptyRecords());
+  assert.equal(loadSettings(blocked).sound, true); assert.deepEqual(loadRecords(blocked), emptyRecords());
   assert.notEqual(SESSION_KEY, RECORDS_KEY); assert.notEqual(SETTINGS_KEY, RECORDS_KEY);
 });
 test("personal bests stay separate by mode and never record unfinished flights", () => {

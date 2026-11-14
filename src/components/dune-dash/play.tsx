@@ -104,6 +104,7 @@ export default function DuneDashPlay() {
     let cancelled = false;
     const r = runtime.current;
     audio.current = createAudio(() => setNotice("Sound is unavailable. You can keep running quietly."));
+    audio.current.enable(defaultSettings.sound); audio.current.music(defaultSettings.music);
     queueMicrotask(() => {
       if (cancelled) return;
       try {

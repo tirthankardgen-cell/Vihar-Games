@@ -92,6 +92,7 @@ export default function PaperwingPlay() {
     let cancelled = false;
     const currentRuntime = runtime.current;
     audio.current = createAudio(() => setNotice("Sound is unavailable in this browser. Your flight can continue quietly."));
+    audio.current.enable(defaultSettings.sound);
     queueMicrotask(() => {
       if (cancelled) return;
       try {

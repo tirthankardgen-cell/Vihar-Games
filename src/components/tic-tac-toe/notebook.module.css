@@ -352,3 +352,4 @@
   .rulesContent .screenTitle { font-size: 30px; }
   .rulesList { margin-top: 10px; }
 }
+.audioNav { display:flex; align-items:center; gap:8px; }

@@ -218,7 +218,7 @@ test("invalid or unavailable storage recovers and never overwrites another game"
   assert.equal(storage.getItem("vihar-games:chess:save:v1"), "chess");
   const unavailable: StorageLike = { getItem: () => { throw Error("blocked"); }, setItem: () => { throw Error("full"); }, removeItem: () => {} };
   assert.equal(loadSession(unavailable).unavailable, true); assert.equal(saveSession(unavailable, newSession("standard", 1, "x")), false);
-  assert.deepEqual(loadSettings(unavailable), { preset: "standard", sound: false, music: false });
+  assert.deepEqual(loadSettings(unavailable), { preset: "standard", sound: true, music: true });
 });
 test("only finished runs record a best, with separate preset and rules records", () => {
   const records = emptyRecords(), run = createRun("standard", 5);
@@ -232,7 +232,7 @@ test("only finished runs record a best, with separate preset and rules records",
 });
 test("sound and music preferences recover older settings and reject malformed audio flags", () => {
   const storage = store(); storage.setItem(SETTINGS_KEY, JSON.stringify({ preset: "practice", sound: true }));
-  assert.deepEqual(loadSettings(storage), { preset: "practice", sound: true, music: false });
+  assert.deepEqual(loadSettings(storage), { preset: "practice", sound: true, music: true });
   storage.setItem(SETTINGS_KEY, JSON.stringify({ preset: "standard", sound: false, music: "yes" }));
-  assert.deepEqual(loadSettings(storage), { preset: "standard", sound: false, music: false });
+  assert.deepEqual(loadSettings(storage), { preset: "standard", sound: true, music: true });
 });

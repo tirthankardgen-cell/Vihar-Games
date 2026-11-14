@@ -8,7 +8,7 @@ export type Settings = { preset: Preset; sound: boolean; music: boolean };
 export type Best = { score: number; rows: number; level: number; elapsedMs: number };
 export type Records = { version: 1; rulesVersion: string; standard: Best; practice: Best };
 export type StorageLike = Pick<Storage, "getItem" | "setItem" | "removeItem">;
-export const defaultSettings: Settings = { preset: "standard", sound: false, music: false };
+export const defaultSettings: Settings = { preset: "standard", sound: true, music: true };
 const emptyBest = (): Best => ({ score: 0, rows: 0, level: 1, elapsedMs: 0 });
 export const emptyRecords = (): Records => ({ version: 1, rulesVersion: RULES_VERSION, standard: emptyBest(), practice: emptyBest() });
 export const newSession = (preset: Preset, seed: number, id: string): Session => ({ version: 1, rulesVersion: RULES_VERSION, id, run: createRun(preset, seed), remainder: 0 });
@@ -33,7 +33,7 @@ export function saveSession(storage: StorageLike, session: Session): boolean {
 export function loadSettings(storage: StorageLike): Settings {
   try {
     const s = JSON.parse(storage.getItem(SETTINGS_KEY) ?? "null") as Settings;
-    return s && ["standard", "practice"].includes(s.preset) && typeof s.sound === "boolean" && (s.music === undefined || typeof s.music === "boolean") ? { preset: s.preset, sound: s.sound, music: s.music ?? false } : { ...defaultSettings };
+    return s && ["standard", "practice"].includes(s.preset) && typeof s.sound === "boolean" && (s.music === undefined || typeof s.music === "boolean") ? { preset: s.preset, sound: s.sound, music: s.music ?? true } : { ...defaultSettings };
   } catch { return { ...defaultSettings }; }
 }
 export function loadRecords(storage: StorageLike): Records {

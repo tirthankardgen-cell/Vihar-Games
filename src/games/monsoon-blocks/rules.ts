@@ -23,6 +23,6 @@ export const monsoonRules = [
   ] },
   { title: "Take a little pause", items: [
     "Pause or Escape freezes gravity, lock delay, repeats, active time, and sound. Switching tabs, losing window focus, leaving the page, or a Vihar host pause also stops play. Returning alone never resumes it. Resume deliberately starts 3, 2, 1; the countdown does not move or drop a shape.",
-    "Unfinished windows restore paused on this device, with the grid, shape, hold, preview, bag, generator, and timers intact. Restart asks before replacing progress. Results show score, rows, highest level, active time, and your preset’s personal best. Glass sounds and original Cloudlight background music start off, have separate switches, and pause with play. Printed patterns distinguish shapes beyond colour. Play runs locally after loading.",
+    "Unfinished windows restore paused on this device, with the grid, shape, hold, preview, bag, generator, and timers intact. Restart asks before replacing progress. Results show score, rows, highest level, active time, and your preset’s personal best. Glass sounds and original Cloudlight background music default to on after your first interaction, have separate switches, and pause with play. Printed patterns distinguish shapes beyond colour. Play runs locally after loading.",
   ] },
 ] as const;

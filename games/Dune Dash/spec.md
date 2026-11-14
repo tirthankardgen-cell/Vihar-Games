@@ -54,7 +54,7 @@ Follow [solo game standards](../../docs/SOLO_GAME_STANDARDS.md). Save mode, fox 
 
 ## 7. Future asset handoff
 
-Implemented as original native SVG: fox run/jump/duck poses, three sandstone silhouettes, ink swift, field-note border, static skyline, and labelled jump/duck diagrams. Results use a dated field-note stamp with live distance and counters. Optional foot taps, jump note, collision thud and an original pentatonic desert music loop are synthesized locally. Music and effects have independent controls, start muted, and stop on pause/Exit. The pure runner is in `src/games/dune-dash/`; its interface is in `src/components/dune-dash/`.
+Implemented as original native SVG: fox run/jump/duck poses, three sandstone silhouettes, ink swift, field-note border, static skyline, and labelled jump/duck diagrams. Results use a dated field-note stamp with live distance and counters. Optional foot taps, jump note, collision thud and an original pentatonic desert music loop are synthesized locally. Music and effects have independent controls, default to on after player interaction, and stop on pause/Exit. The pure runner is in `src/games/dune-dash/`; its interface is in `src/components/dune-dash/`.
 
 ## 8. Acceptance when implemented
 

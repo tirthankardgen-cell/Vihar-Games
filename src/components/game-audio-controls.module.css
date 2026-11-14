@@ -1,0 +1,8 @@
+.controls { position:relative; flex-shrink:0; z-index:20; }
+.controls .trigger { display:grid; place-items:center; min-width:44px; min-height:44px; padding:8px; border:1px solid currentColor; border-radius:3px; background:transparent; color:inherit; cursor:pointer; }
+.trigger svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+.panel { position:absolute; right:0; top:calc(100% + 6px); width:190px; padding:8px; display:grid; gap:5px; background:#f8f5ed; color:#383c40; border:1px solid #b9bdbb; border-radius:3px; }
+.controls .panel button { display:flex; justify-content:space-between; gap:12px; width:100%; min-height:44px; padding:8px 12px; background:transparent; color:#383c40; border:1px solid #d8d6cc; border-radius:2px; font-size:13px; cursor:pointer; }
+.controls .panel button[aria-pressed=true] { background:#e7ebe7; border-color:#365e83; }
+.panel p { margin:5px; font-size:12px; line-height:1.4; }
+.controls button:focus-visible { outline:3px solid #365e83; outline-offset:2px; }

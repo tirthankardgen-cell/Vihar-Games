@@ -97,6 +97,7 @@ export default function MonsoonPlay() {
   useEffect(() => {
     let cancelled = false; const currentRuntime = runtime.current;
     audio.current = createAudio(() => setNotice("Sound is unavailable. You can keep playing quietly."));
+    audio.current.enable(defaultSettings.sound); audio.current.enableMusic(defaultSettings.music);
     queueMicrotask(() => {
       if (cancelled) return;
       try {

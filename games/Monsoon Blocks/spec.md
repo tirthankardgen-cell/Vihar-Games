@@ -47,7 +47,7 @@ Target session: 3–10 minutes. This is continuous solo falling-block play; no o
 - Rows clear with a brief horizontal wipe. Piece motion and rotation remain planar; reduced motion uses immediate state changes. Loss quietly marks the occupied skyline and shows a paper result slip.
 - Keep the entire visible board and primary touch controls reachable without browser scrolling during play. State previews must match actual piece cells.
 - Optional sound: muted glass taps for placement and a soft rainstick chord for a clear; no continuous rain audio by default.
-- Optional music: **Cloudlight**, an original quiet glass melody with soft chord accompaniment, synthesized locally. Effects and music have separate saved switches and start off. Both pause with play and stop on exit; no audio network request or continuous rain loop is needed.
+- Optional music: **Cloudlight**, an original quiet glass melody with soft chord accompaniment, synthesized locally. Effects and music have separate saved switches and default to on after player interaction. Both pause with play and stop on exit; no audio network request or continuous rain loop is needed.
 
 ## 6. State and shared requirements
 

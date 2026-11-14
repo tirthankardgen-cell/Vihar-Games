@@ -8,7 +8,7 @@ export type Session = { version: 1; rulesVersion: string; id: string; run: Run; 
 export type Settings = { version: 1; mode: Mode; sound: boolean; music: boolean };
 type Best = { distance: number; score: number; elapsed: number };
 export type Records = { version: 1; rulesVersion: string; endless: Best; practice: Best };
-export const defaultSettings: Settings = { version: 1, mode: "endless", sound: false, music: false };
+export const defaultSettings: Settings = { version: 1, mode: "endless", sound: true, music: true };
 export const emptyRecords = (): Records => ({ version: 1, rulesVersion: RULES_VERSION, endless: { distance: 0, score: 0, elapsed: 0 }, practice: { distance: 0, score: 0, elapsed: 0 } });
 export const newSession = (mode: Mode, seed: number, id: string, date: string): Session => ({ version: 1, rulesVersion: RULES_VERSION, id, date, run: createRun(mode, seed), remainder: 0 });
 
@@ -26,7 +26,7 @@ export function loadSession(storage: StorageLike) {
 export function loadSettings(storage: StorageLike): Settings {
   try {
     const s = JSON.parse(storage.getItem(SETTINGS_KEY) ?? "null") as Settings;
-    return s?.version === 1 && ["endless", "practice"].includes(s.mode) && typeof s.sound === "boolean" && (s.music === undefined || typeof s.music === "boolean") ? { ...s, music: s.music ?? false } : defaultSettings;
+    return s?.version === 1 && ["endless", "practice"].includes(s.mode) && typeof s.sound === "boolean" && (s.music === undefined || typeof s.music === "boolean") ? { ...s, music: s.music ?? true } : defaultSettings;
   } catch { return defaultSettings; }
 }
 export function loadRecords(storage: StorageLike): Records {
