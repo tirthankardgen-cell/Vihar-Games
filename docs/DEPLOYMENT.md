@@ -8,7 +8,7 @@
 **Suggested Vercel project slug:** `vihar-games`  
 **Production custom domain:** `games.vihar.online`
 
-**Presentation:** All twelve games are 2D only; the single website does not require a 3D rendering engine or modeled gameplay assets.
+**Presentation:** All twenty-four games are 2D only; the single website does not require a 3D rendering engine or modeled gameplay assets.
 
 ## Deploy the current scaffold
 
@@ -28,7 +28,7 @@ Chess, Tic Tac Toe, and Carrom play routes send `Content-Security-Policy: frame-
 
 Create one Vercel project for the entire website. In a repository containing the whole workspace, set the project root to `Vihar Games`. If that directory is the repository root, use the repository root directly.
 
-The root contains one Next.js application, one `package.json`, one lockfile, one Tailwind CSS 4/PostCSS configuration, and one build pipeline. The twelve game specifications and future source modules belong to that application. None of the individual game folders receives its own Vercel project or package installation.
+The root contains one Next.js application, one `package.json`, one lockfile, one Tailwind CSS 4/PostCSS configuration, and one build pipeline. The twenty-four game specifications and future source modules belong to that application. None of the individual game folders receives its own Vercel project or package installation.
 
 Keep the sibling `Bap Ka Rasta`, `Game 3`, and `Gulam Chor` directories outside the build root. Their existing deployments, packages, environment files, and data do not become dependencies of Vihar Games.
 
@@ -102,16 +102,16 @@ Per-room turn deadlines and Memory Match's mismatch deadlines are evaluated on r
 
 Set the site canonical to `https://games.vihar.online` and each game canonical to its path, including `https://games.vihar.online/chess` and `https://games.vihar.online/carrom`. Rules pages have separate canonical URLs ending in `/how-to-play`.
 
-The current sitemap contains the homepage, twelve game overviews, and Chess, Tic Tac Toe, and Carrom's published rules pages. Other rules placeholders are `noindex` and join the sitemap when real rules are published. The completed production sitemap will contain the homepage, twelve overviews, and twelve rules pages. Exclude play and room URLs, API endpoints, private state, and participant names. Mark play pages `noindex`; send `X-Robots-Tag: noindex` on API responses. Keep metadata and links on the shared production domain.
+The current sitemap contains the homepage, twenty-four game overviews, and Chess, Tic Tac Toe, and Carrom's published rules pages. Other rules placeholders are `noindex` and join the sitemap when real rules are published. The completed production sitemap will contain the homepage, twenty-four overviews, and twenty-four rules pages. Exclude play and room URLs, API endpoints, private state, and participant names. Mark play pages `noindex`; send `X-Robots-Tag: noindex` on API responses. Keep metadata and links on the shared production domain.
 
 ## 8. Release verification
 
-For the scaffold, verify lint, type checking, production build, all twelve overview/play/rules-placeholder paths, catalog and info JSON, launch redirects, unknown-game 404s, API `noindex` headers, canonical URLs, and the initial sitemap. Check the catalog on desktop and phone widths. The gameplay and backend checks below apply as their implementations arrive.
+For the scaffold, verify lint, type checking, production build, all twenty-four overview/play/rules-placeholder paths, catalog and info JSON, launch redirects, unknown-game 404s, API `noindex` headers, canonical URLs, and the initial sitemap. Check the catalog on desktop and phone widths. The gameplay and backend checks below apply as their implementations arrive.
 
 1. Run the shared lint, type-check, meaningful game-engine tests, and production build.
-2. Verify the homepage lists all twelve games and excludes the three earlier projects.
+2. Verify the homepage lists all twenty-four games and excludes the three earlier projects.
 3. Visit every game path directly, including `/chess` and `/carrom`; verify its Play and How to Play routes work on fresh browser visits.
-4. Confirm the twelve launch APIs redirect only to their same-site game pages, and metadata/rules APIs match the registry.
+4. Confirm the twenty-four launch APIs redirect only to their same-site game pages, and metadata/rules APIs match the registry.
 5. Complete local games without guest-auth or gameplay API calls. Verify saved Chess, Carrom, and puzzle sessions do not overwrite one another on the shared origin.
 6. For the ten multiplayer games, verify create, join, capacity, start, turns, results, rematch, reconnect, and forfeit in independent browser profiles.
 7. Verify cross-game room and action isolation, duplicate requests, stale revisions, deterministic settled shots, and private Memory Match identities.

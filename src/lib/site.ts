@@ -3,4 +3,4 @@ export const siteUrl = new URL(
 );
 
 export const siteDescription =
-  "A place for familiar board games, friendly rivalries, and quiet puzzles. Twelve browser games are coming to Vihar Games.";
+  "Familiar board games, quiet solo puzzles, and original arcade favourites. Explore the growing Vihar Games collection.";

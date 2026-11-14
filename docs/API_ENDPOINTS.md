@@ -13,18 +13,19 @@
 
 ## Current scaffold behavior
 
-- `GET /api/games` returns the twelve registered entries.
+- `GET /api/games` returns the twenty-four registered entries.
 - `GET /api/games/<game-id>` returns a same-site 307 redirect.
 - `GET /api/games/<game-id>/info` returns public metadata.
 - Unknown IDs on these endpoints return `404 UNKNOWN_GAME` with a request ID.
 - Chess and Tic Tac Toe report `availability: "playable"`, `availableModes: ["computer", "pass-and-play"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. Chess also declares its Acharya Dev computer persona. Carrom reports the same version/availability fields with `availableModes: ["computer", "practice", "pass-and-play"]`. Other entries report `planned`, empty available modes, and a null rules version. All `roomActions` remain empty.
 - Chess, Tic Tac Toe, and Carrom `/rules` endpoints return their published rules. Other registered games return `404 RULES_NOT_AVAILABLE`; unknown games return `404 UNKNOWN_GAME`. All room/action paths and internal cleanup remain unimplemented. Their contracts below apply to the later backend phase.
+- The twelve new solo entries declare `plannedModes: ["solo"]`, null pass-and-play/online limits, `availableModes: []`, and `rulesVersion: null`. Their Markdown design rules do not enable a published rules API or a playable mode.
 
 These routes run within the same Next.js application and require no Firebase configuration in this phase.
 
 ## 1. Game pages and endpoint namespaces
 
-All twelve games are separate pages within the same website. Their API namespaces are also within that website. Selecting a catalog entry opens the page directly; opening the launch API redirects to that page.
+All twenty-four games are separate pages within the same website. Their API namespaces are also within that website. Selecting a catalog entry opens the page directly; opening the launch API redirects to that page.
 
 | Game | Page | Play page | Launch API / API base |
 | --- | --- | --- | --- |
@@ -40,14 +41,26 @@ All twelve games are separate pages within the same website. Their API namespace
 | Sudoku | `/sudoku` | `/sudoku/play` | `/api/games/sudoku` |
 | Minesweeper | `/minesweeper` | `/minesweeper/play` | `/api/games/minesweeper` |
 | Memory Match | `/memory-match` | `/memory-match/play` | `/api/games/memory-match` |
+| Silk Trail | `/silk-trail` | `/silk-trail/play` | `/api/games/silk-trail` |
+| Monsoon Blocks | `/monsoon-blocks` | `/monsoon-blocks/play` | `/api/games/monsoon-blocks` |
+| Dune Dash | `/dune-dash` | `/dune-dash/play` | `/api/games/dune-dash` |
+| Paperwing | `/paperwing` | `/paperwing/play` | `/api/games/paperwing` |
+| Lantern Logic | `/lantern-logic` | `/lantern-logic/play` | `/api/games/lantern-logic` |
+| Mosaic Shift | `/mosaic-shift` | `/mosaic-shift/play` | `/api/games/mosaic-shift` |
+| Prism Paths | `/prism-paths` | `/prism-paths/play` | `/api/games/prism-paths` |
+| Crate Courtyard | `/crate-courtyard` | `/crate-courtyard/play` | `/api/games/crate-courtyard` |
+| Tide Turn | `/tide-turn` | `/tide-turn/play` | `/api/games/tide-turn` |
+| Pebble Solitaire | `/pebble-solitaire` | `/pebble-solitaire/play` | `/api/games/pebble-solitaire` |
+| Rangoli Loops | `/rangoli-loops` | `/rangoli-loops/play` | `/api/games/rangoli-loops` |
+| Orbit Breaker | `/orbit-breaker` | `/orbit-breaker/play` | `/api/games/orbit-breaker` |
 
-Each game also has `/<game-id>/how-to-play`. A private invite uses `/<game-id>/play?room=ABC234`. Bap Ka Rasta, Game 3, and Gulam Chor have no entries, pages, or endpoints in this registry.
+Each game also has `/<game-id>/how-to-play`. For a game with planned online support, a private invite uses `/<game-id>/play?room=ABC234`. The twelve additions are exclusively solo and have no room routes or actions in their designs. Bap Ka Rasta, Game 3, and Gulam Chor have no entries, pages, or endpoints in this registry.
 
 ## 2. Public endpoints
 
 | Method and path | Behavior | Authentication |
 | --- | --- | --- |
-| `GET /api/games` | Return the twelve registered games, page URLs, rules URLs, API bases, supported modes, player limits, rules versions, 2D presentation, and implementation availability | None |
+| `GET /api/games` | Return the twenty-four registered games, page URLs, rules URLs, API bases, supported modes, player limits, rules versions, 2D presentation, and implementation availability | None |
 | `GET /api/games/<game-id>` | Return HTTP 307 with `Location: /<game-id>` so the clicked endpoint opens the game page | None |
 | `GET /api/games/<game-id>/info` | Return metadata for this game, including its available room actions | None |
 | `GET /api/games/<game-id>/rules` | Return this game's exact rules text and `rulesVersion`, consistent with its rules page | None |
@@ -60,7 +73,7 @@ When Chess is implemented, its metadata also exposes its local computer persona:
 
 ## 3. Online room endpoints
 
-These endpoints apply to the ten multiplayer games. Sudoku and Minesweeper expose public launch/info/rules endpoints only; any recognized room request for them returns `422 MODE_NOT_SUPPORTED`.
+These endpoints apply to the ten multiplayer games. Sudoku, Minesweeper, and the twelve additions expose public launch/info/rules endpoints only; any recognized room request for them returns `422 MODE_NOT_SUPPORTED`.
 
 | Method and path | Request or behavior |
 | --- | --- |
@@ -166,4 +179,4 @@ Game ID scopes database paths, seat permissions, code reservation, action receip
 
 `GET /api/internal/cleanup-rooms` is a protected scheduled maintenance endpoint on the same website, outside the public game registry. Validate the scheduler's bearer secret, scan a bounded batch across game namespaces, and conditionally remove only records still expired. The endpoint is not a playable game or public catalog entry.
 
-Implementation checks must verify the twelve launch redirects and metadata/rules endpoints; room support for exactly ten games; token, member, and actor checks; concurrency and duplicate actions; stale simulation rejection; and hidden Memory Match data. Verify direct browser visits to `/chess` and `/carrom` open their pages without any cross-domain redirect.
+Implementation checks must verify the twenty-four launch redirects and metadata/rules endpoints; room support for exactly ten games; token, member, and actor checks; concurrency and duplicate actions; stale simulation rejection; and hidden Memory Match data. Verify direct browser visits to `/chess` and `/carrom` open their pages without any cross-domain redirect.

@@ -12,7 +12,7 @@ export default function HomePage() {
         <div className="hero-copy">
           <p className="eyebrow">The familiar joy of play</p>
           <h1 id="hero-title">Make time for{" "}<br />one more round.</h1>
-          <p>Board games, friendly rivalries, and quiet puzzles. A new place for the games you grew up with.</p>
+          <p>Board games, quiet solo puzzles, and quick arcade rounds. A new place for the games you grew up with.</p>
           <div className="hero-actions">
             <a className="button button-paper" href="#collection">Explore the collection <span aria-hidden="true">↓</span></a>
             <span className="hero-note">A growing collection of {games.length} games</span>
@@ -24,7 +24,7 @@ export default function HomePage() {
       <section id="collection" className="collection" aria-labelledby="collection-title">
         <div className="section-heading">
           <div><p className="eyebrow">A seat for everyone</p><h2 id="collection-title">Find your favourite.</h2></div>
-          <p>Tic Tac Toe is ready to play.{" "}<br />More familiar favourites are on the way.</p>
+          <p>Chess, Carrom, and Tic Tac Toe are ready to play.{" "}<br />New solo puzzles and arcade favourites are on the way.</p>
         </div>
         <ul className="game-grid">
           {games.map((game, index) => (

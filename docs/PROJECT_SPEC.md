@@ -3,15 +3,15 @@
 # Vihar Games — Project specification
 
 **Project:** Vihar Games  
-**Updated:** 9 November 2026  
-**Scope:** Shared deployment scaffold and consolidated plans for twelve 2D games, including an approved detailed visual direction for every game.
+**Updated:** 14 November 2026  
+**Scope:** Shared deployment scaffold and consolidated plans for twenty-four 2D games, including an approved detailed visual direction for every game.
 
 **Deployment target:** One Next.js application, one Vercel project, one domain.  
-**Implementation status:** Chess, Tic Tac Toe, and Carrom local gameplay, local saves, rules and Vihar embedding are implemented. The other nine engines and all online rooms remain planned.
+**Implementation status:** Chess, Tic Tac Toe, and Carrom local gameplay, local saves, rules and Vihar embedding are implemented. The other 21 engines and all online rooms remain planned.
 
 ## 1. Project boundary
 
-The shared application contains exactly the twelve entries in the [catalog](../GAME_CATALOG.md). The earlier Bap Ka Rasta, Game 3, and Gulam Chor folders remain outside the project. Their game pages, routes, code, dependencies, backend data, and deploy configurations are not imported into Vihar Games.
+The shared application contains the 24 entries in the [catalog](../GAME_CATALOG.md). The earlier Bap Ka Rasta, Game 3, and Gulam Chor folders remain outside the project. Their game pages, routes, code, dependencies, backend data, and deploy configurations are not imported into Vihar Games.
 
 Use `https://games.vihar.online` for the whole project. Chess is `/chess`, Carrom is `/carrom`, and every other module uses its catalog game ID as its page path. Remove the previous individual game subdomains from this project's canonical URLs, invitations, metadata, and deployment requirements.
 
@@ -19,13 +19,13 @@ The rule specifications remain the source of truth for gameplay. This consolidat
 
 ### Current scaffold
 
-The shared homepage, twelve overviews, public catalog API, launch redirects, and metadata APIs are implemented. Chess and Tic Tac Toe have computer/pass-and-play setup, local persistence, computer workers and published rules/JSON. Chess includes legal-move selection, promotion, draw claims/offers, resignation and practice undo; its computer opponent is Acharya Dev. Tic Tac Toe keeps its full-screen notebook and session scores. Carrom adds practice, drag shots, deterministic worker physics, contact guides and settled-state saves. All three use the existing Vihar v1 embed and activity SDKs; only visible active rounds report gameplay, and pausing/hiding stops computer workers. The other nine entries remain planned. Local play needs no Firebase configuration. Private rooms and game-host authentication remain deferred.
+The shared homepage, twenty-four overviews, public catalog API, launch redirects, and metadata APIs are implemented. Chess and Tic Tac Toe have computer/pass-and-play setup, local persistence, computer workers and published rules/JSON. Chess includes legal-move selection, promotion, draw claims/offers, resignation and practice undo; its computer opponent is Acharya Dev. Tic Tac Toe keeps its full-screen notebook and session scores. Carrom adds practice, drag shots, deterministic worker physics, contact guides and settled-state saves. All three use the existing Vihar v1 embed and activity SDKs; only visible active rounds report gameplay, and pausing/hiding stops computer workers. The other 21 entries remain planned. Local play needs no Firebase configuration. Private rooms and game-host authentication remain deferred.
 
 ## 2. Shared page contract
 
 | Path | Purpose |
 | --- | --- |
-| `/` | List the twelve Vihar Games entries and let a visitor open one |
+| `/` | List the twenty-four Vihar Games entries and let a visitor open one |
 | `/<game-id>` | Explain the chosen game and provide Play and How to Play |
 | `/<game-id>/play` | Choose its supported modes, resume local play, or create/join an online room |
 | `/<game-id>/how-to-play` | Publish the exact shipped rules for that game |
@@ -34,7 +34,7 @@ The shared homepage, twelve overviews, public catalog API, launch redirects, and
 | `/api/games/<game-id>` | Redirect a browser/API visit to `/<game-id>` |
 | `/api/games/<game-id>/...` | Serve that game's metadata, rules, and supported room actions |
 
-Unknown game IDs return 404. The shared registry is an explicit allowlist of twelve IDs, not a filesystem path supplied by a visitor. Deep links must resolve on a fresh browser visit without first opening the catalog.
+Unknown game IDs return 404. The shared registry is an explicit allowlist of twenty-four IDs, not a filesystem path supplied by a visitor. Deep links must resolve on a fresh browser visit without first opening the catalog.
 
 A catalog entry opens its page directly. The launch API also opens the page through a 307 redirect. A room code is always interpreted together with the game ID in the URL; the same six characters in another game refer to another namespace.
 
@@ -47,7 +47,7 @@ A catalog entry opens its page directly. The launch API also opens the page thro
 - **Finishing:** Explain the result, retain the relevant session score, and offer a rematch or return to the lobby. Every continuing player accepts before an online rematch starts; a roster or settings change invalidates old rematch acceptance.
 - **Switching games:** A local save remains under its game ID. Leaving an online game explicitly uses the game's leave or resignation flow; simply closing or navigating away starts the disconnect grace period. Stop old listeners and pending workers/timers before activating another game.
 
-No email address, password, visible sign-in, or installation is required. Touch, mouse, and keyboard must support setup and gameplay. All twelve games use 2D graphics. Chess, Carrom, and Ludo additionally have detailed Indian courtyard artwork requirements in their game documents, as requested.
+No email address, password, visible sign-in, or installation is required. Touch, mouse, and keyboard must support setup and gameplay. All twenty-four games use 2D graphics. Chess, Carrom, and Ludo additionally have detailed Indian courtyard artwork requirements in their game documents, as requested.
 
 ## 4. One application with separate game modules
 
@@ -62,7 +62,7 @@ The source structure uses these boundaries:
 - `src/lib/rooms/` for shared API validation, room lifecycle, membership, idempotency, state serialization, and database operations.
 - `src/lib/storage/` for game-scoped local save helpers, and workers for bounded computer searches or physics simulations.
 
-The shared application contains App Router pages, catalog/launch/info handlers, and `src/lib/catalog/registry.ts`. Chess, Tic Tac Toe, and Carrom also have engines, local storage helpers, computer workers, and rules handlers. Online rooms and the remaining nine engines are future work. Next.js 16 dynamic route parameters use promises and are awaited by the implemented pages and route handlers.
+The shared application contains App Router pages, catalog/launch/info handlers, and `src/lib/catalog/registry.ts`. Chess, Tic Tac Toe, and Carrom also have engines, local storage helpers, computer workers, and rules handlers. Online rooms and the remaining 21 engines are future work. Next.js 16 dynamic route parameters use promises and are awaited by the implemented pages and route handlers.
 
 The registry maps public IDs such as `tic-tac-toe` to explicit modules and declares `presentation: "2d"` for every entry. Lazy-load the selected game's browser bundle; opening Chess must not load every game's engine or physics dependencies. Share infrastructure without sharing mutable match state.
 
@@ -80,13 +80,13 @@ Generate online dice and shuffles on the server once per accepted action. Transa
 
 For Carrom and Billiards, validate the snapshot and shot intent, run bounded deterministic simulation outside the transaction, then conditionally commit the complete settled outcome against the expected revision. A stale simulation cannot overwrite newer state. If simulation fails or exceeds its budget, leave the input state and turn unchanged. A lost response is recovered using the action ID; a command is accepted only after its outcome commits.
 
-Local rule engines use the same move rules as their online counterparts. Local matches and the two solo puzzles must remain playable after resources load without gameplay API calls.
+Local rule engines use the same move rules as their online counterparts. Local matches and all exclusively solo games must remain playable after resources load without gameplay API calls.
 
 ## 6. Shared room lifecycle
 
 1. Generate a unique six-character uppercase room code within the selected game, using `A–H`, `J–N`, `P–Z`, and `2–9`. Reserve it atomically. A collision retries within that game's namespace.
 2. Trim nicknames to 1–24 valid characters. Guest UID owns the seat; changing a nickname does not change identity. Browser tabs may share the same persisted guest identity, so distinct people use separate devices or profiles.
-3. The creator becomes host. Chess, Carrom, Billiards, Tic-Tac-Toe, Connect Four, Checkers, and Reversi require exactly two online human seats. Ludo, Snakes and Ladders, and Memory Match allow 2–4. Sudoku and Minesweeper have no online rooms. Validate capacity from the registry and the game's specification.
+3. The creator becomes host. Chess, Carrom, Billiards, Tic-Tac-Toe, Connect Four, Checkers, and Reversi require exactly two online human seats. Ludo, Snakes and Ladders, and Memory Match allow 2–4. Sudoku, Minesweeper, and the twelve new solo designs have no online rooms. Validate capacity from the registry and the game's specification.
 4. Humans join in the lobby. No online bots, spectators, public matchmaking, cross-game lobby, or replacement seats enter an active round in this release.
 5. The host changes settings or removes seats only in the lobby, then starts once the game's minimum human count is met. One atomic start creates the game state and side/seat assignment.
 6. Apply each accepted command once, increment the revision, and publish allowed state. Reject stale, invalid, out-of-turn, and post-result actions without changing the game.
@@ -101,7 +101,7 @@ Local rule engines use the same move rules as their online counterparts. Local m
 
 All games now share one browser origin. Use local keys such as `vihar-games:chess:save:v1` and `vihar-games:carrom:settings:v1`; validate save format and isolate every game's undo history, settings, timer, and scores. A corrupted or unavailable save cannot prevent a fresh local game.
 
-Use one `NEXT_PUBLIC_SITE_URL=https://games.vihar.online`. Each game has its own canonical page beneath it; rules pages append `/how-to-play`. The shared sitemap includes the catalog, twelve overviews, and twelve rules pages. Play pages and all room URLs are `noindex`; APIs are excluded from sitemaps and should send an `X-Robots-Tag: noindex` header. Public metadata never includes participant names or private state.
+Use one `NEXT_PUBLIC_SITE_URL=https://games.vihar.online`. Each game has its own canonical page beneath it; rules pages append `/how-to-play`. The current sitemap includes the catalog, all 24 overviews, and the three published rules pages. Future rules pages join only when their rules are published; planned rules placeholders remain `noindex`. Play pages and all room URLs are `noindex`; APIs are excluded from sitemaps and should send an `X-Robots-Tag: noindex` header. Public metadata never includes participant names or private state.
 
 One Firebase guest identity can be shared across the application, but room memberships and current-game subscriptions remain game-scoped. No local or online progress is moved between games merely because the same person opens another route.
 
@@ -113,7 +113,7 @@ Deploy only the `Vihar Games` directory as the root of one Vercel project. Attac
 
 Acceptance requires all catalog paths and launch endpoints to resolve, unsupported modes to be rejected, and every game to complete its defined flows inside the same build. Validate same-origin save isolation, cross-game room isolation, concurrent commands, reconnects, and hidden-state permissions in addition to each game's rules.
 
-The current application includes pinned dependencies, local fonts, lint/type/test/build scripts, metadata, Vercel configuration, and Chess/Tic Tac Toe's local modules. Its sitemap contains the homepage, twelve overviews, and all three published rules pages; other rules placeholders remain `noindex`. Gameplay acceptance checks apply as modules are implemented. Remote backend resources are not provisioned by this work.
+The current application includes pinned dependencies, local fonts, lint/type/test/build scripts, metadata, Vercel configuration, and Chess/Tic Tac Toe's local modules. Its sitemap contains the homepage, twenty-four overviews, and all three published rules pages; other rules placeholders remain `noindex`. Gameplay acceptance checks apply as modules are implemented. Remote backend resources are not provisioned by this work.
 
 ## 9. Mandatory 2D presentation and approved visual styles
 
@@ -147,8 +147,12 @@ The other nine approved visual directions are:
 | [Minesweeper](../games/Minesweeper/GAME_SPEC.md#7-detailed-2d-visual-direction--retro-desktop) | Retro Desktop: flat grey grid, coloured clues, teal flags, readable counters, and small pixel accents |
 | [Memory Match](../games/Memory%20Match/GAME_SPEC.md#7-detailed-2d-visual-direction--illustrated-keepsakes) | Illustrated Keepsakes: cream cards, identical patterned backs, distinct everyday pictures, and flat face fades |
 
-Each game's detailed visual guidance lives in section 7 of its own `GAME_SPEC.md`; the global 2D requirement applies to all twelve. Keep mode selection, player names, turn indicators, scores, and main actions consistently organised while carrying the selected game's theme through setup, play, rules, and results. Supported local and online modes share that game's visual language; Sudoku and Minesweeper retain solo puzzle interfaces.
+The original games' detailed visual guidance lives in section 7 of each `GAME_SPEC.md`; the twelve additions use section 5 of their individual lowercase `spec.md`. The global 2D requirement applies to all 24. Keep mode selection, player names, turn indicators, scores, and main actions consistently organised while carrying the selected game's theme through setup, play, rules, and results. Supported local and online modes share that game's visual language; Sudoku and Minesweeper retain solo puzzle interfaces.
 
 Keep decorative animation brief and separate from rule resolution, accepted state, and computer computation. Respect reduced-motion preferences while preserving required physics resolution and Memory Match observation timing. Decoration must not obscure gameplay targets, numbers, or state, and large boards need readable, navigable mobile layouts.
 
 Shared style tokens and local Hind/Yatra One fonts live inside Vihar Games. Tic Tac Toe adds a locally bundled Caveat font and implemented notebook graphics. The other handoffs define future artwork and game presentation, with no runtime dependency on Gulam Chor.
+
+## 10. Solo puzzle and arcade expansion
+
+The twelve new designs and styles are indexed in the [catalog](../GAME_CATALOG.md#new-solo-games-and-original-styles). Each has an individual `games/<name>/spec.md` and follows [shared solo standards](./SOLO_GAME_STANDARDS.md). Five additions are arcade games and seven are logic/spatial puzzles. All twelve are local one-player designs with null multiplayer limits. This phase registers their overview/placeholder/metadata paths and documents rules; it adds no engines, assets, playable modes, or online services. Existing original-game specifications and multiplayer contracts remain authoritative.

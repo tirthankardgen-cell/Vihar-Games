@@ -2,11 +2,11 @@
 
 # Vihar Games
 
-**One project, twelve browser games, one Vercel deployment.** The homepage lists every included game. Selecting Chess opens `/chess`; selecting Carrom opens `/carrom`. The other games use their documented paths on the same domain.
+**One project, twenty-four browser games, one Vercel deployment.** The homepage lists every included game. Selecting Chess opens `/chess`; selecting Carrom opens `/carrom`. The other games use their documented paths on the same domain.
 
-**Status:** Chess, Tic Tac Toe, and Carrom support computer play, pass-and-play, saved local games, and published rules. Carrom also offers practice, drag-to-strike controls, and a cushion/coin contact guide. Chess keeps its Indian courtyard and Acharya Dev mentor; Tic Tac Toe keeps its ruled notebook. All three integrate with Vihar's embedded player, Exit, pause and activity SDK. Private online rooms remain coming soon; the other nine games retain their planned pages and visual specifications.
+**Status:** Chess, Tic Tac Toe, and Carrom support computer play, pass-and-play, saved local games, and published rules. Carrom also offers practice, drag-to-strike controls, and a cushion/coin contact guide. Chess keeps its Indian courtyard and Acharya Dev mentor; Tic Tac Toe keeps its ruled notebook. All three integrate with Vihar's embedded player, Exit, pause and activity SDK. Private online rooms remain coming soon; the other 21 games retain their planned pages and visual specifications.
 
-**Presentation:** All twelve games are 2D only. Boards, pieces, cards, dice, and transitions use flat graphics; 3D, semi-3D, raised or tilted boards, and perspective effects are excluded.
+**Presentation:** All twenty-four games are 2D only. Boards, pieces, cards, dice, and transitions use flat graphics; 3D, semi-3D, raised or tilted boards, and perspective effects are excluded.
 
 Chess uses [chess.js](https://github.com/jhlywa/chess.js); its [BSD license notice](public/licenses/chess-js.txt) ships with the game. Bundled fonts retain their original notices.
 
@@ -58,7 +58,9 @@ The production dependency audit reports zero vulnerabilities. The full npm audit
 
 ## Included games
 
-Chess, Carrom, Billiards, Tic-Tac-Toe, Ludo, Snakes and Ladders, Connect Four, Checkers, Reversi, Sudoku, Minesweeper, and Memory Match.
+Chess, Carrom, Billiards, Tic-Tac-Toe, Ludo, Snakes and Ladders, Connect Four, Checkers, Reversi, Sudoku, Minesweeper, Memory Match, Silk Trail, Monsoon Blocks, Dune Dash, Paperwing, Lantern Logic, Mosaic Shift, Prism Paths, Crate Courtyard, Tide Turn, Pebble Solitaire, Rangoli Loops, and Orbit Breaker.
+
+The twelve new solo games are **Coming soon** catalog entries with individual lowercase `spec.md` files. Their exact rules and original visual styles are documented; gameplay and custom artwork remain planned. The [solo design standards](./docs/SOLO_GAME_STANDARDS.md) cover their shared requirements.
 
 The [game catalog](./GAME_CATALOG.md) maps every game to its page, API base, supported modes, and detailed specification.
 
@@ -70,11 +72,11 @@ The [game catalog](./GAME_CATALOG.md) maps every game to its page, API base, sup
 4. For online multiplayer, create or join that game's private room and share a code or invite URL. For example: `https://games.vihar.online/chess/play?room=ABC234`.
 5. Finish the match and choose a rematch, the game lobby, or the main catalog. Keep each game's local progress separate when switching games.
 
-No account registration, visible sign-in, or download is required. All ten multiplayer games support both pass-and-play and private rooms. Sudoku and Minesweeper are single-player puzzles.
+No account registration, visible sign-in, or download is required. All ten multiplayer games support both pass-and-play and private rooms. Sudoku, Minesweeper, and all twelve additions are exclusively single-player. The ten multiplayer designs retain their existing seat counts.
 
 ## Page paths and API endpoints
 
-The homepage and all overview, play, and how-to-play paths resolve. Chess, Tic Tac Toe, and Carrom have playable local modes and published rules; the other nine games retain **Coming soon** pages. Catalog, launch, and `/info` APIs are implemented, along with all three playable games' `/rules` JSON. Firebase authentication, room creation, online actions, and room cleanup remain later work.
+The homepage and all overview, play, and how-to-play paths resolve. Chess, Tic Tac Toe, and Carrom have playable local modes and published rules; the other 21 games retain **Coming soon** pages. Catalog, launch, and `/info` APIs are implemented, along with all three playable games' `/rules` JSON. Firebase authentication, room creation, online actions, and room cleanup remain later work.
 
 | Purpose | Chess example | Carrom example |
 | --- | --- | --- |
@@ -140,13 +142,25 @@ Vihar Games/
     Sudoku/GAME_SPEC.md
     Minesweeper/GAME_SPEC.md
     Memory Match/GAME_SPEC.md
+    Silk Trail/spec.md
+    Monsoon Blocks/spec.md
+    Dune Dash/spec.md
+    Paperwing/spec.md
+    Lantern Logic/spec.md
+    Mosaic Shift/spec.md
+    Prism Paths/spec.md
+    Crate Courtyard/spec.md
+    Tide Turn/spec.md
+    Pebble Solitaire/spec.md
+    Rangoli Loops/spec.md
+    Orbit Breaker/spec.md
 ```
 
 Each `games/` folder contains its Markdown specification. Chess, Tic Tac Toe, and Carrom engines, workers, local persistence, rules, and tests live in their matching `src/games/` directories. Their interfaces live in matching `src/components/` directories. Other engines will follow the same module boundary. Online room helpers remain deferred. The shared allowlisted registry is `src/lib/catalog/registry.ts`.
 
 Tailwind CSS 4 uses `postcss.config.mjs` and the CSS theme in `src/app/globals.css`; a separate `tailwind.config.js` is not required. Hind, Yatra One, and Tic Tac Toe's handwritten Caveat font are bundled locally from [Google Fonts](https://github.com/google/fonts), with their SIL Open Font License files beside them. Builds and visitors do not need to fetch fonts from Google.
 
-The current sitemap includes the homepage, twelve overview pages, and Chess/Tic Tac Toe/Carrom's published rules pages. Play URLs are `noindex`. The other nine rules placeholders remain `noindex` until their rules are published. API responses carry `X-Robots-Tag: noindex`.
+The current sitemap includes the homepage, twenty-four overview pages, and Chess/Tic Tac Toe/Carrom's published rules pages. Play URLs are `noindex`. The other 21 rules placeholders remain `noindex` until their rules are published. API responses carry `X-Robots-Tag: noindex`.
 
 ## Documents and authority
 
@@ -154,7 +168,8 @@ The current sitemap includes the homepage, twelve overview pages, and Chess/Tic 
 - [Project specification](./docs/PROJECT_SPEC.md): shared architecture, player flow, room behavior, and module boundaries.
 - [API contract](./docs/API_ENDPOINTS.md): endpoint methods, game actions, payloads, errors, and isolation.
 - [Deployment plan](./docs/DEPLOYMENT.md): one Vercel project, one domain, shared environment settings, and checks.
-- Each `GAME_SPEC.md`: that game's exact rules and acceptance criteria.
+- Each original `GAME_SPEC.md` and new `spec.md`: that game's exact rules, visual handoff, and acceptance criteria.
+- [Solo game standards](./docs/SOLO_GAME_STANDARDS.md): shared requirements for the twelve new puzzle/arcade designs.
 
 The current instructions and these consolidated documents supersede the earlier per-game-subdomain and per-game-deployment plan. Preserve the game rules when implementing the shared application.
 
@@ -176,8 +191,20 @@ Chess, Carrom, and Ludo adapt the Indian courtyard artwork style inspected in Gu
 | Sudoku | Off-white puzzle page, ruled grid, crisp numerals, blue entries, and pencil notes | [Puzzle Journal visual direction](./games/Sudoku/GAME_SPEC.md#7-detailed-2d-visual-direction--puzzle-journal) |
 | Minesweeper | Flat grey cells, coloured clues, teal flags, and restrained retro-computer accents | [Retro Desktop visual direction](./games/Minesweeper/GAME_SPEC.md#7-detailed-2d-visual-direction--retro-desktop) |
 | Memory Match | Cream picture cards, identical patterned backs, and flat everyday-object illustrations | [Illustrated Keepsakes visual direction](./games/Memory%20Match/GAME_SPEC.md#7-detailed-2d-visual-direction--illustrated-keepsakes) |
+| Silk Trail | Silk Garden: mulberry snake, woven border, parchment and sage | [Silk Trail specification](./games/Silk%20Trail/spec.md) |
+| Monsoon Blocks | Rain Window: patterned glass swatches and muted rain colours | [Monsoon Blocks specification](./games/Monsoon%20Blocks/spec.md) |
+| Dune Dash | Desert Field Notes: original fox, sandstone, natural-history print | [Dune Dash specification](./games/Dune%20Dash/spec.md) |
+| Paperwing | Airmail Atelier: folded swallow, postal panels, navy and coral | [Paperwing specification](./games/Paperwing/spec.md) |
+| Lantern Logic | Lantern Workshop: amber stencil cells and plum clues | [Lantern Logic specification](./games/Lantern%20Logic/spec.md) |
+| Mosaic Shift | Ceramic Studio: cobalt patterns, chalk tiles, maker stamp | [Mosaic Shift specification](./games/Mosaic%20Shift/spec.md) |
+| Prism Paths | Optical Print Room: drafting paper and labelled beams | [Prism Paths specification](./games/Prism%20Paths/spec.md) |
+| Crate Courtyard | Morning Market: produce stamps, chalk targets, indigo cloth | [Crate Courtyard specification](./games/Crate%20Courtyard/spec.md) |
+| Tide Turn | Brass Water Study: vessel silhouettes, litre ticks, teal water | [Tide Turn specification](./games/Tide%20Turn/spec.md) |
+| Pebble Solitaire | Riverstone Tray: stone silhouettes and reed/ripple margins | [Pebble Solitaire specification](./games/Pebble%20Solitaire/spec.md) |
+| Rangoli Loops | Chalk Threshold: dotted limestone grid and rangoli corners | [Rangoli Loops specification](./games/Rangoli%20Loops/spec.md) |
+| Orbit Breaker | Celestial Instrument: comet, chart tiles, gold paddle | [Orbit Breaker specification](./games/Orbit%20Breaker/spec.md) |
 
-All twelve games have an approved visual handoff in their own specifications. Each handoff covers palette, artwork, text, board/piece treatment, pages, interaction states, animation, responsive layout, accessibility, and planned asset requirements. Keep mode selection, player names, turn indicators, scores, and main actions consistently organised across the collection while using each game's theme throughout its screens. Chess's original flat SVG courtyard, pieces, and mentor portrait and Tic Tac Toe's notebook graphics are implemented, along with Carrom's courtyard and Canvas 2D board; the other nine games remain planned. The earlier 3D/semi-3D request is superseded by the latest 2D-only direction.
+All twenty-four games have an approved visual handoff in their own specifications. Each handoff covers palette, artwork, text, board/piece treatment, pages, interaction states, animation, responsive layout, accessibility, and planned asset requirements. Keep mode selection, player names, turn indicators, scores, and main actions consistently organised across the collection while using each game's theme throughout its screens. Chess's original flat SVG courtyard, pieces, and mentor portrait and Tic Tac Toe's notebook graphics are implemented, along with Carrom's courtyard and Canvas 2D board; the other 21 games remain planned. The earlier 3D/semi-3D request is superseded by the latest 2D-only direction.
 
 Chess solo mode offers **Easy, Medium, and Hard** against **Acharya Dev (आचार्य देव)**, Vihar's fictional Indian chess mentor. He has a dedicated flat 2D portrait and a consistent identity at all levels. The [Chess computer-opponent handoff](./games/Chess/GAME_SPEC.md#8-solo-computer-opponent--acharya-dev) defines his avatar, level behavior, and local play flow.
 
