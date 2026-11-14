@@ -2,6 +2,15 @@ import { puzzleBank } from "./bank.ts";
 import { RULES_VERSION, isComplete, pause, type Run, type Cell, type Edit, type Difficulty } from "./engine.ts";
 export const SESSION_KEY = "vihar-games:sudoku:session:v1";
 export const SETTINGS_KEY = "vihar-games:sudoku:settings:v1";
+export type AudioSettings = { sound: boolean; music: boolean; volume: number };
+export const AUDIO_KEY = "vihar-games:sudoku:audio:v1";
+export const defaultAudioSettings: AudioSettings = { sound: true, music: true, volume: .4 };
+export function loadAudioSettings(storage: Pick<Storage, "getItem">): AudioSettings {
+  try {
+    const value = JSON.parse(storage.getItem(AUDIO_KEY) ?? "null");
+    return value?.version === 1 && typeof value.sound === "boolean" && typeof value.music === "boolean" && Number.isFinite(value.volume) && value.volume >= 0 && value.volume <= 1 ? { sound: value.sound, music: value.music, volume: value.volume } : defaultAudioSettings;
+  } catch { return defaultAudioSettings; }
+}
 export const RECORDS_KEY = "vihar-games:sudoku:records:v1";
 type StorageLike = Pick<Storage, "getItem" | "setItem">;
 export type RecordEntry = { attemptId: string; puzzleId: string; difficulty: Difficulty; elapsed: number; hints: number; checks: number; restarted: boolean; date: string };

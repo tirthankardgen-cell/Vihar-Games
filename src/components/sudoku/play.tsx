@@ -3,16 +3,17 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { addTime, check, choosePuzzle, conflicts, createRun, difficulties, difficultyDescriptions, difficultyLabels, enter, formatTime, hint, pause, redo, restart, resume, undo, values, type Difficulty, type Run } from "@/games/sudoku/engine";
-import { emptyRecords, loadDifficulty, loadRecords, loadRun, recordResult, saveValue, RECORDS_KEY, SESSION_KEY, SETTINGS_KEY, type Records } from "@/games/sudoku/persistence";
+import { AUDIO_KEY, defaultAudioSettings, loadAudioSettings, emptyRecords, loadDifficulty, loadRecords, loadRun, recordResult, saveValue, RECORDS_KEY, SESSION_KEY, SETTINGS_KEY, type AudioSettings, type Records } from "@/games/sudoku/persistence";
 import { useViharPlay } from "@/lib/use-vihar-play";
 import { SudokuBoard } from "./board";
 import { JournalCover } from "./cover";
 import { JournalDialog, JournalFooter, JournalNav } from "./shared";
 import { RulesBook } from "./rules-book";
+import { createSudokuAudio } from "./audio";
 import styles from "./sudoku.module.css";
 
 type View = "loading" | "setup" | "puzzle";
-type Modal = "new" | "restart" | "records" | "help" | null;
+type Modal = "new" | "restart" | "records" | "help" | "audio" | null;
 const storage = (operation: (s: Storage) => boolean) => { try { return operation(window.localStorage); } catch { return false; } };
 const coordinate = (i: number) => `row ${Math.floor(i / 9) + 1}, column ${i % 9 + 1}`;
 
@@ -21,14 +22,19 @@ export default function SudokuPlay() {
   const [difficulty, setDifficulty] = useState<Difficulty>("easy"), [selected, setSelected] = useState(0);
   const [notes, setNotes] = useState(false), [zoomed, setZoomed] = useState(false), [modal, setModal] = useState<Modal>(null);
   const [notice, setNotice] = useState(""), [saving, setSaving] = useState(true), [records, setRecords] = useState<Records>(emptyRecords), [recordPage, setRecordPage] = useState(0);
+  const [audioSettings, setAudioSettings] = useState<AudioSettings>(defaultAudioSettings), [audioNotice, setAudioNotice] = useState("");
+  const audio = useRef<ReturnType<typeof createSudokuAudio> | null>(null);
   const runtime = useRef<{ run: Run | null; records: Records; lastTick: number; lastSave: number }>({ run: null, records: emptyRecords(), lastTick: 0, lastSave: 0 });
   const vihar = useViharPlay("sudoku", view === "puzzle" && run?.status !== "completed" && !!run, view === "puzzle" && run?.status === "active");
 
   const persist = useCallback((value: Run) => { if (!storage((s) => saveValue(s, SESSION_KEY, value))) setSaving(false); }, []);
   const publish = useCallback((value: Run) => {
+    const previous = runtime.current.run;
     runtime.current.run = value; runtime.current.lastTick = performance.now();
     setRun(value); persist(value);
     if (value.status === "completed") {
+      audio.current?.setPlaying(false);
+      if (previous?.status === "active" && previous.attemptId === value.attemptId) audio.current?.cue("complete");
       setZoomed(false);
       const updated = recordResult(runtime.current.records, value, new Date().toISOString());
       runtime.current.records = updated; setRecords(updated);
@@ -39,29 +45,42 @@ export default function SudokuPlay() {
     const current = runtime.current, now = performance.now();
     if (!current.run) return;
     const timed = addTime(current.run, Math.max(0, now - current.lastTick) / 1000);
-    publish(edit(timed));
+    const next = edit(timed); publish(next); return next;
   }, [publish]);
-  const pauseNow = useCallback(() => { if (runtime.current.run?.status === "active") transact(pause); }, [transact]);
+  const pauseNow = useCallback(() => { audio.current?.stop(); if (runtime.current.run?.status === "active") transact(pause); }, [transact]);
   const resumeNow = () => {
     if (vihar.paused || document.visibilityState !== "visible" || !document.hasFocus()) return;
-    transact(resume); setNotice("");
+    audio.current?.unlock(); transact(resume); audio.current?.setPlaying(true); audio.current?.cue("resume"); setNotice("");
   };
   const begin = () => {
+    audio.current?.reset(); audio.current?.unlock();
     const puzzle = choosePuzzle(difficulty, crypto.getRandomValues(new Uint32Array(1))[0] / 4294967296, runtime.current.run?.puzzle.id);
     publish(createRun(puzzle, crypto.randomUUID())); setView("puzzle"); setModal(null); setNotes(false); setZoomed(false);
     setSelected(puzzle.clues.indexOf("0")); setNotice("");
+    audio.current?.setPlaying(true); audio.current?.cue("start");
     if (!storage((s) => saveValue(s, SETTINGS_KEY, { version: 1, difficulty }))) setSaving(false);
   };
   const requestNew = () => { if (runtime.current.run && runtime.current.run.status !== "completed") setModal("new"); else begin(); };
+  const restartPuzzle = () => {
+    if (!runtime.current.run) return;
+    audio.current?.reset(); audio.current?.unlock();
+    publish(restart(runtime.current.run, crypto.randomUUID()));
+    audio.current?.setPlaying(true); audio.current?.cue("start");
+    setView("puzzle"); setModal(null); setNotes(false); setNotice("");
+  };
   const goToSetup = () => { pauseNow(); setView("setup"); setModal(null); setNotice(""); };
   const digit = (value: number) => {
     if (vihar.paused || document.visibilityState !== "visible" || runtime.current.run?.status !== "active") return;
-    transact((r) => enter(r, selected, value, notes)); setNotice("");
+    const previous = runtime.current.run.cells[selected];
+    audio.current?.unlock();
+    const next = transact((r) => enter(r, selected, value, notes)); setNotice("");
+    if (next && next.cells[selected] !== previous && next.status !== "completed") audio.current?.cue(value === 0 ? "erase" : notes ? "note" : conflicts(next, selected).length ? "conflict" : "entry");
   };
   const takeHint = () => {
     if (vihar.paused || runtime.current.run?.status !== "active") return;
     transact((r) => {
       const result = hint(r, selected);
+      if (result.index !== null && result.run.status !== "completed") audio.current?.cue("hint");
       if (result.index !== null) { setSelected(result.index); setNotice(`Hint: ${coordinate(result.index)} is ${result.run.cells[result.index].value}. This run is assisted.`); }
       return result.run;
     });
@@ -70,20 +89,29 @@ export default function SudokuPlay() {
     if (vihar.paused || runtime.current.run?.status !== "active") return;
     transact((r) => {
       const checked = check(r), n = checked.checked.length;
+      audio.current?.cue(n ? "conflict" : "check");
       setNotice(n ? `Check found ${n} incorrect ${n === 1 ? "entry" : "entries"}, marked !. This run is assisted.` : "Check: every entered answer matches the solution. Empty cells still need answers. This run is assisted.");
       return checked;
     });
   };
-  const takeUndo = () => { if (!vihar.paused && runtime.current.run?.status === "active" && runtime.current.run.undo.length) { transact(undo); setNotice("Undo restored the previous entry or notes."); } };
-  const takeRedo = () => { if (!vihar.paused && runtime.current.run?.status === "active" && runtime.current.run.redo.length) { transact(redo); setNotice("Redo restored the next entry or notes."); } };
+  const takeUndo = () => { if (!vihar.paused && runtime.current.run?.status === "active" && runtime.current.run.undo.length) { transact(undo); audio.current?.cue("undo"); setNotice("Undo restored the previous entry or notes."); } };
+  const takeRedo = () => { if (!vihar.paused && runtime.current.run?.status === "active" && runtime.current.run.redo.length) { const next = transact(redo); if (next?.status !== "completed") audio.current?.cue("redo"); setNotice("Redo restored the next entry or notes."); } };
+  const updateAudio = (value: AudioSettings) => {
+    setAudioSettings(value); audio.current?.configure(value); audio.current?.unlock();
+    if (!storage((s) => saveValue(s, AUDIO_KEY, { version: 1, ...value }))) setSaving(false);
+    if (value.sound && !audioSettings.sound) audio.current?.cue("note");
+  };
 
   useEffect(() => {
     let cancelled = false;
     const current = runtime.current;
+    audio.current = createSudokuAudio(() => setAudioNotice("Audio is unavailable in this browser. Your puzzle can continue quietly."));
+    audio.current.configure(defaultAudioSettings);
     queueMicrotask(() => {
       if (cancelled) return;
       try {
         const s = window.localStorage, loaded = loadRun(s), savedRecords = loadRecords(s);
+        const preferences = loadAudioSettings(s); setAudioSettings(preferences); audio.current?.configure(preferences);
         current.records = savedRecords; setRecords(savedRecords); setDifficulty(loadDifficulty(s));
         if (loaded.run) {
           publish(loaded.run); setView("puzzle"); setDifficulty(loaded.run.puzzle.difficulty); setSelected(loaded.run.puzzle.clues.indexOf("0"));
@@ -94,6 +122,7 @@ export default function SudokuPlay() {
     });
     return () => {
       cancelled = true;
+      audio.current?.dispose(); audio.current = null;
       if (current.run) {
         const timed = addTime(current.run, Math.max(0, performance.now() - current.lastTick) / 1000);
         storage((s) => saveValue(s, SESSION_KEY, pause(timed)));
@@ -121,6 +150,9 @@ export default function SudokuPlay() {
     window.addEventListener("keydown", key, true);
     return () => window.removeEventListener("keydown", key, true);
   }, [modal, pauseNow]);
+  useEffect(() => {
+    audio.current?.setPlaying(view === "puzzle" && run?.status === "active" && !modal && !vihar.paused && document.visibilityState === "visible" && document.hasFocus());
+  }, [view, run?.status, modal, vihar.paused]);
 
   const active = run?.status === "active" && !vihar.paused;
   const selectedConflicts = run ? conflicts(run, selected) : [];
@@ -131,7 +163,7 @@ export default function SudokuPlay() {
   const bests = (assisted: boolean) => records.entries.filter((r) => r.difficulty === difficulty && (r.hints + r.checks > 0) === assisted && !r.restarted).sort((a, b) => a.elapsed - b.elapsed)[0];
 
   return <main id="main-content" className={`${styles.page} ${styles.playPage}`} data-vihar-embedded={vihar.embedded || undefined}>
-    <JournalNav embedded={vihar.embedded}><button className={styles.textButton} onClick={() => { pauseNow(); setModal("help"); }}>How to play</button>{vihar.embedded ? <button className={styles.secondary} onClick={() => { pauseNow(); vihar.exit(); }}>← Exit to Vihar</button> : <Link className={styles.textButton} href="/">← All games</Link>}</JournalNav>
+    <JournalNav embedded={vihar.embedded}><button className={styles.navControl} aria-label="How to play" title="How to play" onClick={() => { pauseNow(); setModal("help"); }}><span aria-hidden="true">?</span><span className={styles.navLabel}>How to play</span></button><button className={styles.navControl} aria-label="Audio settings" title="Sound and music" aria-pressed={(audioSettings.sound || audioSettings.music) && audioSettings.volume > 0} onClick={() => { pauseNow(); setModal("audio"); }}><span aria-hidden="true">♫</span><span className={styles.navLabel}>Audio</span></button>{vihar.embedded ? <button className={styles.navControl} aria-label="Exit to Vihar" title="Exit to Vihar" onClick={() => { pauseNow(); vihar.exit(); }}><span aria-hidden="true">←</span><span className={styles.navLabel}>Exit to Vihar</span></button> : <Link className={styles.navControl} aria-label="All games" title="All games" href="/"><span aria-hidden="true">←</span><span className={styles.navLabel}>All games</span></Link>}</JournalNav>
     {view === "loading" ? <section className={styles.loading} role="status">Opening your journal…</section> : view === "setup" ? <section className={styles.setup} aria-labelledby="setup-title">
       <div className={styles.setupCopy}><p className={styles.eyebrow}>A FRESH PAGE, A FAMILIAR RITUAL</p><h1 id="setup-title">Find your<br /><span>kind of quiet.</span></h1><p className={styles.setupDescription}>Choose the challenge that feels right.<br />There is no clock to beat.</p>
         <div className={styles.difficulties} role="group" aria-label="Puzzle difficulty">{difficulties.map((d) => <button key={d} className={`${styles.difficulty} ${d === difficulty ? styles.difficultySelected : ""}`} aria-pressed={d === difficulty} onClick={() => { setDifficulty(d); }}><span>{difficultyLabels[d]}<small>{difficultyDescriptions[d]}</small></span><span aria-hidden="true">{d === difficulty ? "✓" : "○"}</span></button>)}</div>
@@ -155,7 +187,8 @@ export default function SudokuPlay() {
       </div><div className={styles.feedback} role="status" aria-live="polite">{!saving ? "Saving unavailable. You can keep playing this session." : notice || (run.status === "paused" ? "Paused · Resume when you are ready." : selectedMessage)}{zoomed && <span>Pan the grid or use arrow keys.</span>}</div>
     </section>}
     <JournalFooter />
-    {(modal === "new" || modal === "restart") && <JournalDialog title={modal === "restart" ? "Start this page again?" : "Turn a new page?"} onClose={() => setModal(null)}><p>{modal === "restart" ? "This resets your entries, notes, time, and help counts. Your new attempt will be labelled Restarted." : `Starting a new ${difficultyLabels[difficulty].toLowerCase()} puzzle will replace your unfinished saved puzzle.`}</p><div className={styles.dialogActions}><button className={styles.secondary} onClick={() => setModal(null)}>Keep this puzzle</button><button className={styles.primary} onClick={() => { if (modal === "restart" && runtime.current.run) { publish(restart(runtime.current.run, crypto.randomUUID())); setView("puzzle"); setModal(null); setNotes(false); setNotice(""); } else begin(); }}>{modal === "restart" ? "Restart puzzle" : "Start new puzzle"}</button></div></JournalDialog>}
+    {modal === "audio" && <JournalDialog title="A quieter soundtrack" onClose={() => setModal(null)}><p>Original soft bells and a slow, gentle melody. Music plays while you solve and pauses with your puzzle.</p><div className={styles.audioOptions}><button className={styles.secondary} aria-pressed={audioSettings.sound} onClick={() => updateAudio({ ...audioSettings, sound: !audioSettings.sound })}>Sound: {audioSettings.sound ? "on" : "off"}</button><button className={styles.secondary} aria-pressed={audioSettings.music} onClick={() => updateAudio({ ...audioSettings, music: !audioSettings.music })}>Music: {audioSettings.music ? "on" : "off"}</button><label htmlFor="sudoku-volume">Volume <output>{Math.round(audioSettings.volume * 100)}%</output><input id="sudoku-volume" type="range" min="0" max="100" step="5" value={Math.round(audioSettings.volume * 100)} onChange={(e) => updateAudio({ ...audioSettings, volume: Number(e.target.value) / 100 })} /></label></div>{audioNotice && <p role="status">{audioNotice}</p>}<div className={styles.dialogActions}><button className={styles.secondary} onClick={() => updateAudio({ ...audioSettings, sound: false, music: false })}>Mute all</button><button className={styles.primary} onClick={() => setModal(null)}>Done</button></div></JournalDialog>}
+    {(modal === "new" || modal === "restart") && <JournalDialog title={modal === "restart" ? "Start this page again?" : "Turn a new page?"} onClose={() => setModal(null)}><p>{modal === "restart" ? "This resets your entries, notes, time, and help counts. Your new attempt will be labelled Restarted." : `Starting a new ${difficultyLabels[difficulty].toLowerCase()} puzzle will replace your unfinished saved puzzle.`}</p><div className={styles.dialogActions}><button className={styles.secondary} onClick={() => setModal(null)}>Keep this puzzle</button><button className={styles.primary} onClick={() => modal === "restart" ? restartPuzzle() : begin()}>{modal === "restart" ? "Restart puzzle" : "Start new puzzle"}</button></div></JournalDialog>}
     {modal === "help" && <JournalDialog title="A few notes" onClose={() => setModal(null)}><RulesBook /></JournalDialog>}
     {modal === "records" && <JournalDialog title="Your puzzle journal" onClose={() => setModal(null)}>{record ? <article className={styles.recordEntry}><p className={styles.eyebrow}>{new Date(record.date).toLocaleDateString()} · {record.puzzleId}</p><h3>{difficultyLabels[record.difficulty]} · {formatTime(record.elapsed)}</h3><p>{record.hints + record.checks ? "Assisted" : "Unassisted"}{record.restarted ? " · Restarted attempt" : " · First attempt"}</p><p>{record.hints} hints · {record.checks} checks</p></article> : <p>Your completed puzzles will appear here. Records stay on this device.</p>}<div className={styles.dialogActions}><button className={styles.secondary} disabled={!recordPage} onClick={() => setRecordPage(recordPage - 1)}>← Previous</button><span>{record ? recordPage + 1 : 0} / {records.entries.length}</span><button className={styles.secondary} disabled={recordPage >= records.entries.length - 1} onClick={() => setRecordPage(recordPage + 1)}>Next →</button></div></JournalDialog>}
   </main>;

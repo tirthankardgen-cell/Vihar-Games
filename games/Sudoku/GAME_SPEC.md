@@ -7,6 +7,8 @@
 # Sudoku — Game specification
 
 **Status:** Playable local release: Easy/Medium/Hard, 18 validated puzzles, Puzzle Journal screens, notes, undo/redo, hints/checks, pause, local saves/records, and Vihar embedding.
+
+**Audio:** Original locally synthesized slow journal music and soft action/completion cues. Separate Sound/Music switches, volume and Mute all are available in Audio settings. Both are on initially and start after player interaction; preferences use `vihar-games:sudoku:audio:v1`. Music follows visible active play, pauses without losing its position, and audio resources stop on Exit/navigation. Rules contain ten sections across twenty short pages.
 **Platform:** Browser on mobile, tablet, and desktop.  
 **Access:** No account, visible sign-in, or download.  
 **Players:** One.  
