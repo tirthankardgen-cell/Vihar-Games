@@ -39,7 +39,7 @@ Target session: 20 seconds–3 minutes. One local player, one continuous run, on
 
 ## 4. Controls and interruption
 
-- Space, Up, or W flaps. Pointer/touch taps anywhere on the flight surface flap. The entire surface has an accessible Flap label; an icon provides Pause, and Escape also pauses.
+- Space, Up, or W flaps. After a flight ends, a fresh Space press invokes the existing Retry action immediately, keeping the mode and applying one initial flap. Held/repeated presses cannot restart or add flaps; release Space before the next flap. Space on other focused UI controls retains their normal behavior. Pointer/touch taps anywhere on the flight surface flap. The entire surface has an accessible Flap label; an icon provides Pause, and Escape also pauses.
 - A new flight applies one initial flap immediately. Resuming uses the shared three-count countdown and consumes the resume gesture without flapping. Starting a new mode or retrying directly replaces the old unfinished flight without a popup.
 - Pause freezes bird velocity, gate positions, score flags, and generator. Clear held input and pending taps. Return from a hidden tab remains paused.
 - Fill the viewport below a compact score header. Scale both axes equally, keeping the complete vertical flight bounds visible. Wider displays extend the sky to the right and preview the same seeded future gates without advancing the simulation or its generator. Resizing preserves the bird, gate positions, scoring, collision geometry, and the two-second first approach.

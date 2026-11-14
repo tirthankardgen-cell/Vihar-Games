@@ -122,6 +122,13 @@ export default function PaperwingPlay() {
         if (phase === "paused") beginResume(); else pauseFlight();
         return;
       }
+      if (event.code === "Space" && phase === "result" && !(target instanceof Element && target.closest("button,a") && !target.closest('button[aria-label="Try again"]'))) {
+        event.preventDefault();
+        if (event.repeat || held.current.has(event.code) || vihar.paused || document.visibilityState !== "visible" || !document.hasFocus()) return;
+        const finished = runtime.current.session;
+        if (finished) { prepare(finished.run.mode); held.current.add(event.code); }
+        return;
+      }
       if (!["Space", "ArrowUp", "KeyW"].includes(event.code) || (event.code === "Space" && target instanceof Element && target.closest("button,a"))) return;
       if (phase !== "flying") return;
       event.preventDefault();
@@ -132,7 +139,7 @@ export default function PaperwingPlay() {
     window.addEventListener("keydown", keydown, true); window.addEventListener("keyup", keyup);
     window.addEventListener("blur", blur); window.addEventListener("pagehide", blur); document.addEventListener("visibilitychange", visibility);
     return () => { window.removeEventListener("keydown", keydown, true); window.removeEventListener("keyup", keyup); window.removeEventListener("blur", blur); window.removeEventListener("pagehide", blur); document.removeEventListener("visibilitychange", visibility); };
-  }, [beginResume, pauseFlight, takeFlap]);
+  }, [beginResume, pauseFlight, prepare, takeFlap, vihar.paused]);
   useEffect(() => {
     if (vihar.paused) queueMicrotask(pauseFlight);
   }, [vihar.paused, pauseFlight]);
