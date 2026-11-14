@@ -3,6 +3,7 @@ import { CHESS_RULES_VERSION, chessModes, computerPersona } from "@/games/chess/
 import { CARROM_RULES_VERSION, carromModes } from "@/games/carrom/rules";
 import { PAPERWING_RULES_VERSION, paperwingModes } from "@/games/paperwing/rules";
 import { SUDOKU_RULES_VERSION, sudokuModes } from "@/games/sudoku/rules";
+import { DUNE_DASH_RULES_VERSION, duneDashModes } from "@/games/dune-dash/rules";
 
 export type PlayMode =
   | "computer"
@@ -236,6 +237,7 @@ export const games: readonly Game[] = [
     description: "A little desert fox, a long horizon. Jump stones and duck beneath passing birds.",
     symbol: "⌁",
     playersLabel: "Solo endless runner",
+    availability: "playable",
   },
   {
     ...plannedSolo,
@@ -338,9 +340,10 @@ export function getGameInfo(game: Game) {
     availability: game.availability,
     presentation: game.presentation,
     plannedModes: game.plannedModes,
-    availableModes: game.id === "chess" ? chessModes : game.id === "tic-tac-toe" ? ticTacToeModes : game.id === "carrom" ? carromModes : game.id === "paperwing" ? paperwingModes : game.id === "sudoku" ? sudokuModes : [],
+    availableModes: game.id === "chess" ? chessModes : game.id === "tic-tac-toe" ? ticTacToeModes : game.id === "carrom" ? carromModes : game.id === "paperwing" ? paperwingModes : game.id === "sudoku" ? sudokuModes : game.id === "dune-dash" ? duneDashModes : [],
     playerLimits: game.playerLimits,
-    rulesVersion: game.id === "chess" ? CHESS_RULES_VERSION : game.id === "tic-tac-toe" ? RULES_VERSION : game.id === "carrom" ? CARROM_RULES_VERSION : game.id === "paperwing" ? PAPERWING_RULES_VERSION : game.id === "sudoku" ? SUDOKU_RULES_VERSION : null,
+    ...(game.id === "dune-dash" ? { soloPresets: ["endless", "practice"] } : {}),
+    rulesVersion: game.id === "chess" ? CHESS_RULES_VERSION : game.id === "tic-tac-toe" ? RULES_VERSION : game.id === "carrom" ? CARROM_RULES_VERSION : game.id === "paperwing" ? PAPERWING_RULES_VERSION : game.id === "sudoku" ? SUDOKU_RULES_VERSION : game.id === "dune-dash" ? DUNE_DASH_RULES_VERSION : null,
     ...(game.id === "paperwing" ? { soloPresets: ["standard", "practice"] } : {}),
     ...(game.id === "sudoku" ? { soloPresets: ["easy", "medium", "hard"] } : {}),
     ...(game.availability === "playable" ? { embedVersion: 1 } : {}),

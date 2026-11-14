@@ -2,14 +2,14 @@
 
 **Updated:** 14 November 2026  
 **Scope:** The twelve solo additions in the [complete catalog](../GAME_CATALOG.md).  
-**Current delivery:** Paperwing is playable with Standard/Practice, local saves/records, original 2D artwork, optional sound, published rules, and Vihar embedding. The other eleven additions have `availability: "planned"`, `plannedModes: ["solo"]`, `availableModes: []`, and `rulesVersion: null`. All twelve remain `presentation: "2d"`.
+**Current delivery:** Paperwing (Standard/Practice) and Dune Dash (Endless/Practice) are playable with local saves/records, original 2D artwork, optional sound, published rules, and Vihar embedding. The other ten additions have `availability: "planned"`, `plannedModes: ["solo"]`, `availableModes: []`, and `rulesVersion: null`. All twelve remain `presentation: "2d"`.
 
 Each new game has a lowercase `spec.md` in its own `games/` folder. Its rules and visual direction are authoritative; this document supplies shared requirements for current and later implementations. Existing games retain their `GAME_SPEC.md` files.
 
 ## 1. Catalog and page contract
 
 - Register explicit IDs in `src/lib/catalog/registry.ts`; the homepage, overview, play/rules placeholders, launch redirect, info API, and overview sitemap entries use that allowlist.
-- Keep the eleven unimplemented entries labelled **Coming soon**. Paperwing has published play/rules screens and a versioned rules API. For the other eleven additions, `/play` and `/how-to-play` remain placeholders; `/rules` returns `404 RULES_NOT_AVAILABLE` until actual rules are published. Written design rules in Git do not claim a shipped engine or published rules API.
+- Keep the ten unimplemented entries labelled **Coming soon**. Paperwing has published play/rules screens and a versioned rules API. For the other ten additions, `/play` and `/how-to-play` remain placeholders; `/rules` returns `404 RULES_NOT_AVAILABLE` until actual rules are published. Written design rules in Git do not claim a shipped engine or published rules API.
 - All twelve games are for one local player. Pass-and-play and online player limits are `null`. There are no rooms, bots, competitive leaderboards, accounts, or gameplay API requests in these designs.
 - Future overview, setup, rules, play, pause, and results screens carry each game's own palette, motif, wording, and illustrations. Shared navigation and status placement remain familiar.
 - Catalog IDs are stable. Use `/<id>`, `/<id>/play`, `/<id>/how-to-play`, and `/api/games/<id>` on `games.vihar.online`.
@@ -60,7 +60,7 @@ Each new game has a lowercase `spec.md` in its own `games/` folder. Its rules an
 
 ## 7. Scope and later acceptance
 
-The original catalog phase added names, descriptions, categories, placeholder routes, rules, and visual handoffs. Paperwing is now implemented locally; the other eleven additions remain in that planning phase. Shared dependencies and SDK conventions are retained.
+The original catalog phase added names, descriptions, categories, placeholder routes, rules, and visual handoffs. Paperwing and Dune Dash are now implemented locally; the other ten additions remain in that planning phase. Shared dependencies and SDK conventions are retained.
 
 When implementation is requested, verify each game's acceptance criteria as well as input equivalence, pause/resume, save validation, same-origin isolation, responsive legibility, and reduced motion. Gameplay checks in each `spec.md` are future requirements, not evidence that the game is currently playable.
 

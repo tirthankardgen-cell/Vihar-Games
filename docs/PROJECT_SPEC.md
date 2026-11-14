@@ -7,7 +7,7 @@
 **Scope:** Shared deployment scaffold and consolidated plans for twenty-four 2D games, including an approved detailed visual direction for every game.
 
 **Deployment target:** One Next.js application, one Vercel project, one domain.  
-**Implementation status:** Chess, Tic Tac Toe, Carrom, Sudoku, and Paperwing local gameplay, local saves, rules and Vihar embedding are implemented. The other 19 engines and all online rooms remain planned.
+**Implementation status:** Chess, Tic Tac Toe, Carrom, Sudoku, Paperwing, and Dune Dash local gameplay, local saves, rules and Vihar embedding are implemented. The other 18 engines and all online rooms remain planned.
 
 ## 1. Project boundary
 
@@ -19,7 +19,7 @@ The rule specifications remain the source of truth for gameplay. This consolidat
 
 ### Current scaffold
 
-The shared homepage, twenty-four overviews, public catalog API, launch redirects, and metadata APIs are implemented. Chess and Tic Tac Toe have computer/pass-and-play setup, local persistence, computer workers and published rules/JSON. Chess includes legal-move selection, promotion, draw claims/offers, resignation and practice undo; its computer opponent is Acharya Dev. Tic Tac Toe keeps its full-screen notebook and session scores. Carrom adds practice, drag shots, deterministic worker physics, contact guides and settled-state saves. All five use the existing Vihar v1 embed and activity SDKs; only visible active rounds report gameplay, and pausing/hiding stops computer workers. The other 19 entries remain planned. Local play needs no Firebase configuration. Private rooms and game-host authentication remain deferred.
+The shared homepage, twenty-four overviews, public catalog API, launch redirects, and metadata APIs are implemented. Chess and Tic Tac Toe have computer/pass-and-play setup, local persistence, computer workers and published rules/JSON. Chess includes legal-move selection, promotion, draw claims/offers, resignation and practice undo; its computer opponent is Acharya Dev. Tic Tac Toe keeps its full-screen notebook and session scores. Carrom adds practice, drag shots, deterministic worker physics, contact guides and settled-state saves. All six use the existing Vihar v1 embed and activity SDKs; only visible active rounds report gameplay, and pausing/hiding stops computer workers. The other 18 entries remain planned. Local play needs no Firebase configuration. Private rooms and game-host authentication remain deferred.
 
 ## 2. Shared page contract
 
@@ -62,7 +62,7 @@ The source structure uses these boundaries:
 - `src/lib/rooms/` for shared API validation, room lifecycle, membership, idempotency, state serialization, and database operations.
 - `src/lib/storage/` for game-scoped local save helpers, and workers for bounded computer searches or physics simulations.
 
-The shared application contains App Router pages, catalog/launch/info handlers, and `src/lib/catalog/registry.ts`. Chess, Tic Tac Toe, Carrom, Sudoku, and Paperwing also have engines, local storage helpers, and rules handlers. Chess, Tic Tac Toe, and Carrom use computer workers; Paperwing's bounded fixed-step flight runs locally without one. Online rooms and the remaining 19 engines are future work. Next.js 16 dynamic route parameters use promises and are awaited by the implemented pages and route handlers.
+The shared application contains App Router pages, catalog/launch/info handlers, and `src/lib/catalog/registry.ts`. Chess, Tic Tac Toe, Carrom, Sudoku, Paperwing, and Dune Dash also have engines, local storage helpers, and rules handlers. Chess, Tic Tac Toe, and Carrom use computer workers; Paperwing's bounded fixed-step flight runs locally without one. Online rooms and the remaining 18 engines are future work. Next.js 16 dynamic route parameters use promises and are awaited by the implemented pages and route handlers.
 
 The registry maps public IDs such as `tic-tac-toe` to explicit modules and declares `presentation: "2d"` for every entry. Lazy-load the selected game's browser bundle; opening Chess must not load every game's engine or physics dependencies. Share infrastructure without sharing mutable match state.
 
@@ -101,7 +101,7 @@ Local rule engines use the same move rules as their online counterparts. Local m
 
 All games now share one browser origin. Use local keys such as `vihar-games:chess:save:v1` and `vihar-games:carrom:settings:v1`; validate save format and isolate every game's undo history, settings, timer, and scores. A corrupted or unavailable save cannot prevent a fresh local game.
 
-Use one `NEXT_PUBLIC_SITE_URL=https://games.vihar.online`. Each game has its own canonical page beneath it; rules pages append `/how-to-play`. The current sitemap includes the catalog, all 24 overviews, and the five published rules pages. Future rules pages join only when their rules are published; planned rules placeholders remain `noindex`. Play pages and all room URLs are `noindex`; APIs are excluded from sitemaps and should send an `X-Robots-Tag: noindex` header. Public metadata never includes participant names or private state.
+Use one `NEXT_PUBLIC_SITE_URL=https://games.vihar.online`. Each game has its own canonical page beneath it; rules pages append `/how-to-play`. The current sitemap includes the catalog, all 24 overviews, and the six published rules pages. Future rules pages join only when their rules are published; planned rules placeholders remain `noindex`. Play pages and all room URLs are `noindex`; APIs are excluded from sitemaps and should send an `X-Robots-Tag: noindex` header. Public metadata never includes participant names or private state.
 
 One Firebase guest identity can be shared across the application, but room memberships and current-game subscriptions remain game-scoped. No local or online progress is moved between games merely because the same person opens another route.
 
@@ -113,7 +113,7 @@ Deploy only the `Vihar Games` directory as the root of one Vercel project. Attac
 
 Acceptance requires all catalog paths and launch endpoints to resolve, unsupported modes to be rejected, and every game to complete its defined flows inside the same build. Validate same-origin save isolation, cross-game room isolation, concurrent commands, reconnects, and hidden-state permissions in addition to each game's rules.
 
-The current application includes pinned dependencies, local fonts, lint/type/test/build scripts, metadata, Vercel configuration, and Chess/Tic Tac Toe's local modules. Its sitemap contains the homepage, twenty-four overviews, and all five published rules pages; other rules placeholders remain `noindex`. Gameplay acceptance checks apply as modules are implemented. Remote backend resources are not provisioned by this work.
+The current application includes pinned dependencies, local fonts, lint/type/test/build scripts, metadata, Vercel configuration, and Chess/Tic Tac Toe's local modules. Its sitemap contains the homepage, twenty-four overviews, and all six published rules pages; other rules placeholders remain `noindex`. Gameplay acceptance checks apply as modules are implemented. Remote backend resources are not provisioned by this work.
 
 ## 9. Mandatory 2D presentation and approved visual styles
 
@@ -155,10 +155,10 @@ Shared style tokens and local Hind/Yatra One fonts live inside Vihar Games. Tic 
 
 ## 10. Solo puzzle and arcade expansion
 
-The twelve new designs and styles are indexed in the [catalog](../GAME_CATALOG.md#new-solo-games-and-original-styles). Each has an individual `games/<name>/spec.md` and follows [shared solo standards](./SOLO_GAME_STANDARDS.md). Five additions are arcade games and seven are logic/spatial puzzles. All twelve are local one-player designs; Paperwing is now implemented with null multiplayer limits. The original catalog phase registered overview/placeholder/metadata paths and documented rules. Paperwing now supplies a playable local engine and original artwork; the other eleven additions remain planned, and no online rooms are introduced. Existing original-game specifications and multiplayer contracts remain authoritative.
+The twelve new designs and styles are indexed in the [catalog](../GAME_CATALOG.md#new-solo-games-and-original-styles). Each has an individual `games/<name>/spec.md` and follows [shared solo standards](./SOLO_GAME_STANDARDS.md). Five additions are arcade games and seven are logic/spatial puzzles. All twelve are local one-player designs; Paperwing and Dune Dash are now implemented with null multiplayer limits. The original catalog phase registered overview/placeholder/metadata paths and documented rules. Paperwing now supplies a playable local engine and original artwork; the other ten additions remain planned, and no online rooms are introduced. Existing original-game specifications and multiplayer contracts remain authoritative.
 
 ## Mandatory single-viewport presentation
 
 Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.
 
-Paperwing is now a playable local module with original airmail SVG screens, Standard/Practice, seeded fixed-step flight and swept collisions, pause/resume countdown, validated saves, local mode records, optional synthesized sound, and Vihar embedding. Its own specification is authoritative. The other eleven solo additions remain planned. Catalog paging keeps the entire homepage within a single viewport and sorts playable entries before planned entries.
+Paperwing is now a playable local module with original airmail SVG screens, Standard/Practice, seeded fixed-step flight and swept collisions, pause/resume countdown, validated saves, local mode records, optional synthesized sound, and Vihar embedding. Its own specification is authoritative. Dune Dash also ships its local runner; the other ten solo additions remain planned. Catalog paging keeps the entire homepage within a single viewport and sorts playable entries before planned entries.

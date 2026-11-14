@@ -2,7 +2,7 @@
 
 # Vihar Games — Single-project deployment plan
 
-**Status:** Chess, Tic Tac Toe, Carrom, Sudoku, and Paperwing's local modes and Vihar embedded integration are implemented. Private rooms and game-host Firebase setup remain deferred. The existing Vihar account service supplies optional scoped activity launches; direct guest play needs no backend configuration.
+**Status:** Chess, Tic Tac Toe, Carrom, Sudoku, Paperwing, and Dune Dash's local modes and Vihar embedded integration are implemented. Private rooms and game-host Firebase setup remain deferred. The existing Vihar account service supplies optional scoped activity launches; direct guest play needs no backend configuration.
 
 **Project name:** Vihar Games  
 **Suggested Vercel project slug:** `vihar-games`  
@@ -24,7 +24,7 @@ Next.js **16.4.5** and stable Node.js **26.13.0** were verified online on **8 No
 
 ## 1. Vercel project boundary
 
-Chess, Tic Tac Toe, Carrom, Sudoku, and Paperwing play routes send `Content-Security-Policy: frame-ancestors 'self' https://vihar.online`, without conflicting X-Frame-Options. Their public manifests advertise `embedVersion: 1`. The shared `useViharPlay` hook uses unchanged copies of Vihar's public `/sdk/vihar-id.js` and `/sdk/vihar-embed.js` under `src/lib/vihar-sdk/`; keep these synchronized when the Vihar protocol changes. Menus, handovers, paused/hidden rounds and chess practice do not credit play time. Exiting flushes the game-owned session; Vihar bounds the wait. Credentials stay in the existing SDK and never cross UI messages. Record releases and verification in the Vihar website's single `development.md`.
+Chess, Tic Tac Toe, Carrom, Sudoku, Paperwing, and Dune Dash play routes send `Content-Security-Policy: frame-ancestors 'self' https://vihar.online`, without conflicting X-Frame-Options. Their public manifests advertise `embedVersion: 1`. The shared `useViharPlay` hook uses unchanged copies of Vihar's public `/sdk/vihar-id.js` and `/sdk/vihar-embed.js` under `src/lib/vihar-sdk/`; keep these synchronized when the Vihar protocol changes. Menus, handovers, paused/hidden rounds and chess practice do not credit play time. Exiting flushes the game-owned session; Vihar bounds the wait. Credentials stay in the existing SDK and never cross UI messages. Record releases and verification in the Vihar website's single `development.md`.
 
 Create one Vercel project for the entire website. In a repository containing the whole workspace, set the project root to `Vihar Games`. If that directory is the repository root, use the repository root directly.
 
@@ -102,7 +102,7 @@ Per-room turn deadlines and Memory Match's mismatch deadlines are evaluated on r
 
 Set the site canonical to `https://games.vihar.online` and each game canonical to its path, including `https://games.vihar.online/chess` and `https://games.vihar.online/carrom`. Rules pages have separate canonical URLs ending in `/how-to-play`.
 
-The current sitemap contains the homepage, twenty-four game overviews, and Chess, Tic Tac Toe, Carrom, Sudoku, and Paperwing's published rules pages. Other rules placeholders are `noindex` and join the sitemap when real rules are published. The completed production sitemap will contain the homepage, twenty-four overviews, and twenty-four rules pages. Exclude play and room URLs, API endpoints, private state, and participant names. Mark play pages `noindex`; send `X-Robots-Tag: noindex` on API responses. Keep metadata and links on the shared production domain.
+The current sitemap contains the homepage, twenty-four game overviews, and Chess, Tic Tac Toe, Carrom, Sudoku, Paperwing, and Dune Dash's published rules pages. Other rules placeholders are `noindex` and join the sitemap when real rules are published. The completed production sitemap will contain the homepage, twenty-four overviews, and twenty-four rules pages. Exclude play and room URLs, API endpoints, private state, and participant names. Mark play pages `noindex`; send `X-Robots-Tag: noindex` on API responses. Keep metadata and links on the shared production domain.
 
 ## 8. Release verification
 

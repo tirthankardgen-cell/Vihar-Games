@@ -1,7 +1,7 @@
 # Dune Dash
 
-**Status:** Planned; catalog and specification only.  
-**Updated:** 14 November 2026  
+**Status:** Playable locally; Endless/Practice, original 2D artwork, local saves/records, published rules and Vihar embedding.
+**Updated:** 15 November 2026
 **Game ID:** `dune-dash` · **Category:** Arcade · **Players:** One  
 **Page:** `/dune-dash` · **API base:** `/api/games/dune-dash`  
 **Style:** Desert Field Notes · **Inspiration:** Browser dinosaur-style endless running
@@ -54,7 +54,7 @@ Follow [solo game standards](../../docs/SOLO_GAME_STANDARDS.md). Save mode, fox 
 
 ## 7. Future asset handoff
 
-Original fox poses/run cycle, two sandstone sets, swift bird, field-note border, static skyline, control diagrams, travel stamp, and optional sounds. These assets and the runner engine are not part of this planning delivery.
+Implemented as original native SVG: fox run/jump/duck poses, three sandstone silhouettes, ink swift, field-note border, static skyline, and labelled jump/duck diagrams. Results use a dated field-note stamp with live distance and counters. Optional foot taps, jump note, collision thud and an original pentatonic desert music loop are synthesized locally. Music and effects have independent controls, start muted, and stop on pause/Exit. The pure runner is in `src/games/dune-dash/`; its interface is in `src/components/dune-dash/`.
 
 ## 8. Acceptance when implemented
 
@@ -66,3 +66,7 @@ Original fox poses/run cycle, two sandstone sets, swift bird, field-note border,
 ## Mandatory single-viewport presentation
 
 Every screen must fit within one dynamic viewport (`100dvh`), including the overview, mode selection, setup, rules, gameplay, pause, handover, results, room forms, and confirmations where applicable. There must be no browser-page scrolling during normal use. Size the board and artwork from both available width and height, and keep all essential actions visible. Use Previous/Next pages for long rules and histories; dense boards may use zoom/pan inside a fixed board area while controls stay in view. Dialogs also fit the viewport. Preserve access at accessibility zoom without clipping essential content. Verify desktop, phone portrait, short landscape, and embedded player sizes.
+
+## Implemented keyboard addition
+
+Space deliberately starts the Ready screen and replays a completed run with a fresh seed in the same mode. During running it jumps. Holding Space never repeats a jump or retries on a death frame; release is required for another action. Focused navigation and other buttons retain their normal Space activation. The result also has separate Try again, Change mode and Return to collection controls.

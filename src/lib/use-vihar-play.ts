@@ -6,7 +6,7 @@ import { createViharId } from "./vihar-sdk/vihar-id.js";
 
 // These SDK modules mirror Vihar's public v1 modules. The engine remains the
 // only source of round state; menus and handovers never count as playing.
-export function useViharPlay(gameId: "chess" | "tic-tac-toe" | "carrom" | "paperwing" | "sudoku", inRound: boolean, playing: boolean) {
+export function useViharPlay(gameId: "chess" | "tic-tac-toe" | "carrom" | "paperwing" | "sudoku" | "dune-dash", inRound: boolean, playing: boolean) {
   const [embedded, setEmbedded] = useState(false);
   const [visible, setVisible] = useState(true);
   const [manualPause, setManualPause] = useState(false);
