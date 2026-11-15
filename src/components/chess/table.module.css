@@ -6,6 +6,8 @@
 .below { position:absolute; inset-inline:0; top:calc(100% + 6px); display:flex; justify-content:space-between; align-items:center; min-height:28px; color:#dac9a6; font-size:11px; }
 .below button { display:flex; gap:7px; align-items:center; padding:4px 8px; border:0; background:transparent; color:inherit; font-size:11px; }
 .below svg { width:15px; height:15px; }
+.below > span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.below button { flex-shrink:0; }
 .veil { position:absolute; inset:0; z-index:4; display:grid; place-items:center; background:#183c3655; backdrop-filter:blur(3px); padding:14px; }
 .card { display:flex; flex-direction:column; align-items:center; text-align:center; gap:12px; width:min(85%,420px); padding:26px 20px; border:1px solid #dec18a80; border-radius:18px; background:#243f37f7; color:#ffe5b4; box-shadow:0 12px 45px #172b3033; animation:arrive 450ms ease-out both; }
 .card h2 { font:clamp(24px,5.5cqw,40px)/1.2 var(--font-yatra),serif; text-wrap:balance; overflow-wrap:anywhere; }

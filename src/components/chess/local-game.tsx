@@ -11,11 +11,10 @@ import { Icon } from "./icons";
 import { MoveBook } from "./move-book";
 import styles from "./chess.module.css";
 import table from "./table.module.css";
-import { PlayButton, PlayCallout, usePlayCallout } from "../play-tools";
+import { PlayButton, PlayState } from "../play-tools";
 import { GameAudioControls } from "../game-audio-controls";
 import type { useGameAudio } from "@/lib/use-game-audio";
 import type { useViharPlay } from "@/lib/use-vihar-play";
-import { moveFeedback } from "@/games/chess/feedback";
 
 export function LocalGame({ session, onChange, onBack, onAgain, saved, paused = false, play, audio }: { session: Session; onChange: (session: Session, expectedRevision?: number) => boolean; onBack: () => void; onAgain: () => void; saved: boolean; paused?: boolean; play: ReturnType<typeof useViharPlay>; audio: ReturnType<typeof useGameAudio> }) {
   const { match } = session, board = new Chess(match.fen), turn = board.turn();
@@ -35,14 +34,6 @@ export function LocalGame({ session, onChange, onBack, onAgain, saved, paused = 
   const actor = session.mode === "computer" ? session.humanSide : turn;
   const orientation = flipped ? opposite(session.humanSide) : session.humanSide;
   const live = useRef(session);
-  const previous = useRef(match);
-  const callout = usePlayCallout(paused || Boolean(panel));
-  const { show } = callout;
-  useEffect(() => {
-    const before = previous.current; previous.current = match;
-    const next = moveFeedback(before, match, session.mode === "computer" ? session.humanSide : undefined);
-    if (next) queueMicrotask(() => show(next));
-  }, [match, show, session.mode, session.humanSide]);
   useEffect(() => { live.current = session; }, [session]);
 
   useEffect(() => {
@@ -86,7 +77,6 @@ export function LocalGame({ session, onChange, onBack, onAgain, saved, paused = 
   }
   function select(square: Square) {
     if (locked) return;
-    callout.dismiss();
     const piece = board.get(square);
     if (selected === square) { setSelected(null); setNotice(""); return; }
     if (selected) {
@@ -139,16 +129,15 @@ export function LocalGame({ session, onChange, onBack, onAgain, saved, paused = 
       <div className={table.surface}>
         <div className={table.players}>{player(opposite(orientation))}{player(orientation)}</div>
         <Board match={match} orientation={orientation} selected={selected} onSelect={select} locked={locked} />
-        {callout.event && !match.result && <PlayCallout event={callout.event} paused={paused || session.handover || Boolean(panel)} />}
         {match.result ? <div className={table.veil} data-result="true"><div className={table.card}>
           <span className={table.emblem}><Piece type="k" color={match.result.winner ?? orientation} /></span>
           <p className={table.eyebrow}>{match.result.winner === null ? "HONOURS SHARED" : match.result.reason === "checkmate" ? "SHAH AUR MAAT" : "THE FINAL POSITION"}</p>
-          <h2>{match.result.winner === null ? "A thoughtful draw." : session.mode === "computer" ? match.result.winner === session.humanSide ? "Shabash. You won!" : "Acharya Dev wins." : `${session.players[match.result.winner]} wins!`}</h2>
+          <h2>{match.result.winner === null ? "Draw." : session.mode === "computer" ? match.result.winner === session.humanSide ? "You won!" : "You lost." : `${session.players[match.result.winner]} wins!`}</h2>
           <p>{resultText(match.result)}</p><button className={styles.primary} onClick={onAgain}>One more game <Icon name="arrow" /></button>
-        </div></div> : paused ? <div className={table.veil}><div className={table.card}><p className={table.eyebrow}>YOUR POSITION IS KEPT</p><h2>Chai break?</h2><p>The next move can wait.</p>{play.manualPause && <button className={styles.primary} onClick={play.togglePause}>Back to the board</button>}</div></div> : session.handover ? <div className={table.veil}><div className={table.card}><p className={table.eyebrow}>{sideName(turn)} TO MOVE</p><h2>{session.players[turn]}, your move.</h2><button className={styles.primary} onClick={() => onChange({ ...session, handover: false }, match.revision)}>I’m ready <Icon name="arrow" /></button></div></div> : null}
+        </div></div> : paused ? <PlayState label="Resume game" disabled={!play.manualPause} onAction={play.togglePause} /> : null}
         {match.drawOffer && !match.result && !paused && <div className={table.drawNotice}><p>{session.players[match.drawOffer]} offers a draw.{match.drawOffer === actor ? " Complete your move to pass the offer." : " Accept, decline, or make a move."}</p>{match.drawOffer !== actor && !session.handover && <div className={styles.actions}><button className={styles.primary} onClick={() => attempt(() => respondToDraw(match, actor, true))}>Accept draw</button><button className={styles.secondary} onClick={() => attempt(() => respondToDraw(match, actor, false))}>Decline</button></div>}</div>}
         {workerError && <div className={table.drawNotice} role="alert"><p>{workerError}</p><button className={styles.secondary} onClick={() => { setWorkerError(""); setRetry(n => n + 1); }}>Retry computer</button></div>}
-        <div className={table.below}><span>{thinking ? "Acharya Dev is thinking…" : board.isCheck() && !match.result ? "Check · protect your king" : session.practice ? "Practice game" : ""}</span><button onClick={() => setPanel("history")} aria-label="Move book"><Icon name="book" />{match.notation.at(-1) ?? "Moves"}</button></div>
+        <div className={table.below}><span>{session.handover ? `${session.players[turn]} · ${sideName(turn)} to move` : thinking ? "Acharya Dev is thinking…" : board.isCheck() && !match.result ? "Check · protect your king" : session.practice ? "Practice game" : ""}</span>{session.handover && <button disabled={paused} onClick={() => onChange({ ...session, handover: false }, match.revision)}>I’m ready</button>}<button onClick={() => setPanel("history")} aria-label="Move book"><Icon name="book" />{match.notation.at(-1) ?? "Moves"}</button></div>
       </div>
     <p className={styles.srOnly} role="status" aria-live="polite">{notice}</p>
     {panel && <Dialog title={panel === "history" ? "Your move book" : "At your fingertips"} onClose={() => setPanel(null)}>{panel === "history" ? <MoveBook match={match} /> : <>{controls}<button className={styles.textButton} onClick={() => setPanel("history")}><Icon name="book" />Move book</button><a className={styles.textButton} href="/chess/how-to-play" target="_blank" rel="noopener noreferrer">How to play ↗</a><p className={styles.small}>Undo takes back a complete turn in computer mode and marks the game as practice.</p></>}</Dialog>}

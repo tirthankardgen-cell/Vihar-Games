@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { flap, step, STEP, presets, type Mode } from "@/games/paperwing/engine";
+import { createFlightInput, flightAction, flightKeys, type FlightView as View } from "@/games/paperwing/input";
 import { defaultSettings, emptyRecords, loadRecords, loadSession, loadSettings, newSession, recordResult, saveSession, saveValue, RECORDS_KEY, SETTINGS_KEY, type Session, type Settings, type Records } from "@/games/paperwing/persistence";
 import { useViharPlay } from "@/lib/use-vihar-play";
 import { createAudio } from "./audio";
@@ -9,10 +10,8 @@ import { BirdMark, FlightField } from "./art";
 import { PaperwingFooter, PaperwingNav } from "./shared";
 import styles from "./paperwing.module.css";
 
-type View = "loading" | "choose" | "flying" | "paused" | "countdown" | "result";
 const activeView = (view: View) => view === "flying" || view === "paused" || view === "countdown";
 const withStorage = (operation: (storage: Storage) => boolean): boolean => { try { return operation(window.localStorage); } catch { return false; } };
-const embeddedLaunch = () => window.parent !== window && new URLSearchParams(location.search).get("vihar_embed") === "1" && /^[A-Za-z0-9_-]{16,80}$/.test(new URLSearchParams(location.search).get("vihar_session") ?? "");
 
 export default function PaperwingPlay() {
   const [view, setView] = useState<View>("loading"), [session, setSession] = useState<Session | null>(null);
@@ -20,8 +19,8 @@ export default function PaperwingPlay() {
   const [records, setRecords] = useState<Records>(emptyRecords), [saving, setSaving] = useState(true), [notice, setNotice] = useState("");
   const [countdown, setCountdown] = useState(3);
   const runtime = useRef<{ view: View; session: Session | null; previous: Session | null; records: Records; settings: Settings; lastSave: number }>({ view: "loading", session: null, previous: null, records: emptyRecords(), settings: defaultSettings, lastSave: 0 });
-  const audio = useRef<ReturnType<typeof createAudio> | null>(null), held = useRef(new Set<string>());
-  const pendingStart = useRef(false);
+  const audio = useRef<ReturnType<typeof createAudio> | null>(null), input = useRef(createFlightInput());
+  const stage = useRef<HTMLElement>(null);
   const inRound = activeView(view) && session?.run.status === "flying";
   const vihar = useViharPlay("paperwing", inRound, view === "flying");
 
@@ -42,32 +41,27 @@ export default function PaperwingPlay() {
   const pauseFlight = useCallback(() => {
     const r = runtime.current;
     if ((r.view !== "flying" && r.view !== "countdown") || !r.session) return;
-    pendingStart.current = false;
-    held.current.clear(); audio.current?.stop(); publish(r.session, "paused"); persist(r.session);
+    audio.current?.stop(); publish(r.session, "paused"); persist(r.session);
   }, [persist, publish]);
   const beginResume = useCallback(() => {
     const r = runtime.current;
     if (r.view !== "paused" || !r.session || vihar.paused || document.visibilityState !== "visible" || !document.hasFocus()) return;
-    pendingStart.current = false;
-    held.current.clear(); audio.current?.unlock(); setCountdown(3); publish(r.session, "countdown");
+    audio.current?.unlock(); setCountdown(3); publish(r.session, "countdown");
   }, [publish, vihar.paused]);
   const takeFlap = useCallback(() => {
     const r = runtime.current;
-    if (!r.session || r.view !== "flying" || vihar.paused || document.visibilityState !== "visible") return;
+    if (!r.session || !["ready", "flying"].includes(r.view) || vihar.paused || document.visibilityState !== "visible" || !document.hasFocus()) return;
     const next = { ...r.session, run: flap(r.session.run) };
     audio.current?.unlock(); audio.current?.flap(); publish(next, "flying"); persist(next);
   }, [persist, publish, vihar.paused]);
-  const prepare = useCallback((mode: Mode, automatic = false) => {
-    held.current.clear(); audio.current?.reset();
-    if (!automatic) audio.current?.unlock();
+  const prepare = useCallback((mode: Mode) => {
+    audio.current?.reset(); audio.current?.unlock();
     const ready = newSession(mode, crypto.getRandomValues(new Uint32Array(1))[0], crypto.randomUUID());
     const fresh = { ...ready, run: flap(ready.run) };
-    pendingStart.current = automatic && (embeddedLaunch() || document.visibilityState !== "visible" || !document.hasFocus());
-    runtime.current.lastSave = 0; setNotice(""); publish(fresh, pendingStart.current ? "paused" : "flying"); persist(fresh);
-    if (!automatic) audio.current?.flap();
+    runtime.current.lastSave = 0; setNotice(""); publish(fresh, "flying"); persist(fresh);
+    audio.current?.flap();
   }, [persist, publish]);
   const choose = useCallback(() => {
-    pendingStart.current = false;
     pauseFlight();
     const r = runtime.current; if (r.session) persist(r.session);
     r.view = "choose"; setView("choose");
@@ -77,16 +71,9 @@ export default function PaperwingPlay() {
     if (value.sound) audio.current?.unlock();
     if (!withStorage((storage) => saveValue(storage, SETTINGS_KEY, value))) setSaving(false);
   }, []);
-  const startWhenReady = useCallback(() => {
-    const r = runtime.current;
-    if (!pendingStart.current || r.view !== "paused" || !r.session || vihar.paused || document.visibilityState !== "visible" || !document.hasFocus() || embeddedLaunch() && !vihar.embedded) return;
-    pendingStart.current = false; publish(r.session, "flying");
-  }, [publish, vihar.embedded, vihar.paused]);
   useEffect(() => {
-    queueMicrotask(startWhenReady);
-    window.addEventListener("focus", startWhenReady); document.addEventListener("visibilitychange", startWhenReady);
-    return () => { window.removeEventListener("focus", startWhenReady); document.removeEventListener("visibilitychange", startWhenReady); };
-  }, [startWhenReady, view]);
+    if (view === "flying") stage.current?.querySelector<SVGSVGElement>("svg[data-bird-y]")?.focus({ preventScroll: true });
+  }, [view]);
 
   useEffect(() => {
     let cancelled = false;
@@ -99,12 +86,19 @@ export default function PaperwingPlay() {
         const storage = window.localStorage, loaded = loadSession(storage), preferences = loadSettings(storage), bests = loadRecords(storage);
         runtime.current.previous = loaded.session; runtime.current.settings = preferences; runtime.current.records = bests;
         setPrevious(loaded.session); setSettings(preferences); setRecords(bests); audio.current?.enable(preferences.sound);
-        if (loaded.session?.run.status === "flying") {
+        if (loaded.session) {
           runtime.current.lastSave = loaded.session.run.elapsed;
-          publish(loaded.session, "paused");
-        } else prepare(preferences.mode, true);
-        if (loaded.damaged) setNotice("The saved flight could not be restored. A fresh flight has started.");
-      } catch { setSaving(false); prepare(defaultSettings.mode, true); }
+          publish(loaded.session, loaded.session.run.status === "ended" ? "result" : loaded.session.run.status === "ready" ? "ready" : "paused");
+        } else {
+          const fresh = newSession(preferences.mode, crypto.getRandomValues(new Uint32Array(1))[0], crypto.randomUUID());
+          publish(fresh, "ready"); persist(fresh);
+        }
+        if (loaded.damaged) setNotice("The saved flight could not be restored. Press Space or tap Play to start a fresh flight.");
+      } catch {
+        setSaving(false);
+        const fresh = newSession(defaultSettings.mode, crypto.getRandomValues(new Uint32Array(1))[0], crypto.randomUUID());
+        publish(fresh, "ready"); persist(fresh);
+      }
     });
     return () => {
       cancelled = true;
@@ -112,34 +106,26 @@ export default function PaperwingPlay() {
       if (current) withStorage((storage) => saveSession(storage, current));
       audio.current?.dispose(); audio.current = null;
     };
-  }, [prepare, publish]);
+  }, [persist, publish]);
   useEffect(() => {
-    const blur = () => { held.current.clear(); audio.current?.stop(); pauseFlight(); };
+    const blur = () => { input.current.clear(); audio.current?.stop(); pauseFlight(); };
     const visibility = () => { if (document.visibilityState !== "visible") blur(); };
     const keydown = (event: KeyboardEvent) => {
       const target = event.target;
-      if (target instanceof Element && target.closest("dialog,input,textarea,select")) return;
+      if (event.ctrlKey || event.metaKey || event.altKey || target instanceof Element && target.closest('dialog,input,textarea,select,[contenteditable="true"]')) return;
       const phase = runtime.current.view;
-      if (event.key === "Escape" && activeView(phase)) {
-        event.preventDefault(); event.stopImmediatePropagation();
-        if (event.repeat) return;
-        if (phase === "paused") beginResume(); else pauseFlight();
-        return;
-      }
-      if (event.code === "Space" && phase === "result" && !(target instanceof Element && target.closest("button,a") && !target.closest('button[aria-label="Try again"]'))) {
-        event.preventDefault();
-        if (event.repeat || held.current.has(event.code) || vihar.paused || document.visibilityState !== "visible" || !document.hasFocus()) return;
-        const finished = runtime.current.session;
-        if (finished) { prepare(finished.run.mode); held.current.add(event.code); }
-        return;
-      }
-      if (!["Space", "ArrowUp", "KeyW"].includes(event.code) || (event.code === "Space" && target instanceof Element && target.closest("button,a"))) return;
-      if (phase !== "flying") return;
-      event.preventDefault();
-      if (event.repeat || held.current.has(event.code)) return;
-      held.current.add(event.code); takeFlap();
+      if (!flightKeys.includes(event.code) || event.code === "Space" && target instanceof Element && target.closest("button,a") && !target.closest("[data-flight-action]")) return;
+      const action = flightAction(phase, event.code);
+      if (!action && !(event.code === "Space" && phase === "countdown")) return;
+      event.preventDefault(); event.stopImmediatePropagation();
+      if (!input.current.press(event.code, event.repeat) || vihar.paused || document.visibilityState !== "visible" || !document.hasFocus()) return;
+      if (action === "start") prepare(runtime.current.settings.mode);
+      else if (action === "retry" && runtime.current.session) prepare(runtime.current.session.run.mode);
+      else if (action === "flap") takeFlap();
+      else if (action === "resume") beginResume();
+      else if (action === "pause") pauseFlight();
     };
-    const keyup = (event: KeyboardEvent) => { held.current.delete(event.code); };
+    const keyup = (event: KeyboardEvent) => { input.current.release(event.code); };
     window.addEventListener("keydown", keydown, true); window.addEventListener("keyup", keyup);
     window.addEventListener("blur", blur); window.addEventListener("pagehide", blur); document.addEventListener("visibilitychange", visibility);
     return () => { window.removeEventListener("keydown", keydown, true); window.removeEventListener("keyup", keyup); window.removeEventListener("blur", blur); window.removeEventListener("pagehide", blur); document.removeEventListener("visibilitychange", visibility); };
@@ -192,7 +178,7 @@ export default function PaperwingPlay() {
         <input type="radio" name="mode" value={mode} checked={settings.mode === mode} onChange={() => updateSettings({ ...settings, mode })} />
         <span className={styles.stamp}><BirdMark /><small>{mode === "standard" ? "AIR POST" : "SLOW POST"}</small></span><span className={styles.modeCopy}><span className={styles.eyebrow}>{mode === "standard" ? "FIND YOUR RHYTHM" : "A LITTLE MORE ROOM"}</span><strong>{presets[mode].name}</strong><span>{mode === "standard" ? "A faster sky, shifting shutters, and wax seals to weave around." : "Wider openings and a gentler speed rise. The same new challenges."}</span><small>PERSONAL BEST · {records[mode].score} GATES</small></span><span className={styles.radioMark} aria-hidden="true">{settings.mode === mode ? "✓" : ""}</span>
       </label>)}</fieldset>
-      <div className={styles.chooseActions}><button className={styles.primary} disabled={vihar.paused} onClick={() => prepare(settings.mode)}>Start flight <span aria-hidden="true">↗</span></button>
+      <div className={styles.chooseActions}><button className={styles.primary} data-flight-action disabled={vihar.paused} onClick={() => prepare(settings.mode)}>Start flight <span aria-hidden="true">↗</span></button>
         {previous && <button className={styles.textButton} onClick={() => { if (previous.run.status === "ready") prepare(previous.run.mode); else publish(previous, previous.run.status === "ended" ? "result" : "paused"); }}>{previous.run.status === "ended" ? "Your last flight" : "Resume saved flight"}<span aria-hidden="true">→</span></button>}
       </div><p className={styles.screenNote} role="status">{notice || vihar.notice || (!saving ? "Saving unavailable. Your flight stays in this tab." : "Saved on this device. Ready when you are.")}</p>
     </section> : session && <>
@@ -205,10 +191,10 @@ export default function PaperwingPlay() {
           {vihar.embedded && <button className={styles.hudIcon} aria-label="Exit to Vihar" onClick={() => { pauseFlight(); vihar.exit(); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>}
         </div>
       </header>
-      <section className={styles.fullStage} aria-label={`${presets[session.run.mode].name} flight`}>
+      <section ref={stage} className={styles.fullStage} aria-label={`${presets[session.run.mode].name} flight`}>
         <FlightField run={session.run} moving={view === "flying"} onFlap={takeFlap} />
         {view !== "flying" && <div className={styles.flightOverlay}>
-          {view === "countdown" ? <button className={styles.startIcon} aria-label={`Resuming in ${countdown}. Keep paused.`} onClick={pauseFlight}><span className={styles.resumeCount} role="status">{countdown}</span></button> : <button className={styles.startIcon} disabled={vihar.paused} aria-label={view === "result" ? "Try again" : "Resume flight"} onClick={view === "result" ? () => prepare(session.run.mode) : beginResume}>
+          {view === "countdown" ? <button className={styles.startIcon} data-flight-action aria-label={`Resuming in ${countdown}. Keep paused.`} onClick={pauseFlight}><span className={styles.resumeCount} role="status">{countdown}</span></button> : <button className={styles.startIcon} data-flight-action disabled={vihar.paused} aria-label={view === "result" ? "Try again" : view === "ready" ? "Start flight" : "Resume flight"} onClick={view === "result" ? () => prepare(session.run.mode) : view === "ready" ? takeFlap : beginResume}>
             <svg viewBox="0 0 32 32" aria-hidden="true">{view === "result" ? <path d="M25 14a10 10 0 1 0-3 10M25 6v8h-8" /> : <path d="m12 7 14 9-14 9Z" />}</svg>
           </button>}
         </div>}

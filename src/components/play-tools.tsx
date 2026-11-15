@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useRef, useState, type ButtonHTMLAttributes } from "react";
+import type { ButtonHTMLAttributes } from "react";
 import styles from "./play-tools.module.css";
 
 type Symbol = "menu" | "pause" | "play" | "back" | "audio" | "book";
@@ -15,20 +15,10 @@ export function PlayButton({ icon, label, ...props }: ButtonHTMLAttributes<HTMLB
   return <button type="button" {...props} className={styles.button} aria-label={label} title={label}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[icon]}</svg></button>;
 }
 
-export type PlayCallout = { title: string; label: string; tone?: "warm" | "royal" | "alert"; id: string | number };
-export function usePlayCallout(paused: boolean) {
-  const [event, setEvent] = useState<PlayCallout | null>(null);
-  const remaining = useRef({ event: null as PlayCallout | null, ms: 2300 });
-  useEffect(() => {
-    if (remaining.current.event !== event) remaining.current = { event, ms: 2300 };
-    if (!event || paused) return;
-    const start = performance.now(), timer = window.setTimeout(() => setEvent(null), remaining.current.ms);
-    return () => { clearTimeout(timer); remaining.current.ms = Math.max(0, remaining.current.ms - (performance.now() - start)); };
-  }, [event, paused]);
-  const show = useCallback((next: PlayCallout) => setEvent(next), []);
-  const dismiss = useCallback(() => setEvent(null), []);
-  return { event, show, dismiss };
-}
-export function PlayCallout({ event, paused = false }: { event: PlayCallout; paused?: boolean }) {
-  return <div key={event.id} className={styles.callout} data-tone={event.tone ?? "warm"} data-paused={paused} role="status" aria-atomic="true"><span aria-hidden="true">✦</span><small>{event.label}</small><strong>{event.title}</strong></div>;
+export function PlayState({ label, onAction, retry = false, countdown, disabled = false, spaceStart = false }: { label: string; onAction: () => void; retry?: boolean; countdown?: number; disabled?: boolean; spaceStart?: boolean }) {
+  return <div className={styles.state}>
+    <button type="button" className={styles.stateButton} aria-label={label} title={label} onClick={onAction} disabled={disabled} data-space-start={spaceStart || undefined}>
+      {countdown ? <span aria-hidden="true">{countdown}</span> : <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{retry ? <path d="M25 14a10 10 0 1 0-3 10M25 6v8h-8" /> : <path d="m12 7 14 9-14 9Z" />}</svg>}
+    </button>
+  </div>;
 }

@@ -11,7 +11,7 @@ import { JournalDialog, JournalFooter, JournalNav } from "./shared";
 import { RulesBook } from "./rules-book";
 import { createSudokuAudio } from "./audio";
 import styles from "./sudoku.module.css";
-import { PlayButton } from "../play-tools";
+import { PlayButton, PlayState } from "../play-tools";
 
 type View = "loading" | "setup" | "puzzle";
 type Modal = "new" | "restart" | "records" | "help" | "audio" | "options" | null;
@@ -182,8 +182,8 @@ export default function SudokuPlay() {
         <div className={styles.boardViewport} data-paused={run.status === "paused" || vihar.paused}>
           <div className={styles.puzzleMeta}><span>{difficultyLabels[run.puzzle.difficulty]} <small>{run.hints + run.checks ? "Assisted" : ""}{run.restarted ? " · Restarted" : ""}</small></span><span>{progress}<small> / 81</small></span><time aria-label={`Active time ${formatTime(run.elapsed)}`}>{formatTime(run.elapsed)}</time></div>
           <SudokuBoard run={run} selected={selected} onSelect={setSelected} onDigit={digit} onNotes={() => { if (active) setNotes((n) => !n); }} onUndo={takeUndo} onRedo={takeRedo} />
-          {(run.status === "paused" || vihar.paused) && <div className={styles.pausePanel}><p className={styles.eyebrow}>YOUR PLACE IS KEPT</p><h2>A quiet moment.</h2><button className={styles.primary} disabled={vihar.paused} onClick={resumeNow}>{vihar.paused ? "Waiting for Vihar…" : "Resume puzzle →"}</button></div>}
-          {run.status === "completed" && <div className={styles.puzzleResult} role="status"><p className={styles.eyebrow}>A PAGE WELL SPENT</p><h2>Shabash.<br />Every square, solved.</h2><p>{formatTime(run.elapsed)} · {run.hints + run.checks ? "Assisted" : "Unassisted"}{run.restarted ? " · Restarted" : ""}</p><button className={styles.primary} onClick={begin}>One more puzzle →</button><button className={styles.textButton} onClick={goToSetup}>Choose difficulty</button></div>}
+          {(run.status === "paused" || vihar.paused) && <PlayState label="Resume puzzle" disabled={vihar.paused} onAction={resumeNow} />}
+          {run.status === "completed" && <PlayState label="Start another puzzle" retry onAction={begin} />}
           {run.status !== "completed" && <aside className={styles.controls} aria-label="Puzzle controls">
             <div className={styles.keypad} role="group" aria-label={notes ? "Pencil note digits" : "Answer digits"}>{Array.from({ length: 9 }, (_, n) => <button key={n} className={styles.digitButton} disabled={!active} onClick={() => digit(n + 1)} aria-label={`${notes ? "Toggle note" : "Enter"} ${n + 1}`}>{n + 1}</button>)}</div>
             <div className={styles.tools}><button className={`${styles.tool} ${notes ? styles.notesActive : ""}`} disabled={!active} aria-label="Notes" aria-pressed={notes} onClick={() => setNotes(!notes)}><span aria-hidden="true">✎</span><small>Notes</small></button><button className={styles.tool} disabled={!active} onClick={() => digit(0)} aria-label="Erase"><span aria-hidden="true">⌫</span><small>Erase</small></button><button className={styles.tool} disabled={!active || !run.undo.length} onClick={takeUndo} aria-label="Undo"><span aria-hidden="true">↶</span><small>Undo</small></button><button className={styles.tool} disabled={!active || !run.redo.length} onClick={takeRedo} aria-label="Redo"><span aria-hidden="true">↷</span><small>Redo</small></button><button className={styles.tool} disabled={!active} onClick={takeCheck} aria-label="Check puzzle"><span aria-hidden="true">✓</span><small>Check</small></button><button className={styles.tool} disabled={!active} onClick={takeHint} aria-label="Hint"><span aria-hidden="true">?</span><small>Hint</small></button></div>

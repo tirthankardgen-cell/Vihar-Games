@@ -2,12 +2,10 @@
 .button:hover { background:color-mix(in srgb,currentColor 9%,transparent); }
 .button svg { width:20px; height:20px; }
 .button:focus-visible { outline:2px solid currentColor; outline-offset:2px; }
-.callout { position:absolute; z-index:5; top:38%; left:50%; transform:translate(-50%,-50%); display:grid; justify-items:center; gap:3px; width:max-content; max-width:85%; padding:12px 26px 16px; border:1px solid #dfc28b; border-radius:16px; background:#243f37f5; color:#ffe1a4; box-shadow:0 10px 35px #152c3026; pointer-events:none; text-align:center; animation:callout 2300ms both; }
-.callout small { font:9px/1.4 var(--font-hind),sans-serif; letter-spacing:.13em; text-transform:uppercase; }
-.callout strong { font:clamp(21px,4cqw,34px)/1.2 var(--font-yatra),Georgia,serif; font-weight:400; text-wrap:balance; }
-.callout > span { font-size:17px; }
-.callout[data-tone=royal] { background:#513247f5; color:#ffe0a7; }
-.callout[data-tone=alert] { background:#653d32f5; color:#ffe5c3; }
-.callout[data-paused=true] { animation-play-state:paused; visibility:hidden; }
-@keyframes callout { 0% { opacity:0; translate:0 10px; scale:.92; } 12%,80% { opacity:1; translate:0; scale:1; } 100% { opacity:0; translate:0 -6px; } }
-@media (prefers-reduced-motion:reduce) { .callout { animation:none; } }
+.state { position:absolute; inset:0; z-index:4; display:grid; place-items:center; pointer-events:none; }
+.stateButton { display:grid; place-items:center; width:72px; height:72px; padding:20px; border:1px solid currentColor; border-radius:50%; background:var(--paper,#f5e6c5); color:var(--ink,#243f37); box-shadow:0 3px 12px #172b3020; pointer-events:auto; cursor:pointer; }
+.stateButton svg { width:100%; height:100%; }
+.stateButton > span { font:32px/1 var(--font-yatra),Georgia,serif; }
+.stateButton:focus-visible { outline:2px solid currentColor; outline-offset:3px; }
+.stateButton:disabled { opacity:.5; cursor:default; }
+@media (max-height:450px) { .stateButton { width:60px; height:60px; padding:16px; } }

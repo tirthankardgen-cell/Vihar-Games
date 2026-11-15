@@ -333,7 +333,7 @@
 .page[data-focus] .controls { position:absolute; bottom:16px; left:20px; right:20px; display:flex; justify-content:center; pointer-events:none; }
 .page[data-focus] .touchControls { display:flex; gap:14px; pointer-events:auto; }.page[data-focus] .jumpButton,.page[data-focus] .duckButton { min-width:105px; min-height:46px; border-radius:25px; font-size:14px; box-shadow:0 5px 15px #463d3210; }
 .page[data-focus] .keyHints,.page[data-focus] .runMeta,.page[data-focus] .playLayout > .screenNote { display:none; }
-.page[data-focus] .playLayout:has(.panel) .controls { visibility:hidden; }
+.page[data-focus]:not([data-dune-view=running]) .controls { visibility:hidden; }
 .page[data-focus] .panel[data-phase=countdown] { width:160px; border:0; background:transparent; box-shadow:none; padding:10px; }.page[data-focus] .panel[data-phase=countdown] .eyebrow { display:none; }.page[data-focus] .panel .countdown { font-size:96px; }
 .page[data-focus] .resultDetails { padding-block:8px; }.page[data-focus] .replayHint { display:none; }
 .menuOptions { display:grid; gap:4px; }.menuOptions :is(button,a) { padding:11px 8px; min-height:44px; border:0; border-bottom:1px solid #c5b69980; background:transparent; color:inherit; text-align:left; font:14px var(--font-hind),sans-serif; cursor:pointer; }
