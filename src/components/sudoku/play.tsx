@@ -11,16 +11,17 @@ import { JournalDialog, JournalFooter, JournalNav } from "./shared";
 import { RulesBook } from "./rules-book";
 import { createSudokuAudio } from "./audio";
 import styles from "./sudoku.module.css";
+import { PlayButton } from "../play-tools";
 
 type View = "loading" | "setup" | "puzzle";
-type Modal = "new" | "restart" | "records" | "help" | "audio" | null;
+type Modal = "new" | "restart" | "records" | "help" | "audio" | "options" | null;
 const storage = (operation: (s: Storage) => boolean) => { try { return operation(window.localStorage); } catch { return false; } };
 const coordinate = (i: number) => `row ${Math.floor(i / 9) + 1}, column ${i % 9 + 1}`;
 
 export default function SudokuPlay() {
   const [run, setRun] = useState<Run | null>(null), [view, setView] = useState<View>("loading");
   const [difficulty, setDifficulty] = useState<Difficulty>("easy"), [selected, setSelected] = useState(0);
-  const [notes, setNotes] = useState(false), [zoomed, setZoomed] = useState(false), [modal, setModal] = useState<Modal>(null);
+  const [notes, setNotes] = useState(false), [modal, setModal] = useState<Modal>(null);
   const [notice, setNotice] = useState(""), [saving, setSaving] = useState(true), [records, setRecords] = useState<Records>(emptyRecords), [recordPage, setRecordPage] = useState(0);
   const [audioSettings, setAudioSettings] = useState<AudioSettings>(defaultAudioSettings), [audioNotice, setAudioNotice] = useState("");
   const audio = useRef<ReturnType<typeof createSudokuAudio> | null>(null);
@@ -35,7 +36,6 @@ export default function SudokuPlay() {
     if (value.status === "completed") {
       audio.current?.setPlaying(false);
       if (previous?.status === "active" && previous.attemptId === value.attemptId) audio.current?.cue("complete");
-      setZoomed(false);
       const updated = recordResult(runtime.current.records, value, new Date().toISOString());
       runtime.current.records = updated; setRecords(updated);
       if (!storage((s) => saveValue(s, RECORDS_KEY, updated))) setSaving(false);
@@ -55,7 +55,7 @@ export default function SudokuPlay() {
   const begin = () => {
     audio.current?.reset(); audio.current?.unlock();
     const puzzle = choosePuzzle(difficulty, crypto.getRandomValues(new Uint32Array(1))[0] / 4294967296, runtime.current.run?.puzzle.id);
-    publish(createRun(puzzle, crypto.randomUUID())); setView("puzzle"); setModal(null); setNotes(false); setZoomed(false);
+    publish(createRun(puzzle, crypto.randomUUID())); setView("puzzle"); setModal(null); setNotes(false);
     setSelected(puzzle.clues.indexOf("0")); setNotice("");
     audio.current?.setPlaying(true); audio.current?.cue("start");
     if (!storage((s) => saveValue(s, SETTINGS_KEY, { version: 1, difficulty }))) setSaving(false);
@@ -162,8 +162,13 @@ export default function SudokuPlay() {
   const record = records.entries[recordPage];
   const bests = (assisted: boolean) => records.entries.filter((r) => r.difficulty === difficulty && (r.hints + r.checks > 0) === assisted && !r.restarted).sort((a, b) => a.elapsed - b.elapsed)[0];
 
-  return <main id="main-content" className={`${styles.page} ${styles.playPage}`} data-vihar-embedded={vihar.embedded || undefined}>
-    <JournalNav embedded={vihar.embedded}><button className={styles.navControl} aria-label="How to play" title="How to play" onClick={() => { pauseNow(); setModal("help"); }}><span aria-hidden="true">?</span><span className={styles.navLabel}>How to play</span></button><button className={styles.navControl} aria-label="Audio settings" title="Sound and music" aria-pressed={(audioSettings.sound || audioSettings.music) && audioSettings.volume > 0} onClick={() => { pauseNow(); setModal("audio"); }}><span aria-hidden="true">♫</span><span className={styles.navLabel}>Audio</span></button>{vihar.embedded ? <button className={styles.navControl} aria-label="Exit to Vihar" title="Exit to Vihar" onClick={() => { pauseNow(); vihar.exit(); }}><span aria-hidden="true">←</span><span className={styles.navLabel}>Exit to Vihar</span></button> : <Link className={styles.navControl} aria-label="All games" title="All games" href="/"><span aria-hidden="true">←</span><span className={styles.navLabel}>All games</span></Link>}</JournalNav>
+  return <main id="main-content" className={`${styles.page} ${styles.playPage}`} data-vihar-embedded={vihar.embedded || undefined} data-focus={view === "puzzle" || undefined}>
+    <JournalNav embedded={vihar.embedded}>
+      <PlayButton icon="audio" label="Audio settings" onClick={() => { pauseNow(); setModal("audio"); }} />
+      {view === "puzzle" && run?.status !== "completed" && <PlayButton icon={active ? "pause" : "play"} label={active ? "Pause puzzle" : "Resume puzzle"} onClick={active ? pauseNow : resumeNow} />}
+      <PlayButton icon="menu" label="Puzzle options" onClick={() => { pauseNow(); setModal("options"); }} />
+      {vihar.embedded && <PlayButton icon="back" label="Exit to Vihar" onClick={() => { pauseNow(); vihar.exit(); }} />}
+    </JournalNav>
     {view === "loading" ? <section className={styles.loading} role="status">Opening your journal…</section> : view === "setup" ? <section className={styles.setup} aria-labelledby="setup-title">
       <div className={styles.setupCopy}><p className={styles.eyebrow}>A FRESH PAGE, A FAMILIAR RITUAL</p><h1 id="setup-title">Find your<br /><span>kind of quiet.</span></h1><p className={styles.setupDescription}>Choose the challenge that feels right.<br />There is no clock to beat.</p>
         <div className={styles.difficulties} role="group" aria-label="Puzzle difficulty">{difficulties.map((d) => <button key={d} className={`${styles.difficulty} ${d === difficulty ? styles.difficultySelected : ""}`} aria-pressed={d === difficulty} onClick={() => { setDifficulty(d); }}><span>{difficultyLabels[d]}<small>{difficultyDescriptions[d]}</small></span><span aria-hidden="true">{d === difficulty ? "✓" : "○"}</span></button>)}</div>
@@ -172,21 +177,23 @@ export default function SudokuPlay() {
         {(notice || !saving) && <p className={styles.setupNotice} role="status">{notice}{!saving && " Saving is unavailable. You can keep playing in this session."}</p>}
       </div><JournalCover />
     </section> : run && <section className={styles.game} aria-label="Sudoku play">
-      <header className={styles.gameHeading}><div><p className={styles.eyebrow}>{difficultyLabels[run.puzzle.difficulty]} · {run.restarted ? "RESTARTED ATTEMPT" : "YOUR JOURNAL"}</p><h1>One square at a time.</h1></div><div className={styles.gameMeta}><span aria-label={`Active time ${formatTime(run.elapsed)}`} className={styles.timer}>{formatTime(run.elapsed)}</span><span className={styles.assistance}>{run.hints} hints · {run.checks} checks</span></div><div className={styles.gameHeadingActions}><button className={styles.secondary} onClick={goToSetup}>New puzzle</button><button className={styles.secondary} onClick={() => { pauseNow(); setModal("restart"); }}>Restart</button></div></header>
-      <div className={styles.workspace}><div className={styles.boardRegion}><div className={`${styles.boardViewport} ${zoomed ? styles.panning : ""}`}>
-        {run.status === "paused" || vihar.paused ? <div className={styles.pausePanel}><p className={styles.eyebrow}>YOUR PLACE IS KEPT</p><h2>A quiet moment.</h2><p>The grid and timer are paused.</p><button className={styles.primary} disabled={vihar.paused} onClick={resumeNow}>{vihar.paused ? "Waiting for Vihar…" : "Resume puzzle →"}</button></div> : <SudokuBoard run={run} selected={selected} onSelect={setSelected} onDigit={digit} onNotes={() => { if (active) setNotes((n) => !n); }} onUndo={takeUndo} onRedo={takeRedo} zoomed={zoomed} />}
-      </div><div className={styles.boardCaption}><span>GRAPHITE · CLUES <i /> BLUE · YOUR INK</span><span>{progress} / 81</span></div></div>
-        <aside className={styles.controls} aria-label="Puzzle controls">
-          {run.status === "completed" ? <div className={styles.result} role="status"><p className={styles.eyebrow}>A PAGE WELL SPENT</p><h2>Every number<br />found its place.</h2><p>{difficultyLabels[run.puzzle.difficulty]} · {formatTime(run.elapsed)}</p><p>{run.hints + run.checks ? "Assisted" : "Unassisted"}{run.restarted ? " · Restarted" : ""}<br />{run.hints} hints · {run.checks} checks</p><div className={styles.resultActions}><button className={styles.primary} onClick={begin}>Another {difficultyLabels[run.puzzle.difficulty].toLowerCase()} puzzle →</button><button className={styles.secondary} onClick={goToSetup}>Choose difficulty</button><button className={styles.secondary} onClick={() => setModal("restart")}>Restart this puzzle</button><button className={styles.textButton} onClick={() => { setRecordPage(0); setModal("records"); }}>Your records ↗</button></div></div> : <>
-            <div className={styles.controlHeading}><span className={styles.eyebrow}>YOUR {notes ? "PENCIL" : "BLUE INK"}</span><span>{notes ? "Notes mode" : "Entry mode"}</span></div>
+      <h1 className={styles.srOnly}>Sudoku · {difficultyLabels[run.puzzle.difficulty]}</h1>
+      <div className={styles.workspace}><div className={styles.boardRegion}>
+        <div className={styles.boardViewport} data-paused={run.status === "paused" || vihar.paused}>
+          <div className={styles.puzzleMeta}><span>{difficultyLabels[run.puzzle.difficulty]} <small>{run.hints + run.checks ? "Assisted" : ""}{run.restarted ? " · Restarted" : ""}</small></span><span>{progress}<small> / 81</small></span><time aria-label={`Active time ${formatTime(run.elapsed)}`}>{formatTime(run.elapsed)}</time></div>
+          <SudokuBoard run={run} selected={selected} onSelect={setSelected} onDigit={digit} onNotes={() => { if (active) setNotes((n) => !n); }} onUndo={takeUndo} onRedo={takeRedo} />
+          {(run.status === "paused" || vihar.paused) && <div className={styles.pausePanel}><p className={styles.eyebrow}>YOUR PLACE IS KEPT</p><h2>A quiet moment.</h2><button className={styles.primary} disabled={vihar.paused} onClick={resumeNow}>{vihar.paused ? "Waiting for Vihar…" : "Resume puzzle →"}</button></div>}
+          {run.status === "completed" && <div className={styles.puzzleResult} role="status"><p className={styles.eyebrow}>A PAGE WELL SPENT</p><h2>Shabash.<br />Every square, solved.</h2><p>{formatTime(run.elapsed)} · {run.hints + run.checks ? "Assisted" : "Unassisted"}{run.restarted ? " · Restarted" : ""}</p><button className={styles.primary} onClick={begin}>One more puzzle →</button><button className={styles.textButton} onClick={goToSetup}>Choose difficulty</button></div>}
+          {run.status !== "completed" && <aside className={styles.controls} aria-label="Puzzle controls">
             <div className={styles.keypad} role="group" aria-label={notes ? "Pencil note digits" : "Answer digits"}>{Array.from({ length: 9 }, (_, n) => <button key={n} className={styles.digitButton} disabled={!active} onClick={() => digit(n + 1)} aria-label={`${notes ? "Toggle note" : "Enter"} ${n + 1}`}>{n + 1}</button>)}</div>
-            <div className={styles.tools}><button className={`${styles.tool} ${notes ? styles.notesActive : ""}`} disabled={!active} aria-pressed={notes} onClick={() => setNotes(!notes)}><span aria-hidden="true">✎</span>Notes: {notes ? "on" : "off"}</button><button className={styles.tool} disabled={!active} onClick={() => digit(0)}><span aria-hidden="true">⌫</span>Erase</button><button className={styles.tool} disabled={!active || !run.undo.length} onClick={takeUndo}><span aria-hidden="true">↶</span>Undo</button><button className={styles.tool} disabled={!active || !run.redo.length} onClick={takeRedo}><span aria-hidden="true">↷</span>Redo</button><button className={styles.tool} disabled={!active} onClick={takeCheck}><span aria-hidden="true">✓</span>Check</button><button className={styles.tool} disabled={!active} onClick={takeHint}><span aria-hidden="true">?</span>Hint</button><button className={styles.tool} disabled={vihar.paused} onClick={() => run.status === "paused" ? resumeNow() : pauseNow()}><span aria-hidden="true">{run.status === "paused" ? "▷" : "Ⅱ"}</span>{run.status === "paused" ? "Resume" : "Pause"}</button><button className={styles.tool} aria-pressed={zoomed} onClick={() => setZoomed(!zoomed)}><span aria-hidden="true">⌕</span>{zoomed ? "Fit grid" : "Larger grid"}</button></div>
-            <p className={styles.keyboardNote}>1–9 to write · N for notes<br />Arrows to move · Delete to erase<br />Ctrl/⌘ Z to undo · Esc to pause</p>
-          </>}
-        </aside>
-      </div><div className={styles.feedback} role="status" aria-live="polite">{!saving ? "Saving unavailable. You can keep playing this session." : notice || (run.status === "paused" ? "Paused · Resume when you are ready." : selectedMessage)}{zoomed && <span>Pan the grid or use arrow keys.</span>}</div>
+            <div className={styles.tools}><button className={`${styles.tool} ${notes ? styles.notesActive : ""}`} disabled={!active} aria-label="Notes" aria-pressed={notes} onClick={() => setNotes(!notes)}><span aria-hidden="true">✎</span><small>Notes</small></button><button className={styles.tool} disabled={!active} onClick={() => digit(0)} aria-label="Erase"><span aria-hidden="true">⌫</span><small>Erase</small></button><button className={styles.tool} disabled={!active || !run.undo.length} onClick={takeUndo} aria-label="Undo"><span aria-hidden="true">↶</span><small>Undo</small></button><button className={styles.tool} disabled={!active || !run.redo.length} onClick={takeRedo} aria-label="Redo"><span aria-hidden="true">↷</span><small>Redo</small></button><button className={styles.tool} disabled={!active} onClick={takeCheck} aria-label="Check puzzle"><span aria-hidden="true">✓</span><small>Check</small></button><button className={styles.tool} disabled={!active} onClick={takeHint} aria-label="Hint"><span aria-hidden="true">?</span><small>Hint</small></button></div>
+          </aside>}
+        </div>
+      </div></div>
+      <div className={styles.feedback} role="status" aria-live="polite">{!saving ? "Saving unavailable. Keep this tab open." : notice || selectedMessage}</div>
     </section>}
     <JournalFooter />
+    {modal === "options" && <JournalDialog title="Your puzzle" onClose={() => setModal(null)}><div className={styles.menuOptions}><button onClick={goToSetup}>New puzzle</button><button disabled={!run} onClick={() => setModal("restart")}>Restart this puzzle</button><button onClick={() => setModal("help")}>How to play</button><button onClick={() => { setRecordPage(0); setModal("records"); }}>Your records</button><Link href="/">All games</Link></div><p>1–9 to write · N for notes · Delete to erase.<br />Arrow keys move. Ctrl/⌘ Z undoes.</p></JournalDialog>}
     {modal === "audio" && <JournalDialog title="A quieter soundtrack" onClose={() => setModal(null)}><p>Original soft bells and a slow, gentle melody. Music plays while you solve and pauses with your puzzle.</p><div className={styles.audioOptions}><button className={styles.secondary} aria-pressed={audioSettings.sound} onClick={() => updateAudio({ ...audioSettings, sound: !audioSettings.sound })}>Sound: {audioSettings.sound ? "on" : "off"}</button><button className={styles.secondary} aria-pressed={audioSettings.music} onClick={() => updateAudio({ ...audioSettings, music: !audioSettings.music })}>Music: {audioSettings.music ? "on" : "off"}</button><label htmlFor="sudoku-volume">Volume <output>{Math.round(audioSettings.volume * 100)}%</output><input id="sudoku-volume" type="range" min="0" max="100" step="5" value={Math.round(audioSettings.volume * 100)} onChange={(e) => updateAudio({ ...audioSettings, volume: Number(e.target.value) / 100 })} /></label></div>{audioNotice && <p role="status">{audioNotice}</p>}<div className={styles.dialogActions}><button className={styles.secondary} onClick={() => updateAudio({ ...audioSettings, sound: false, music: false })}>Mute all</button><button className={styles.primary} onClick={() => setModal(null)}>Done</button></div></JournalDialog>}
     {(modal === "new" || modal === "restart") && <JournalDialog title={modal === "restart" ? "Start this page again?" : "Turn a new page?"} onClose={() => setModal(null)}><p>{modal === "restart" ? "This resets your entries, notes, time, and help counts. Your new attempt will be labelled Restarted." : `Starting a new ${difficultyLabels[difficulty].toLowerCase()} puzzle will replace your unfinished saved puzzle.`}</p><div className={styles.dialogActions}><button className={styles.secondary} onClick={() => setModal(null)}>Keep this puzzle</button><button className={styles.primary} onClick={() => modal === "restart" ? restartPuzzle() : begin()}>{modal === "restart" ? "Restart puzzle" : "Start new puzzle"}</button></div></JournalDialog>}
     {modal === "help" && <JournalDialog title="A few notes" onClose={() => setModal(null)}><RulesBook /></JournalDialog>}

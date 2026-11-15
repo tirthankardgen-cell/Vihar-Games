@@ -55,7 +55,7 @@
   animation:feedbackLife var(--feedback-ms,2400ms) both;
 }
 .feedbackCopy { position:relative; isolation:isolate; display:flex; flex-direction:column; align-items:center; gap:7px; width:min(79%,410px); padding:22px 16px 25px; border:1px solid #f8dfaa55; border-radius:20px; background:linear-gradient(150deg,color-mix(in srgb,var(--veil),#fff 5%),var(--veil)); box-shadow:0 15px 45px #102b3740,inset 0 0 0 5px #ffedc206; color:var(--accent); text-align:center; animation:pocketPop 500ms cubic-bezier(.16,1,.3,1) both; }
-.feedbackCopy::after { content:"✦"; position:absolute; bottom:-9px; left:calc(50% - 12px); width:24px; background:var(--veil); font-size:13px; color:var(--accent); }
+.feedbackCopy::after { content:"✦"; position:absolute; bottom:5px; left:calc(50% - 12px); width:24px; background:transparent; font-size:10px; line-height:1; color:var(--accent); opacity:.7; }
 .feedbackCopy h2 { max-width:100%; margin:0; font-family:var(--font-yatra),serif; font-size:clamp(26px,6.6cqw,45px); font-weight:400; line-height:1.15; letter-spacing:-.025em; text-wrap:balance; }
 .feedbackCopy p { max-width:95%; margin:0; color:#ede5d3; font-size:clamp(11px,2.15cqw,14px); line-height:1.45; text-wrap:balance; }
 .feedbackLabel { color:#d6c6a1; font-size:clamp(8px,1.6cqw,10px); line-height:1.4; letter-spacing:.15em; text-transform:uppercase; }

@@ -5,10 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import { Icon } from "./icons";
 import styles from "./chess.module.css";
 
-export function ChessNav({ controls, embedded = false, home = false }: { controls?: React.ReactNode; embedded?: boolean; home?: boolean }) {
+export function ChessNav({ controls, embedded = false, home = false, compact = false }: { controls?: React.ReactNode; embedded?: boolean; home?: boolean; compact?: boolean }) {
   return <nav className={styles.nav} aria-label="Chess navigation">
     {embedded ? <span className={styles.navBrand}><span className={styles.brandMark} lang="hi">श</span><span>शतरंज <b>VIHAR CHESS</b></span></span> : <Link className={styles.navBrand} href={home ? "/" : "/chess"} aria-label={home ? "Vihar Games home" : "Chess courtyard"}><span className={styles.brandMark} lang="hi">श</span><span>शतरंज <b>VIHAR CHESS</b></span></Link>}
-    <div className={styles.navActions}>{controls}<Link className={styles.helpLink} href="/chess/how-to-play" target={embedded ? "_blank" : undefined} rel={embedded ? "noopener noreferrer" : undefined}><Icon name="book" /><span>How to play</span></Link></div>
+    <div className={styles.navActions}>{controls}{!compact && <Link className={styles.helpLink} href="/chess/how-to-play" target={embedded ? "_blank" : undefined} rel={embedded ? "noopener noreferrer" : undefined}><Icon name="book" /><span>How to play</span></Link>}</div>
   </nav>;
 }
 export function ChessFooter() { return <footer className={styles.footer}><span>A little play. A little togetherness.</span><span lang="hi">चाल आपकी।</span></footer>; }

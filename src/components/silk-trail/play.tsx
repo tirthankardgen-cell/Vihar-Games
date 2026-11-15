@@ -9,6 +9,8 @@ import { createAudio } from "./audio";
 import { formatTime, SilkDialog, SilkFooter, SilkNav } from "./shared";
 import { RulesBook } from "./rules-book";
 import styles from "./silk.module.css";
+import { PlayButton, PlayCallout, usePlayCallout } from "../play-tools";
+import { GameAudioControls } from "../game-audio-controls";
 type View = "loading" | "setup" | "ready" | "countdown" | "playing" | "paused" | "result";
 const isGame = (view: View) => !["loading", "setup"].includes(view);
 const withStorage = (operation: (storage: Storage) => boolean) => { try { return operation(window.localStorage); } catch { return false; } };
@@ -20,12 +22,14 @@ export default function SilkPlay() {
   const [view, setView] = useState<View>("loading"), [session, setSession] = useState<Session | null>(null);
   const [settings, setSettings] = useState<Settings>(defaultSettings), [records, setRecords] = useState<Records>(emptyRecords);
   const [notice, setNotice] = useState(""), [saving, setSaving] = useState(true), [feedback, setFeedback] = useState("");
-  const [dialog, setDialog] = useState<"rules" | "restart" | null>(null), [pendingPreset, setPendingPreset] = useState<Preset>("flow"), [countdown, setCountdown] = useState(3);
+  const [dialog, setDialog] = useState<"rules" | "restart" | "options" | null>(null), [pendingPreset, setPendingPreset] = useState<Preset>("flow"), [countdown, setCountdown] = useState(3);
   const runtime = useRef<{ view: View; session: Session | null; settings: Settings; records: Records; lastSave: number }>({ view: "loading", session: null, settings: defaultSettings, records: emptyRecords(), lastSave: 0 });
   const audio = useRef<ReturnType<typeof createAudio> | null>(null);
   const stateFocus = useRef<HTMLDivElement | null>(null);
   const gesture = useRef<{ id: number; x: number; y: number; element: HTMLDivElement } | null>(null);
   const vihar = useViharPlay("silk-trail", ["playing", "paused", "countdown"].includes(view) && session?.run.status === "playing", view === "playing");
+  const callout = usePlayCallout(view !== "playing");
+  const { show, dismiss } = callout;
   const clearInput = useCallback(() => {
     const r = runtime.current; if (r.session) r.session = { ...r.session, run: clearTurns(r.session.run) };
     const g = gesture.current; gesture.current = null;
@@ -34,13 +38,13 @@ export default function SilkPlay() {
   const persist = useCallback((s: Session) => { setSaving(withStorage((storage) => saveSession(storage, s))); }, []);
   const publish = useCallback((s: Session, next: View) => {
     const r = runtime.current, before = r.session?.run; r.session = s; r.view = next; setSession(s); setView(next);
-    if (before && s.run.score > before.score) { audio.current?.leaf(); setFeedback(`Leaf gathered · ${s.run.score} leaves · length ${s.run.body.length}`); }
+    if (before && s.run.score > before.score) { if (s.run.score % 5 === 0) show({ id: s.run.score, title: s.run.score % 10 === 0 ? "Wah, kya flow!" : "Growing beautifully.", label: `${s.run.score} leaves gathered` }); audio.current?.leaf(); setFeedback(`Leaf gathered · ${s.run.score} leaves · length ${s.run.body.length}`); }
     if (next === "result" && before?.status !== "ended") {
       clearInput(); audio.current?.stop(); r.records = recordResult(r.records, s.run); setRecords(r.records);
       persist(s); if (!withStorage((storage) => saveValue(storage, RECORDS_KEY, r.records))) setSaving(false);
       setFeedback(`${endings[s.run.reason!]} ${s.run.score} leaves. Final length ${s.run.body.length}.`);
     }
-  }, [clearInput, persist]);
+  }, [clearInput, persist, show]);
   const pause = useCallback(() => {
     clearInput(); audio.current?.stop(); const r = runtime.current;
     if (r.session && ["playing", "countdown"].includes(r.view)) { publish(r.session, "paused"); persist(r.session); }
@@ -54,10 +58,10 @@ export default function SilkPlay() {
     if (!withStorage((storage) => saveValue(storage, SETTINGS_KEY, s))) setSaving(false);
   }, []);
   const prepare = useCallback((preset: Preset) => {
-    clearInput(); audio.current?.stop(); audio.current?.reset();
+    clearInput(); dismiss(); audio.current?.stop(); audio.current?.reset();
     const s = newSession(preset, crypto.getRandomValues(new Uint32Array(1))[0], crypto.randomUUID());
     runtime.current.lastSave = 0; updateSettings({ ...runtime.current.settings, preset }); setDialog(null); setFeedback(""); publish(s, "ready"); persist(s);
-  }, [clearInput, persist, publish, updateSettings]);
+  }, [clearInput, dismiss, persist, publish, updateSettings]);
   const requestStart = (preset: Preset) => { setPendingPreset(preset); if (runtime.current.session?.run.status === "playing") { pause(); setDialog("restart"); } else prepare(preset); };
   const resume = useCallback(() => {
     const r = runtime.current;
@@ -142,11 +146,12 @@ export default function SilkPlay() {
   };
   const run = session?.run, active = view === "playing" || view === "countdown";
   const audioChoices = <div className={styles.audioChoices}><button className={styles.toggle} aria-label="Sound effects" aria-pressed={settings.sound} onClick={() => updateSettings({ ...settings, sound: !settings.sound })}>Sound <span>{settings.sound ? "on" : "off"}</span></button><button className={styles.toggle} aria-label="Background music" aria-pressed={settings.music} onClick={() => updateSettings({ ...settings, music: !settings.music })}>Music <span>{settings.music ? "on" : "off"}</span></button></div>;
-  return <main id="main-content" className={styles.page} data-silk-view={view} data-vihar-embedded={vihar.embedded || undefined}>
+  return <main id="main-content" className={styles.page} data-silk-view={view} data-vihar-embedded={vihar.embedded || undefined} data-focus={isGame(view) || undefined}>
     <SilkNav onMenu={view === "loading" ? undefined : menu} embedded={vihar.embedded}>
       {isGame(view) && view !== "result" && <button className={styles.iconButton} onClick={active ? pause : resume} aria-label={active ? "Pause game" : "Resume game"}>{active ? "Ⅱ" : "▷"}</button>}
-      <button className={styles.iconButton} onClick={openRules} aria-label="How to play">?</button>
-      {vihar.embedded ? <button className={styles.iconButton} onClick={exit} aria-label="Exit to Vihar">↗</button> : <Link className={styles.iconButton} href="/" onClick={pause} aria-label="All games">↗</Link>}
+      <GameAudioControls audio={{ preferences: { sound: settings.sound, music: settings.music }, notice, update: key => updateSettings({ ...settings, [key]: !settings[key] }) }} />
+      <PlayButton icon="menu" label="Game options" onClick={() => { pause(); setDialog("options"); }} />
+      {vihar.embedded && <PlayButton icon="back" label="Exit to Vihar" onClick={exit} />}
     </SilkNav>
     {view === "loading" && <section className={styles.loading} role="status"><TrailMark /><p>Unfolding the garden…</p></section>}
     {view === "setup" && <section className={styles.setup} aria-labelledby="setup-title"><div className={styles.setupCopy}>
@@ -157,13 +162,14 @@ export default function SilkPlay() {
       <div className={styles.actions}><button className={styles.primary} onClick={() => requestStart(settings.preset)}>Enter the garden →</button>{run?.status === "playing" && <button className={styles.secondary} onClick={resume}>Resume {run.preset}</button>}</div>
       <p className={styles.notice} role="status">{notice || vihar.notice || (saving ? "Your trail stays on this device." : "Storage unavailable · keep this page open to retain progress.")}</p>
     </div><GardenArt /></section>}
-    {isGame(view) && run && <section className={styles.game} aria-label="Silk Garden game"><div className={styles.gameTop}><div><p className={styles.eyebrow}>{run.preset.toUpperCase()} · {RATES[run.preset]} CELLS / SECOND</p><h1>Silk Trail</h1></div><dl className={styles.metrics}><div><dt>Leaves</dt><dd data-stat="score">{run.score}</dd></div><div><dt>Length</dt><dd data-stat="length">{run.body.length}</dd></div><div><dt>Best</dt><dd>{records[run.preset]}</dd></div></dl></div>
+    {isGame(view) && run && <section className={styles.game} aria-label="Silk Garden game">
       <div className={styles.workspace} data-large={settings.large || undefined}>
-        <div className={styles.boardArea}><div className={styles.boardFrame}><div className={styles.swipeSurface} onPointerDown={swipeStart} onPointerUp={swipeEnd} onPointerCancel={swipeEnd} onLostPointerCapture={swipeEnd}><GardenBoard run={run} quiet={view !== "playing"} /></div></div></div>
-        <aside className={styles.controls} aria-label="Garden controls" inert={view !== "playing"}><div className={styles.controlCopy}><Leaf /><h2>A little room<br />for the next turn.</h2><p>Arrows or WASD.<br />Swipe the garden, or use the pad below.</p></div><div className={styles.pad} aria-label="Direction pad">{directions.map(({ direction, label, symbol }) => <button key={direction} data-direction={direction} aria-label={label} disabled={view !== "playing" || vihar.paused} onPointerDown={(e) => { if (e.button === 0) { e.preventDefault(); perform(direction); } }} onClick={(e) => { if (e.detail === 0) perform(direction); }}><span aria-hidden="true">{symbol}</span><small>{label}</small></button>)}</div><div className={styles.controlSettings}>{audioChoices}<button className={styles.toggle} aria-label="Larger garden" aria-pressed={settings.large} onClick={() => updateSettings({ ...settings, large: !settings.large })}>{settings.large ? "Standard garden" : "Larger garden"}</button></div><p className={styles.keyGuide}>SPACE / ESC · PAUSE</p></aside>
-        {view !== "playing" && <div className={styles.overlay}>{view === "countdown" ? <div className={`${styles.statePanel} ${styles.countdown}`} role="status"><p className={styles.eyebrow}>FOLLOW YOUR THREAD</p><strong>{countdown}</strong></div> : view === "result" ? <div className={`${styles.statePanel} ${styles.result}`} ref={stateFocus} role="region" aria-label="Game results"><p className={styles.eyebrow}>{run.preset.toUpperCase()} · YOUR GARDEN RIBBON</p><h2>{endings[run.reason!]}</h2><div className={styles.ribbon}><strong>{run.body.length}</strong><span>CELLS OF SILK</span></div><dl className={styles.resultStats}><div><dt>Leaves</dt><dd>{run.score}</dd></div><div><dt>Final length</dt><dd>{run.body.length}</dd></div><div><dt>Active time</dt><dd>{formatTime(run.elapsedMs)}</dd></div><div><dt>{run.preset} best</dt><dd>{records[run.preset]}</dd></div></dl><div className={styles.actions}><button className={styles.primary} onClick={() => prepare(run.preset)}>Play again →</button><button className={styles.secondary} onClick={menu}>Choose a pace</button></div></div> : <div className={styles.statePanel} ref={stateFocus} role="region" aria-label={view === "ready" ? "Ready to play" : "Game paused"}><span className={styles.stateMark}><TrailMark /></span><p className={styles.eyebrow}>{view === "ready" ? "YOUR GARDEN IS READY" : "THE THREAD CAN WAIT"}</p><h2>{view === "ready" ? "Follow a little leaf." : "Rest in the garden."}</h2><p>{view === "ready" ? "Arrows, WASD, the direction pad, or a clear swipe. Gather leaves and keep a little space to turn." : "Your trail, leaf, and time are just where you left them."}</p><div className={styles.stateActions}><button className={styles.primary} onClick={resume} disabled={vihar.paused}>{view === "ready" ? "Start · 3, 2, 1" : "Resume · 3, 2, 1"}</button><button className={styles.secondary} onClick={openRules}>How to play</button><button className={styles.secondary} onClick={() => requestStart(run.preset)}>New garden</button><button className={styles.textButton} onClick={menu}>Save & choose a pace</button></div></div>}</div>}
+        <div className={styles.boardArea}><div className={styles.boardFrame}><div className={styles.gameTop}><div><p className={styles.eyebrow}>{run.preset.toUpperCase()} · {RATES[run.preset]} CELLS / SECOND</p><h1>Silk Trail</h1></div><dl className={styles.metrics}><div><dt>Leaves</dt><dd data-stat="score">{run.score}</dd></div><div><dt>Length</dt><dd data-stat="length">{run.body.length}</dd></div><div><dt>Best</dt><dd>{records[run.preset]}</dd></div></dl></div><div className={styles.swipeSurface} onPointerDown={swipeStart} onPointerUp={swipeEnd} onPointerCancel={swipeEnd} onLostPointerCapture={swipeEnd}><GardenBoard run={run} quiet={view !== "playing"} />{callout.event && <PlayCallout event={callout.event} paused={view !== "playing"} />}</div></div></div>
+        <aside className={styles.controls} aria-label="Garden controls" inert={view !== "playing"}><div className={styles.controlCopy}><Leaf /><h2>A little room<br />for the next turn.</h2><p>Arrows or WASD.<br />Swipe the garden, or use the pad below.</p></div><div className={styles.pad} aria-label="Direction pad">{directions.map(({ direction, label, symbol }) => <button key={direction} data-direction={direction} aria-label={label} disabled={view !== "playing" || vihar.paused} onPointerDown={(e) => { if (e.button === 0) { e.preventDefault(); perform(direction); } }} onClick={(e) => { if (e.detail === 0) perform(direction); }}><span aria-hidden="true">{symbol}</span><small>{label}</small></button>)}</div><p className={styles.keyGuide}>SPACE / ESC · PAUSE</p></aside>
+        {view !== "playing" && <div className={styles.overlay}>{view === "countdown" ? <div className={`${styles.statePanel} ${styles.countdown}`} role="status"><p className={styles.eyebrow}>FOLLOW YOUR THREAD</p><strong>{countdown}</strong></div> : view === "result" ? <div className={`${styles.statePanel} ${styles.result}`} ref={stateFocus} role="region" aria-label="Game results"><p className={styles.eyebrow}>{run.preset.toUpperCase()} · YOUR GARDEN RIBBON</p><h2>{endings[run.reason!]}</h2><div className={styles.ribbon}><strong>{run.body.length}</strong><span>CELLS OF SILK</span></div><dl className={styles.resultStats}><div><dt>Leaves</dt><dd>{run.score}</dd></div><div><dt>Final length</dt><dd>{run.body.length}</dd></div><div><dt>Active time</dt><dd>{formatTime(run.elapsedMs)}</dd></div><div><dt>{run.preset} best</dt><dd>{records[run.preset]}</dd></div></dl><div className={styles.actions}><button className={styles.primary} onClick={() => prepare(run.preset)}>Play again →</button><button className={styles.secondary} onClick={menu}>Choose a pace</button></div></div> : <div className={styles.statePanel} ref={stateFocus} role="region" aria-label={view === "ready" ? "Ready to play" : "Game paused"}><span className={styles.stateMark}><TrailMark /></span><p className={styles.eyebrow}>{view === "ready" ? "YOUR GARDEN IS READY" : "THE THREAD CAN WAIT"}</p><h2>{view === "ready" ? "Follow a little leaf." : "Rest in the garden."}</h2><p>{view === "ready" ? "Follow the leaves. Leave a little room to turn." : "Your trail, leaf, and time are just where you left them."}</p><div className={styles.stateActions}><button className={styles.primary} onClick={resume} disabled={vihar.paused}>{view === "ready" ? "Start · 3, 2, 1" : "Resume · 3, 2, 1"}</button><button className={styles.textButton} onClick={() => setDialog("options")}>Game options</button></div></div>}</div>}
       </div><div className={styles.gameFeedback}><span role="status" aria-live="polite">{notice || vihar.notice || feedback || "Gather a leaf. Leave a little room."}</span><span>{formatTime(run.elapsedMs)} · {saving ? "Saved" : "Unsaved"}</span></div></section>}
     <SilkFooter />
+    {dialog === "options" && <SilkDialog title="In your garden" onClose={() => setDialog(null)}><div className={styles.menuOptions}><button onClick={openRules}>How to play</button><button onClick={() => requestStart(run?.preset ?? settings.preset)}>New garden</button><button onClick={() => { setDialog(null); menu(); }}>Choose a pace</button><Link href="/" onClick={pause}>All games</Link></div><p>Arrows or WASD to turn. Swipe the garden or use the pad.<br />Space / Escape pauses.</p></SilkDialog>}
     {dialog === "rules" && <SilkDialog title="How to play" onClose={() => setDialog(null)}><RulesBook /></SilkDialog>}
     {dialog === "restart" && <SilkDialog title="Unfold a fresh garden?" onClose={() => setDialog(null)}><p>Replace your unfinished trail with a new {pendingPreset} garden? The leaf count and active time start again.</p><div className={styles.actions}><button className={styles.secondary} onClick={() => setDialog(null)}>Keep this trail</button><button className={styles.primary} onClick={() => prepare(pendingPreset)}>Start fresh</button></div></SilkDialog>}
   </main>;

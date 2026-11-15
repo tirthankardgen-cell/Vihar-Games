@@ -10,6 +10,10 @@
 
 **Audio:** All eight playable games have original local music and sound effects, enabled by default after player interaction. Saved mute choices are preserved. The speaker/Audio controls let players change their preferences; Sudoku also offers volume and Mute all. Music stops on pause, focus loss, Exit or navigation. See [audio behavior and verification](./docs/AUDIO.md).
 
+**Gameplay layout:** Chess, Sudoku, Monsoon Blocks, Silk Trail, and Dune Dash give the playable surface the available viewport. Chess stays centred like Carrom; scores sit beside the board and secondary actions live in compact menus. Ready, pause, and result cards appear over the game, with short feedback for captures, clears, and milestones. Dune Dash uses a responsive camera while keeping its collision physics unchanged. Carrom praise is reserved for human shots; computer queen updates remain factual, and the feedback card's star blends into its background.
+
+The November 2026 UI pass was checked at desktop, phone, small-phone, and landscape sizes, including moves, puzzle completion, arcade controls, pause/resume, results, audio toggles, and queen transfer. The shared check command includes Chess and Carrom feedback regressions.
+
 Chess uses [chess.js](https://github.com/jhlywa/chess.js); its [BSD license notice](public/licenses/chess-js.txt) ships with the game. Bundled fonts retain their original notices.
 
 ## Run locally
@@ -60,7 +64,7 @@ The production dependency audit reports zero vulnerabilities. The full npm audit
 
 ## Included games
 
-Sudoku is playable at `/sudoku`, with Easy/Medium/Hard setup, 18 uniquely solvable puzzles rated by solving techniques, pencil notes, undo/redo, conflict explanations, hints/checks, and active-time pause/resume. Saves and labelled assisted/unassisted/restarted records stay on this device. Its flat Puzzle Journal screens fit one dynamic viewport; Larger grid allows internal panning on small screens. No gameplay service is required. Prepare and validate the bank offline with `node --experimental-strip-types scripts/prepare-sudoku-bank.ts`; no runtime solver or generation ships in the player.
+Sudoku is playable at `/sudoku`, with Easy/Medium/Hard setup, 18 uniquely solvable puzzles rated by solving techniques, pencil notes, undo/redo, conflict explanations, hints/checks, and active-time pause/resume. Saves and labelled assisted/unassisted/restarted records stay on this device. Its flat Puzzle Journal screens fit one dynamic viewport, with the full grid and number pad visible together. No gameplay service is required. Prepare and validate the bank offline with `node --experimental-strip-types scripts/prepare-sudoku-bank.ts`; no runtime solver or generation ships in the player.
 
 Chess, Carrom, Billiards, Tic-Tac-Toe, Ludo, Snakes and Ladders, Connect Four, Checkers, Reversi, Sudoku, Minesweeper, Memory Match, Silk Trail, Monsoon Blocks, Dune Dash, Paperwing, Lantern Logic, Mosaic Shift, Prism Paths, Crate Courtyard, Tide Turn, Pebble Solitaire, Rangoli Loops, and Orbit Breaker.
 

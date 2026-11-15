@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { useGameAudio } from "@/lib/use-game-audio";
 import styles from "./game-audio-controls.module.css";
 
-export function GameAudioControls({ audio }: { audio: ReturnType<typeof useGameAudio> }) {
+export function GameAudioControls({ audio }: { audio: Pick<ReturnType<typeof useGameAudio>, "preferences" | "notice" | "update"> }) {
   const [open, setOpen] = useState(false), ref = useRef<HTMLDivElement>(null);
   const { sound, music } = audio.preferences;
   useEffect(() => {

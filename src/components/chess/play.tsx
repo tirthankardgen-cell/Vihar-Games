@@ -66,7 +66,7 @@ export default function ChessPlay({ initialRoom }: { initialRoom?: string }) {
     const next = newSession(session.mode, { difficulty: session.difficulty, side: session.humanSide, names: [session.players[session.humanSide], session.players[session.humanSide === "w" ? "b" : "w"]] }, crypto.randomUUID());
     commit(next);
   }
-  return <main id="main-content" className={styles.page} data-vihar-embedded={vihar.embedded || undefined}><ChessNav embedded={vihar.embedded} controls={<><GameAudioControls audio={audio} /><ViharPlayControls play={{ ...vihar, exit: () => { audio.stop(); vihar.exit(); } }} inRound={inRound} /></>} />
+  return <main id="main-content" className={`${styles.page} ${screen === "game" ? styles.focusPage : ""}`} data-vihar-embedded={vihar.embedded || undefined}>{screen !== "game" && <ChessNav embedded={vihar.embedded} controls={<><GameAudioControls audio={audio} /><ViharPlayControls play={{ ...vihar, exit: () => { audio.stop(); vihar.exit(); } }} inRound={inRound} /></>} />}
     {screen === "choose" && <section className={`${styles.content} ${styles.choose}`}>
       <div className={styles.screenHeading}><p className={styles.eyebrow}>01 / Choose your company</p><h1>A good game starts with good company.</h1><p className={styles.intro}>Pull up a chair. We’ll bring the board.</p></div>
       <div className={styles.modeGrid}>
@@ -79,7 +79,7 @@ export default function ChessPlay({ initialRoom }: { initialRoom?: string }) {
       {notice && <p role="status" className={styles.notice}>{notice}</p>}
     </section>}
     {screen === "setup" && <Setup mode={mode} settings={settings} onSettings={setSettings} onStart={() => { if (previous && !previous.match.result) setReplace(true); else start(); }} onBack={back} />}
-    {screen === "game" && session && <LocalGame key={session.id} session={session} onChange={commit} onBack={back} onAgain={again} saved={saved} paused={vihar.paused} />}
+    {screen === "game" && session && <LocalGame key={session.id} session={session} onChange={commit} onBack={back} onAgain={again} saved={saved} paused={vihar.paused} play={vihar} audio={audio} />}
     {(screen === "create" || screen === "join") && <RoomSetup joining={screen === "join"} initialRoom={initialRoom ?? ""} onBack={back} onLocal={() => choose("pass-and-play")} />}
     {replace && <Dialog title="Start a fresh game?" onClose={() => setReplace(false)}><p>This replaces your unfinished saved game. Your new side and difficulty apply to the fresh board.</p><div className={styles.actions}><button className={styles.primary} onClick={start}>Start fresh</button><button className={styles.secondary} onClick={() => setReplace(false)}>Keep my saved game</button></div></Dialog>}
     <ChessFooter />

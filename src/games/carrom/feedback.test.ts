@@ -39,7 +39,7 @@ test("queen pickup, successful cover and missed cover are distinct accepted even
     assert.equal(pickup.feedback?.kind, "queen");
     assert.equal(take(pickup.after, [prefix + "1"]).feedback?.kind, "cover");
     assert.equal(take(pickup.after).feedback?.kind, "return");
-    assert.equal(take(eligible, ["q", prefix + "1"]).feedback?.title, "Rani secured!");
+    assert.equal(take(eligible, ["q", prefix + "1"]).feedback?.kind, "cover");
   }
 });
 
@@ -89,4 +89,23 @@ test("resignation and a completed practice board have appropriate persistent res
   assert.equal(resultFeedback(resign(createMatch()), context)?.title, "Ravi wins.");
   const complete = createMatch(); complete.pieces = [];
   assert.equal(resultFeedback(complete, { mode:"practice", humanSide:"cream" })?.title, "Full paisa vasool!");
+});
+
+
+test("computer pockets never earn praise, while its queen and foul updates stay factual", () => {
+  for (const humanSide of ["cream", "ink"] as const) {
+    const actor = opposite(humanSide), prefix = actor === "cream" ? "c" : "d";
+    const before = createMatch(actor), context = { mode: "computer" as const, humanSide };
+    for (const ids of [[prefix + "0"], [prefix + "0", prefix + "1"]]) {
+      const { after, outcome } = take(before, ids);
+      assert.equal(shotFeedback(before, after, outcome, context), null);
+    }
+    const eligible = take(before, [prefix + "0"]).after;
+    const queen = take(eligible, ["q"]);
+    assert.equal(shotFeedback(eligible, queen.after, queen.outcome, context)?.title, "Ravi has the queen.");
+    const cover = take(queen.after, [prefix + "1"]);
+    assert.equal(shotFeedback(queen.after, cover.after, cover.outcome, context)?.title, "Ravi covered the queen.");
+    const foul = take(before, [], true);
+    assert.equal(shotFeedback(before, foul.after, foul.outcome, context)?.kind, "foul");
+  }
 });

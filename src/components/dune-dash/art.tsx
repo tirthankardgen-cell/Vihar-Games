@@ -1,3 +1,5 @@
+"use client";
+import { useEffect, useRef, useState } from "react";
 import { foxBox, WORLD, type Pose, type Run } from "@/games/dune-dash/engine";
 import styles from "./dune-dash.module.css";
 
@@ -26,7 +28,6 @@ export function Fox({ pose = "standing", stride = 0 }: { pose?: Pose; stride?: n
 }
 function Skyline() {
   return <g aria-hidden="true">
-    <circle cx="777" cy="107" r="43" fill="#B56843" opacity=".28" />
     <path d="M0 293Q90 261 173 289T353 284T570 288T760 279T960 284V300H0Z" fill="#D9CAAA" />
     <path d="M0 300Q143 278 229 294T454 292T679 294T960 286V300Z" fill="#B8AB77" opacity=".35" />
     <path d="M0 300H960" stroke="#463D32" strokeWidth="1.5" />
@@ -34,8 +35,23 @@ function Skyline() {
   </g>;
 }
 export function RunField({ run, moving, onJump }: { run: Run; moving: boolean; onJump: () => void }) {
-  const box = foxBox(run);
-  return <svg className={styles.field} viewBox={`0 0 ${WORLD.width} ${WORLD.height}`} preserveAspectRatio="xMidYMid meet" role="img" aria-label="Desert running horizon. Jump stones; duck beneath birds." data-moving={moving} onPointerDown={(event) => { if (event.button === 0) onJump(); }}>
+  const box = foxBox(run), field = useRef<SVGSVGElement>(null);
+  const [camera, setCamera] = useState({ width: 960, height: 360 });
+  useEffect(() => {
+    const node = field.current; if (!node) return;
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      if (!width || !height) return;
+      const aspect = width / height, visibleWidth = Math.max(640, Math.min(960, aspect * 360));
+      setCamera({ width: visibleWidth, height: visibleWidth / aspect });
+    });
+    observer.observe(node); return () => observer.disconnect();
+  }, []);
+  const offset = camera.height * .7 - WORLD.ground;
+  return <svg ref={field} className={styles.field} viewBox={`0 0 ${camera.width} ${camera.height}`} preserveAspectRatio="xMidYMid meet" role="img" aria-label="Desert running horizon. Jump stones; duck beneath birds." data-moving={moving} onPointerDown={(event) => { if (event.button === 0) onJump(); }}>
+    <rect width={camera.width} height={camera.height} fill="#F2E5CB" />
+    <circle cx={camera.width * .76} cy={Math.max(65, offset * .5)} r="48" fill="#B56843" opacity=".16" />
+    <g transform={`translate(0 ${offset})`}>
     <Skyline />
     {run.obstacles.map((o) => o.kind === "stone" ? <g key={o.id} transform={`translate(${o.x} ${o.bottom - o.height})`}>
       <path d={o.variant === 0 ? `M0 ${o.height} 2 10 ${o.width * .35} 0 ${o.width - 5} 4 ${o.width} ${o.height}Z` : o.variant === 1 ? `M0 ${o.height} 0 12 7 2 ${o.width * .65} 0 ${o.width} 13 ${o.width} ${o.height}Z` : `M0 ${o.height} 3 ${o.height * .5} ${o.width * .25} 0 ${o.width - 4} 3 ${o.width} ${o.height}Z`} fill="#AE9270" stroke="#463D32" strokeWidth="1.5" />
@@ -46,6 +62,7 @@ export function RunField({ run, moving, onJump }: { run: Run; moving: boolean; o
     <svg x={box.left} y={box.top} width={box.right - box.left} height={box.bottom - box.top} viewBox={run.pose === "ducking" ? "0 0 46 24" : "0 0 34 46"}>
       <Fox pose={run.pose} stride={moving ? Math.floor(run.elapsed * 9) : 0} />
     </svg>
+    </g>
   </svg>;
 }
 export function CoverArt() {

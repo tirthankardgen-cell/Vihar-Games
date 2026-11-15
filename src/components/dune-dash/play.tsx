@@ -10,6 +10,8 @@ import { ControlStudy, Fox, RunField } from "./art";
 import { Dialog, DuneFooter, DuneNav } from "./shared";
 import { RulesBook } from "./rules-book";
 import styles from "./dune-dash.module.css";
+import { PlayButton, PlayCallout, usePlayCallout } from "../play-tools";
+import { GameAudioControls } from "../game-audio-controls";
 
 type View = "loading" | "choose" | "ready" | "running" | "paused" | "countdown" | "result";
 type Confirmation = { kind: "prepare"; mode: Mode } | { kind: "choose" };
@@ -21,12 +23,15 @@ export default function DuneDashPlay() {
   const [view, setView] = useState<View>("loading"), [session, setSession] = useState<Session | null>(null), [previous, setPrevious] = useState<Session | null>(null);
   const [settings, setSettings] = useState<Settings>(defaultSettings), [records, setRecords] = useState<Records>(emptyRecords);
   const [saving, setSaving] = useState(true), [notice, setNotice] = useState(""), [countdown, setCountdown] = useState(3);
+  const [optionsOpen, setOptionsOpen] = useState(false);
   const [rulesOpen, setRulesOpen] = useState(false), [confirmation, setConfirmation] = useState<Confirmation | null>(null);
   const runtime = useRef({ view: "loading" as View, session: null as Session | null, previous: null as Session | null, records: emptyRecords(), lastSave: 0, blocked: false });
   const held = useRef(new Set<string>()), pointers = useRef(new Map<number, HTMLButtonElement>()), audio = useRef<ReturnType<typeof createAudio> | null>(null), stage = useRef<HTMLElement>(null);
   const inRound = active(view) && session?.run.status === "running";
   const vihar = useViharPlay("dune-dash", inRound, view === "running");
 
+  const callout = usePlayCallout(view !== "running");
+  const { show, dismiss } = callout;
   const clearInput = useCallback(() => {
     held.current.clear();
     for (const [id, element] of pointers.current) { if (element.hasPointerCapture(id)) element.releasePointerCapture(id); }
@@ -37,6 +42,8 @@ export default function DuneDashPlay() {
     runtime.current.previous = value; setPrevious(value);
   }, []);
   const publish = useCallback((value: Session, next: View) => {
+    const before = runtime.current.session;
+    if (before?.id === value.id && Math.floor(scoreOf(value.run) / 50) > Math.floor(scoreOf(before.run) / 50)) show({ id: scoreOf(value.run), title: "Hawa se baatein!", label: `${Math.floor(scoreOf(value.run) / 50) * 50} points` });
     runtime.current.session = value; runtime.current.view = next; setSession(value); setView(next);
     if (next === "result") {
       clearInput(); audio.current?.stop(); audio.current?.thud();
@@ -45,7 +52,7 @@ export default function DuneDashPlay() {
       if (!withStorage(RECORDS_KEY, bests)) setSaving(false);
       persist(value);
     }
-  }, [clearInput, persist]);
+  }, [clearInput, persist, show]);
   const pause = useCallback(() => {
     const r = runtime.current;
     if (!r.session || !["running", "countdown"].includes(r.view)) return;
@@ -54,11 +61,11 @@ export default function DuneDashPlay() {
     r.view = "paused"; clearInput(); audio.current?.stop(); publish(r.session, "paused"); persist(r.session);
   }, [clearInput, persist, publish]);
   const prepare = useCallback((mode: Mode) => {
-    runtime.current.view = "ready"; clearInput(); audio.current?.stop();
+    runtime.current.view = "ready"; clearInput(); dismiss(); audio.current?.stop();
     const date = new Date().toLocaleDateString("en-CA");
     const fresh = newSession(mode, crypto.getRandomValues(new Uint32Array(1))[0], crypto.randomUUID(), date);
     runtime.current.lastSave = 0; publish(fresh, "ready"); persist(fresh);
-  }, [clearInput, persist, publish]);
+  }, [clearInput, dismiss, persist, publish]);
   const canRun = useCallback(() => !vihar.paused && !runtime.current.blocked && document.visibilityState === "visible" && document.hasFocus(), [vihar.paused]);
   const begin = useCallback(() => {
     const r = runtime.current;
@@ -98,8 +105,8 @@ export default function DuneDashPlay() {
   const exit = () => { pause(); const current = runtime.current.session; if (current) persist(current); audio.current?.stop(); clearInput(); vihar.exit(); };
 
   useEffect(() => {
-    runtime.current.blocked = rulesOpen || confirmation !== null;
-  }, [rulesOpen, confirmation]);
+    runtime.current.blocked = rulesOpen || optionsOpen || confirmation !== null;
+  }, [rulesOpen, optionsOpen, confirmation]);
   useEffect(() => {
     let cancelled = false;
     const r = runtime.current;
@@ -201,12 +208,12 @@ export default function DuneDashPlay() {
   const run = session?.run;
   const collection = vihar.embedded ? <button className={styles.textButton} onClick={exit}>Exit to Vihar ↗</button> : <Link className={styles.textButton} href="/">Return to collection ↗</Link>;
 
-  return <main id="main-content" className={styles.page} data-vihar-embedded={vihar.embedded || undefined} data-dune-view={view}>
+  return <main id="main-content" className={styles.page} data-vihar-embedded={vihar.embedded || undefined} data-dune-view={view} data-focus={view !== "choose" && view !== "loading" || undefined}>
     <DuneNav embedded={vihar.embedded}>
-      {view === "choose" || view === "loading" ? vihar.embedded ? <button className={styles.iconButton} aria-label="Exit to Vihar" onClick={exit}>↗</button> : <Link className={styles.iconButton} href="/" aria-label="Return to collection">↗</Link> : <button className={styles.guideButton} aria-label="Field guide" onClick={() => { pause(); setRulesOpen(true); }}><span className={styles.guideLabel}>Field guide</span><span className={styles.guideSymbol} aria-hidden="true">?</span></button>}
-      <button className={styles.audioButton} onClick={() => updateSettings({ ...settings, sound: !settings.sound })} aria-pressed={settings.sound} aria-label={settings.sound ? "Turn sound off" : "Turn sound on"} title={settings.sound ? "Sound effects on" : "Sound effects off"}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M3 9h4l5-4v14l-5-4H3Z" />{settings.sound ? <path d="M15 8q5 4 0 8m3-11q7 7 0 14" /> : <path d="m16 9 5 6m0-6-5 6" />}</svg></button>
-      <button className={styles.audioButton} onClick={() => updateSettings({ ...settings, music: !settings.music })} aria-pressed={settings.music} aria-label={settings.music ? "Turn music off" : "Turn music on"} title={settings.music ? "Desert music on" : "Desert music off"}>♫</button>
-      {vihar.embedded && view !== "choose" && <button className={styles.iconButton} data-exit aria-label="Exit to Vihar" onClick={exit}>×</button>}
+      <GameAudioControls audio={{ preferences: { sound: settings.sound, music: settings.music }, notice, update: key => updateSettings({ ...settings, [key]: !settings[key] }) }} />
+      {active(view) && <PlayButton icon={view === "paused" ? "play" : "pause"} label={view === "paused" ? "Resume run" : "Pause run"} onClick={view === "paused" ? resume : pause} />}
+      <PlayButton icon="menu" label="Game options" onClick={() => { pause(); setOptionsOpen(true); }} />
+      {vihar.embedded && <PlayButton icon="back" label="Exit to Vihar" onClick={exit} />}
     </DuneNav>
     {view === "loading" ? <section className={styles.loading} role="status">Opening your field notes…</section> : view === "choose" ? <section className={styles.choose} aria-labelledby="choose-title">
       <header className={styles.screenHeading}><p className={styles.eyebrow}>01 / CHOOSE YOUR PACE</p><h1 id="choose-title">The horizon is yours.</h1><p>A little leap. A low duck. See how far you wander.</p></header>
@@ -220,17 +227,17 @@ export default function DuneDashPlay() {
       <header className={styles.hud}>
         <span className={styles.modeLabel}>{presets[run.mode].name}<small>{view === "running" ? "ON THE TRAIL" : view === "paused" ? "TRAIL PAUSED" : view === "result" ? "JOURNEY COMPLETE" : "GET YOUR BEARINGS"}</small></span>
         <div className={styles.scores}><span>Score <output aria-label="Score" aria-live="off">{scoreOf(run)}</output></span><span>Local best <output aria-label="Local best" aria-live="off">{Math.max(records[run.mode].score, view === "result" ? scoreOf(run) : 0)}</output></span></div>
-        <button className={styles.secondary} disabled={view !== "running" && view !== "countdown"} onClick={pause} aria-label="Pause run">Ⅱ <span>Pause</span></button>
+
       </header>
       <div className={styles.trail}>
-        <section ref={stage} tabIndex={0} className={styles.stage} aria-label="Running field" aria-describedby="dune-controls"><RunField run={run} moving={view === "running"} onJump={takeJump} /></section>
+        <section ref={stage} tabIndex={0} className={styles.stage} aria-label="Running field" aria-describedby="dune-controls"><RunField run={run} moving={view === "running"} onJump={takeJump} />{callout.event && <PlayCallout event={callout.event} paused={view !== "running"} />}</section>
         {view !== "running" && <section className={styles.panel} aria-labelledby="panel-title" data-phase={view}>
           {view === "ready" ? <>
-            <header><p className={styles.eyebrow}>02 / A FEW NOTES BEFORE YOU GO</p><h1 id="panel-title">Ready, little wanderer?</h1></header><ControlStudy />
+            <header><p className={styles.eyebrow}>THE HORIZON IS YOURS</p><h1 id="panel-title">Ready, little wanderer?</h1></header><ControlStudy />
             <p className={styles.panelCopy}>Jump the stones. Hold Duck for birds.<br />Space starts the run, then jumps.</p><div className={styles.panelActions}><button className={styles.primary} data-space-start disabled={vihar.paused} onClick={begin}>Start run ↗</button><button className={styles.secondary} onClick={choose}>Change mode</button></div>
           </> : view === "paused" ? <>
             <header><p className={styles.eyebrow}>A PLACE TO CATCH YOUR BREATH</p><h1 id="panel-title">The desert can wait.</h1></header><p className={styles.panelCopy}>Your fox and the trail are right where you left them.</p>
-            <div className={styles.panelActions}><button className={styles.primary} disabled={vihar.paused} onClick={resume}>Resume · 3, 2, 1</button><button className={styles.secondary} onClick={() => requestPrepare(run.mode)}>Restart</button><button className={styles.textButton} onClick={() => setConfirmation({ kind: "choose" })}>Change mode</button>{collection}</div>
+            <div className={styles.panelActions}><button className={styles.primary} disabled={vihar.paused} onClick={resume}>Resume · 3, 2, 1</button><button className={styles.textButton} onClick={() => setOptionsOpen(true)}>Game options</button></div>
           </> : view === "countdown" ? <>
             <header><p className={styles.eyebrow}>BACK TO THE TRAIL IN</p><h1 id="panel-title" className={styles.countdown} role="status">{countdown}</h1></header><button className={styles.secondary} onClick={pause}>Keep paused</button>
           </> : <>
@@ -252,6 +259,7 @@ export default function DuneDashPlay() {
       <p className={styles.screenNote} role="status">{view === "running" ? "Escape pauses · Tap the open horizon to jump" : saveNotice}</p>
     </section>}
     <DuneFooter />
+    {optionsOpen && <Dialog title="Your field notes" onClose={() => setOptionsOpen(false)}><div className={styles.menuOptions}><button onClick={() => { setOptionsOpen(false); setRulesOpen(true); }}>How to play</button><button onClick={() => { setOptionsOpen(false); requestPrepare(run?.mode ?? settings.mode); }}>New run</button><button onClick={() => { setOptionsOpen(false); choose(); }}>Choose a pace</button>{collection}</div><p>Space / Up / W to jump. Hold Down / S to duck.<br />Tap the horizon to jump. Escape pauses.</p></Dialog>}
     {rulesOpen && <Dialog title="Your field guide" onClose={() => setRulesOpen(false)}><RulesBook /></Dialog>}
     {confirmation && <Dialog title={confirmation.kind === "prepare" ? "Start a fresh trail?" : "Choose another pace?"} onClose={() => setConfirmation(null)}>
       <p className={styles.confirmCopy}>{confirmation.kind === "prepare" ? "This replaces your unfinished run with a fresh seed. Your local best stays in your field notes." : "Your current run will stay saved and paused. You can come back to it from mode selection."}</p>

@@ -193,3 +193,29 @@
   .statusPanel .actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; }.statusPanel .actions .primary { margin-top:5px; min-height:36px; font-size:12px; padding:7px; }.statusPanel .actions .textButton { font-size:11px; min-height:36px; }.compactTools .toolButton { min-height:34px; }.saveNote { font-size:9px; }
 }
 @media (prefers-reduced-motion:reduce) { .shell *,.dialog * { animation:none !important; transition:none !important; } }
+
+/* Full-size centred table; secondary tools live in the game menu. */
+.page.focusPage { width:100%; padding:0 6px; grid-template-rows:48px minmax(0,1fr); }
+.focusPage > .footer { display:none; }
+.focusPage .nav { min-height:48px; border:0; padding-inline:6px; }
+.focusPage .navBrand b { display:none; }
+.focusPage .brandMark { width:28px; height:30px; font-size:21px; }
+.focusPage .navBrand { gap:8px; }
+.focusPage .navBrand > span:last-child { font-size:18px; }
+.focusPage .navActions { gap:3px; }
+.focusPage .navActions > div > button { min-width:40px; min-height:40px; padding:9px; border:0; border-radius:50%; background:transparent; color:inherit; }
+.focusPage .boardFrame { grid-template-columns:16px minmax(0,1fr); grid-template-rows:minmax(0,1fr) 16px; padding:3px; box-shadow:0 14px 40px #122e2638; border-radius:3px; }
+.focusPage .rankLabels,.focusPage .fileLabels { font-size:9px; }
+.focusPage .compactMentor .avatar { width:28px; height:28px; }
+.focusPage .compactMentor > div:last-child { display:block; }
+.focusPage .compactMentor strong { font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.focusPage .compactMentor span,.focusPage .compactMentor small { display:none; }
+.focusPage .playerBar { font-size:12px; }
+.focusPage .playerInitial { width:26px; height:26px; font-size:12px; }
+.focusPage .playerSide { font-size:9px; gap:4px; }
+@media (min-aspect-ratio:7/5) {
+ .page.focusPage { position:relative; grid-template-rows:minmax(0,1fr); }
+ .focusPage .nav { position:absolute; inset:0 10px auto; z-index:8; pointer-events:none; }
+ .focusPage .nav :is(button,a) { pointer-events:auto; }
+}
+@media (max-width:400px) { .focusPage .playerSide { font-size:0; }.focusPage .playerSide i { width:8px; height:8px; }.focusPage .humanPlayer { gap:5px; }.focusPage .compactMentor { gap:5px; } }

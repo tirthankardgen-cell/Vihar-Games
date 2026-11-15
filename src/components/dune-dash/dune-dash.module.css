@@ -318,3 +318,25 @@
   .stride { display:none; }
   .stillLegs { display:block; }
 }
+/* An uninterrupted horizon; menus float above the field. */
+.page[data-focus] { width:100%; padding:0 8px 8px; display:grid; grid-template-rows:48px minmax(0,1fr); }
+.page[data-focus] > .footer { display:none; }.page[data-focus] .nav { border:0; padding-inline:6px; }.page[data-focus] .brand { font-size:11px; gap:8px; }.page[data-focus] .brand small { display:none; }.page[data-focus] .brandMark { width:24px; height:32px; }.page[data-focus] .navActions { gap:3px; }
+.page[data-focus] .playLayout { display:block; position:relative; height:100%; min-height:0; padding:0; }
+.page[data-focus] .hud { position:absolute; z-index:2; left:20px; right:20px; top:10px; height:40px; border:0; pointer-events:none; }
+.page[data-focus] .modeLabel { font-size:14px; }.page[data-focus] .modeLabel small { display:none; }.page[data-focus] .scores { font-size:10px; gap:20px; }.page[data-focus] .scores output { font-size:24px; }
+.page[data-focus] .trail,.page[data-focus] .trail:has(.panel) { display:block; height:100%; width:100%; position:relative; }
+.page[data-focus] .stage { display:block; position:relative; width:100%; height:100%; overflow:hidden; border:1px solid #c5b69990; border-radius:10px; container-type:inline-size; background:#f2e5cb; }
+.page[data-focus] .field { width:100%; height:100%; }
+.page[data-focus] .panel { position:absolute; z-index:4; left:50%; top:50%; transform:translate(-50%,-50%); width:min(440px,calc(100% - 28px)); max-height:calc(100% - 24px); overflow:auto; padding:24px 20px; border:1px solid #ad977780; border-radius:18px; gap:14px; background:#f7edd8f5; box-shadow:0 16px 45px #463d3230; }
+.page[data-focus] .panel h1 { margin:4px 0 0; font-size:clamp(25px,3vw,35px); }
+.page[data-focus] .panel .primary { border-radius:25px; }.page[data-focus] .controlStudy { max-height:90px; }.page[data-focus] .panelCopy { font-size:13px; }
+.page[data-focus] .controls { position:absolute; bottom:16px; left:20px; right:20px; display:flex; justify-content:center; pointer-events:none; }
+.page[data-focus] .touchControls { display:flex; gap:14px; pointer-events:auto; }.page[data-focus] .jumpButton,.page[data-focus] .duckButton { min-width:105px; min-height:46px; border-radius:25px; font-size:14px; box-shadow:0 5px 15px #463d3210; }
+.page[data-focus] .keyHints,.page[data-focus] .runMeta,.page[data-focus] .playLayout > .screenNote { display:none; }
+.page[data-focus] .playLayout:has(.panel) .controls { visibility:hidden; }
+.page[data-focus] .panel[data-phase=countdown] { width:160px; border:0; background:transparent; box-shadow:none; padding:10px; }.page[data-focus] .panel[data-phase=countdown] .eyebrow { display:none; }.page[data-focus] .panel .countdown { font-size:96px; }
+.page[data-focus] .resultDetails { padding-block:8px; }.page[data-focus] .replayHint { display:none; }
+.menuOptions { display:grid; gap:4px; }.menuOptions :is(button,a) { padding:11px 8px; min-height:44px; border:0; border-bottom:1px solid #c5b69980; background:transparent; color:inherit; text-align:left; font:14px var(--font-hind),sans-serif; cursor:pointer; }
+@media (max-height:450px) { .page[data-focus] .panel { padding:14px; gap:8px; }.page[data-focus] .controlStudy { display:none; }.page[data-focus] .panel h1 { font-size:25px; }.page[data-focus] .panel .eyebrow { font-size:8px; }.page[data-focus] .resultDistance output { font-size:33px; }.page[data-focus] .resultDetails { padding-block:4px; }.page[data-focus] .resultDetails dd { font-size:13px; margin-top:1px; }.page[data-focus] .panelCopy { font-size:11px; } }
+
+.page[data-focus] .navActions button[aria-label="Audio settings"] { border:0; border-radius:50%; background:transparent; min-width:40px; min-height:40px; width:40px; height:40px; padding:9px; }
