@@ -6,7 +6,8 @@ import type { Session } from "@/games/carrom/persistence";
 import type { Frame } from "@/games/carrom/physics";
 import type { ShotReply } from "@/games/carrom/shot.worker";
 import { opponentRemark } from "@/games/carrom/opponent";
-import { resultFeedback, shotFeedback, type ShotFeedback } from "@/games/carrom/feedback";
+import { FEEDBACK_MS, resultFeedback, shotFeedback, type ShotFeedback } from "@/games/carrom/feedback";
+import { queenJourney, type QueenJourney } from "@/games/carrom/queen-transfer";
 import type { useViharPlay } from "@/lib/use-vihar-play";
 import { Board } from "./board";
 import { Coin } from "./board-art";
@@ -15,13 +16,13 @@ import { Icon } from "./icons";
 import { RaviPortrait } from "./opponent";
 import { PowerMeter } from "./power-meter";
 import { ShotCelebration } from "./shot-feedback";
+import { QueenFlight } from "./queen-flight";
 import styles from "./carrom.module.css";
 import table from "./table.module.css";
 import { useGameAudio } from "@/lib/use-game-audio";
 import { GameAudioControls } from "../game-audio-controls";
 
 const defaultShot: Shot = { position: 0, angle: 0, power: 0 };
-const FEEDBACK_MS = 1900;
 type Props = { session: Session; onChange: (s: Session, revision?: number) => boolean; onBack: () => void; onAgain: () => void; saved: boolean; play: ReturnType<typeof useViharPlay> };
 
 export function LocalGame({ session, onChange, onBack, onAgain, saved, play }: Props) {
@@ -35,6 +36,9 @@ export function LocalGame({ session, onChange, onBack, onAgain, saved, play }: P
   const [reportPage, setReportPage] = useState(0);
   const [dialog, setDialog] = useState<"options" | "resign" | "new" | "details" | null>(null);
   const [feedback, setFeedback] = useState<{ message: ShotFeedback; revision: number } | null>(null);
+  const [journey, setJourney] = useState<QueenJourney | null>(null);
+  const surface = useRef<HTMLDivElement>(null);
+  const feedbackRemaining = useRef(FEEDBACK_MS);
   const feedbackUntil = useRef(0);
   const live = useRef(session);
   const finishCard = resultFeedback(match, session);
@@ -47,17 +51,17 @@ export function LocalGame({ session, onChange, onBack, onAgain, saved, play }: P
   useEffect(() => {
     const before = lastAudioMatch.current; lastAudioMatch.current = match;
     if (match.revision <= before.revision) return;
-    if (finishCard) cue("complete");
-    else if (match.pieces.length < before.pieces.length) cue("pocket");
+    if (finishCard) cue(finishCard.kind === "loss" ? "loss" : "complete");
   }, [match, finishCard, cue]);
   const yourTurn = !thinking && !session.handover && !finishCard;
   useEffect(() => { live.current = session; }, [session]);
 
   useEffect(() => {
     if (!feedback || paused || dialog) return;
-    feedbackUntil.current = performance.now() + FEEDBACK_MS;
-    const timer = window.setTimeout(() => setFeedback(null), FEEDBACK_MS);
-    return () => window.clearTimeout(timer);
+    const started = performance.now();
+    feedbackUntil.current = started + feedbackRemaining.current;
+    const timer = window.setTimeout(() => setFeedback(null), feedbackRemaining.current);
+    return () => { window.clearTimeout(timer); feedbackRemaining.current = Math.max(0, feedbackRemaining.current - (performance.now() - started)); };
   }, [feedback, paused, dialog]);
 
   useEffect(() => {
@@ -84,6 +88,12 @@ export function LocalGame({ session, onChange, onBack, onAgain, saved, play }: P
           if (stopped) return;
           if (onChange({ ...current, match: nextMatch, handover: current.mode === "pass-and-play" && !nextMatch.result && nextMatch.turn !== current.match.turn }, current.match.revision)) {
             const message = shotFeedback(current.match, nextMatch, simulation.outcome, current);
+            setJourney(queenJourney(current.match, nextMatch));
+            if (message) {
+              const kind = message.kind;
+              cue(kind === "gift" || kind === "debt" ? "return" : kind === "win" ? "complete" : kind);
+            }
+            feedbackRemaining.current = FEEDBACK_MS;
             feedbackUntil.current = message ? performance.now() + FEEDBACK_MS : 0;
             setFeedback(message ? { message, revision: nextMatch.revision } : null);
           }
@@ -91,13 +101,20 @@ export function LocalGame({ session, onChange, onBack, onAgain, saved, play }: P
         };
         const animate = () => {
           if (stopped) return;
-          cue("strike");
+          cue("strike", acceptedShot.power / 100);
           setShot(acceptedShot); setError("");
           if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { finish(); return; }
           const start = performance.now();
+          let soundIndex = 0;
           const draw = (now: number) => {
             if (stopped) return;
             const progress = (now - start) / (simulation.duration * 1000);
+            const elapsed = (now - start) / 1000;
+            while (soundIndex < simulation.sounds.length && simulation.sounds[soundIndex].time <= elapsed) {
+              const sound = simulation.sounds[soundIndex++];
+              // Skip stale contacts after a delayed frame instead of a loud catch-up burst.
+              if (elapsed - sound.time < .12) cue(sound.cue, sound.strength);
+            }
             if (progress >= 1) { finish(); return; }
             setFrame(simulation.frames[Math.min(simulation.frames.length - 1, Math.floor(progress * simulation.frames.length))]);
             animation = requestAnimationFrame(draw);
@@ -121,20 +138,22 @@ export function LocalGame({ session, onChange, onBack, onAgain, saved, play }: P
     setShot(next); setFeedback(null); feedbackUntil.current = 0;
     if (!thinking) setError("");
   }
-  const orientation = session.mode === "pass-and-play" ? match.turn : session.humanSide;
+  const orientation = session.mode === "pass-and-play" ? session.handover ? opposite(match.turn) : match.turn : session.humanSide;
   const status = paused ? "Game paused" : finishCard?.title ?? (session.handover ? `Pass to ${sideName(match.turn)}` : error ? "Shot needs attention" : frame ? "In motion…" : thinking ? "Ravi is thinking…" : command ? "Here we go…" : "Your shot.");
   const remark = opponentRemark(match, session.humanSide, Boolean(thinking), Boolean(frame));
   const player = (side: Side) => {
     const ravi = session.mode === "computer" && side !== session.humanSide;
     const active = side === match.turn && !finishCard;
     const name = session.mode === "practice" ? sideName(side) : ravi ? "Ravi" : session.players[side];
+    const ownsQueen = match.coverSide === side && match.queen !== "board";
+    const queenLabel = ownsQueen ? match.queen === "pending" ? `${name} has the queen. Cover on the next shot.` : `${name} covered the queen.` : `${name}, no queen`;
     return <div className={table.player} data-active={active} aria-label={`${session.players[side]}, ${sideName(side)}, ${match.pocketed[side].length} of 9 pocketed${active ? ", at the table" : ""}`}>
       <span className={table.avatar}>{ravi ? <RaviPortrait mood={remark.mood} /> : <Coin color={side} />}</span>
       <span className={table.playerName} title={session.players[side]}>{name}<small>{ravi ? "Computer" : active ? "Your turn" : sideName(side)}</small></span>
       <span className={table.score}>{match.pocketed[side].length}<small>/9</small></span>
+      <span className={table.queen} data-queen-slot={side} data-state={ownsQueen ? match.queen : "empty"} data-travelling={journey?.side === side} title={queenLabel} aria-label={queenLabel}><Coin color="queen" />{ownsQueen && match.queen === "covered" && <Icon name="check" />}</span>
     </div>;
   };
-  const queenLabel = match.queen === "covered" ? `Queen covered by ${sideName(match.coverSide!)}` : match.queen === "pending" ? "Queen awaiting cover" : "Queen on the board";
 
   return <>
     <CarromNav compact embedded={play.embedded} controls={<div className={table.gameButtons} aria-label="Game menu">
@@ -145,17 +164,18 @@ export function LocalGame({ session, onChange, onBack, onAgain, saved, play }: P
     </div>} />
     <section className={table.arena} data-mode={session.mode} data-human-turn={Boolean(yourTurn)} aria-labelledby="game-title">
       <h1 id="game-title" tabIndex={-1} className={styles.srOnly} aria-live="polite">{status}</h1>
-      <div className={table.surface}>
+      <div ref={surface} className={table.surface}>
         <div className={table.scoreboard}>
           {player(opposite(orientation))}
-          <span className={table.queen} data-state={match.queen} title={queenLabel} aria-label={queenLabel}><Coin color="queen" />{match.queen === "covered" && <Icon name="check" />}</span>
           {player(orientation)}
         </div>
-        <Board match={match} shot={shot} frame={frame} orientation={orientation} locked={locked} onAim={aim} onShoot={shoot} onPull={setPulling} />
-        {finishCard ? <ShotCelebration feedback={finishCard} permanent onAgain={onAgain} /> : paused ? <div className={table.boardVeil}><Icon name="pause" /><h2>Take your time.</h2><p>Your board will wait.</p></div> : feedback ? <ShotCelebration key={feedback.revision} feedback={feedback.message} paused={Boolean(dialog)} /> : session.handover ? <div className={table.boardVeil}><Icon name="people" /><h2>{sideName(match.turn)}’s turn.</h2><p>{session.players[match.turn]}, take your seat.</p><button className={table.againButton} onClick={() => onChange({ ...session, handover: false }, match.revision)}>I’m ready<Icon name="arrow" /></button></div> : null}
+        <Board match={match} shot={shot} frame={frame} orientation={orientation} locked={locked} returningQueen={journey?.kind === "return"} onAim={aim} onShoot={shoot} onPull={setPulling} />
+        {finishCard ? <ShotCelebration feedback={finishCard} permanent onAgain={onAgain} /> : feedback ? <ShotCelebration key={feedback.revision} feedback={feedback.message} paused={paused || Boolean(dialog)} /> : session.handover && !paused ? <div className={table.boardVeil}><Icon name="people" /><h2>{sideName(match.turn)}’s turn.</h2><p>{session.players[match.turn]}, take your seat.</p><button className={table.againButton} onClick={() => onChange({ ...session, handover: false }, match.revision)}>I’m ready<Icon name="arrow" /></button></div> : null}
+        {paused && !finishCard && <div className={table.boardVeil}><Icon name="pause" /><h2>Chai break?</h2><p>Your board will wait.</p></div>}
+        {journey && <QueenFlight journey={journey} surface={surface} orientation={orientation} paused={paused || Boolean(dialog)} onDone={() => setJourney(null)} />}
         {error && !paused && <div className={table.tableNotice} role="alert"><p>{error}</p>{thinking && <button onClick={() => { setError(""); setRetry(n => n + 1); }}>Retry Ravi’s shot</button>}</div>}
         <div className={table.belowBoard}>
-          {yourTurn && !paused && !dialog ? <PowerMeter power={pulling || command || frame ? shot.power : 0} pulling={pulling} /> : thinking && !frame && !feedback && !paused && !dialog ? <p className={table.raviRemark} title={remark.text}>“{remark.text}”</p> : null}
+          {yourTurn && !paused && !dialog && (pulling || frame) ? <PowerMeter power={shot.power} pulling={pulling} /> : null}
         </div>
       </div>
       {dialog && <Dialog title={dialog === "resign" ? "Resign this board?" : dialog === "new" ? "A fresh board?" : dialog === "details" ? "Last shot" : "At your table"} onClose={() => setDialog(null)}>

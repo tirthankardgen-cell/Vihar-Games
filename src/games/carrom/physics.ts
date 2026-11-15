@@ -2,7 +2,8 @@ import { radius, strikerPosition, validateShot, type Match, type Outcome, type P
 import { boardEdge, boardFarEdge, pockets, pocketRadius } from "./geometry.ts";
 
 export type Frame = { id: string; x: number; y: number }[];
-export type Simulation = { outcome: Outcome; frames: Frame[]; duration: number };
+export type ShotSound = { time: number; cue: "collision" | "cushion" | "drop"; strength: number };
+export type Simulation = { outcome: Outcome; frames: Frame[]; duration: number; sounds: ShotSound[] };
 type Body = Piece & { vx: number; vy: number; alive: boolean };
 const DT = 1 / 180, MAX_STEPS = 180 * 12, FRICTION = 175;
 export { pocketRadius } from "./geometry.ts";
@@ -17,6 +18,14 @@ export function simulate(match: Match, shot: Shot, record = true): Simulation {
   const bodies: Body[] = match.pieces.map((piece) => ({ ...piece, vx: 0, vy: 0, alive: true }));
   bodies.push({ id: "striker", kind: match.turn, ...start, vx: Math.sin(angle) * speed * direction, vy: -Math.cos(angle) * speed * direction, alive: true });
   const frames: Frame[] = [], pocketed: string[] = [];
+  const sounds: ShotSound[] = [];
+  let lastContact = -1;
+  const contactSound = (cue: ShotSound["cue"], velocity: number, step: number) => {
+    const time = step * DT;
+    if (!record || velocity < 28 || cue !== "drop" && time - lastContact < .045) return;
+    sounds.push({ time, cue, strength: Math.min(1, Math.max(.15, velocity / 600)) });
+    if (cue !== "drop") lastContact = time;
+  };
   const frame = () => bodies.filter((body) => body.alive).map(({ id, x, y }) => ({ id, x, y }));
   if (record) frames.push(frame());
   let settled = false, step = 0;
@@ -24,7 +33,9 @@ export function simulate(match: Match, shot: Shot, record = true): Simulation {
     for (const body of bodies) if (body.alive) {
       body.x += body.vx * DT; body.y += body.vy * DT;
       const r = radius(body);
-      if (pockets.some(([x, y]) => Math.hypot(body.x - x, body.y - y) < pocketCaptureRadius(r))) { body.alive = false; pocketed.push(body.id); continue; }
+      if (pockets.some(([x, y]) => Math.hypot(body.x - x, body.y - y) < pocketCaptureRadius(r))) { body.alive = false; pocketed.push(body.id); contactSound("drop", 360, step); continue; }
+      if (body.x < boardEdge + r || body.x > boardFarEdge - r) contactSound("cushion", Math.abs(body.vx), step);
+      if (body.y < boardEdge + r || body.y > boardFarEdge - r) contactSound("cushion", Math.abs(body.vy), step);
       if (body.x < boardEdge + r) { body.x = boardEdge + r; body.vx = Math.abs(body.vx) * .86; }
       if (body.x > boardFarEdge - r) { body.x = boardFarEdge - r; body.vx = -Math.abs(body.vx) * .86; }
       if (body.y < boardEdge + r) { body.y = boardEdge + r; body.vy = Math.abs(body.vy) * .86; }
@@ -41,6 +52,7 @@ export function simulate(match: Match, shot: Shot, record = true): Simulation {
       a.x -= nx * overlap; a.y -= ny * overlap; b.x += nx * overlap; b.y += ny * overlap;
       const approach = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
       if (approach < 0) {
+        contactSound("collision", -approach, step);
         const ma = a.id === "striker" ? 1.6 : 1, mb = b.id === "striker" ? 1.6 : 1;
         const impulse = -1.94 * approach / (1 / ma + 1 / mb);
         a.vx -= impulse * nx / ma; a.vy -= impulse * ny / ma; b.vx += impulse * nx / mb; b.vy += impulse * ny / mb;
@@ -70,5 +82,5 @@ export function simulate(match: Match, shot: Shot, record = true): Simulation {
     if (pass === 59) throw new Error("Pieces could not settle safely. Retake the shot.");
   }
   if (record) frames.push(frame());
-  return { outcome: { pieces: bodies.filter((body) => body.alive && body.id !== "striker").map(({ id, kind, x, y }) => ({ id, kind, x, y })), pockets: pocketed.filter((id) => id !== "striker"), strikerPocketed: pocketed.includes("striker"), ejected: [] }, frames, duration: (step + 1) * DT };
+  return { outcome: { pieces: bodies.filter((body) => body.alive && body.id !== "striker").map(({ id, kind, x, y }) => ({ id, kind, x, y })), pockets: pocketed.filter((id) => id !== "striker"), strikerPocketed: pocketed.includes("striker"), ejected: [] }, frames, duration: (step + 1) * DT, sounds };
 }

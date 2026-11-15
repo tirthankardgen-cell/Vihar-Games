@@ -42,8 +42,8 @@ export function useGameAudio(game: AudioGame, playing: boolean, blocked = false)
       document.removeEventListener("visibilitychange", visibility); window.removeEventListener("blur", stop); window.removeEventListener("pagehide", stop);
     };
   }, [game]);
-  const cue = useCallback((value: AudioCue) => {
-    if (!activity.current.blocked && document.visibilityState === "visible" && document.hasFocus()) audio.current?.cue(value);
+  const cue = useCallback((value: AudioCue, strength?: number) => {
+    if (!activity.current.blocked && document.visibilityState === "visible" && document.hasFocus()) audio.current?.cue(value, strength);
   }, []);
   const update = (key: keyof AudioPreferences) => {
     const next = { ...preferences, [key]: !preferences[key] };

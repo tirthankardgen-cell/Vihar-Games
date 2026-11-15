@@ -1,12 +1,14 @@
 /* A single centered square. Scores and the readout sit outside its playing area. */
 .arena {
-  height:100%; min-height:0; width:100%; padding:42px 0 30px;
+  height:100%; min-height:0; width:100%; padding:42px 0 90px;
   display:grid; place-items:center; container-type:size; overflow:clip;
 }
 .surface { position:relative; width:min(100cqw,100cqh); aspect-ratio:1; container-type:inline-size; isolation:isolate; }
-.scoreboard { position:absolute; inset-inline:0; top:-41px; height:34px; display:grid; grid-template-columns:minmax(0,1fr) 27px minmax(0,1fr); gap:12px; align-items:center; }
+.scoreboard { position:absolute; inset-inline:0; top:-41px; height:34px; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:24px; align-items:center; }
 .player { min-width:0; display:flex; align-items:center; gap:9px; color:#e4d9bd; }
-.player:last-child { justify-content:flex-end; }
+.player:last-child { flex-direction:row-reverse; text-align:right; }
+.player .queen { margin-left:3px; flex-shrink:0; }
+.player:last-child .queen { margin-left:0; margin-right:3px; }
 .avatar { display:grid; place-items:center; width:30px; height:32px; flex-shrink:0; overflow:hidden; border-radius:12px 12px 6px 6px; }
 .avatar > svg { width:100%; height:100%; }
 .playerName { min-width:0; font-size:13px; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -18,6 +20,10 @@
 .queen { position:relative; display:grid; place-items:center; width:25px; height:25px; }
 .queen > svg:first-child { width:25px; height:25px; }
 .queen > svg:last-child:not(:first-child) { position:absolute; right:-4px; bottom:-3px; width:13px; height:13px; background:#20443d; border-radius:50%; color:#f0d398; padding:1px; }
+.queen[data-state="empty"] { opacity:.18; filter:grayscale(1); }
+.queen[data-travelling="true"] { opacity:0; }
+.queenFlight { position:absolute; top:0; left:0; width:44px; height:44px; z-index:7; pointer-events:none; filter:drop-shadow(0 5px 7px #270b1f66); will-change:transform; }
+.queenFlight > svg { width:100%; height:100%; }
 .queen[data-state="pending"] { animation:queenSignal 1100ms ease-in-out infinite alternate; }
 .belowBoard { position:absolute; top:calc(100% + 8px); inset-inline:0; height:22px; display:flex; align-items:center; justify-content:center; }
 
@@ -42,45 +48,45 @@
 .optionsList svg { width:19px; height:19px; flex-shrink:0; }
 .optionsList svg:last-child { margin-left:auto; width:15px; height:15px; color:#8a8867; }
 
-/* Feedback belongs to the table. It never intercepts a new pull. */
+/* A small, typeset celebration floats above the wood without blocking input. */
 .feedbackLayer {
-  --accent:#ffe3a1; --veil:#153f39f2;
+  --accent:#f2c979; --veil:#173f39;
   position:absolute; inset:0; display:grid; place-items:center; z-index:3; border-radius:2%; overflow:hidden; pointer-events:none;
-  animation:feedbackLife 1900ms both;
+  animation:feedbackLife var(--feedback-ms,2400ms) both;
 }
-.feedbackCopy { position:relative; isolation:isolate; display:flex; flex-direction:column; align-items:center; gap:6px; width:88%; padding:22px 12px; color:var(--accent); text-align:center; animation:pocketPop 580ms cubic-bezier(.18,.8,.25,1.25) both; }
-.feedbackCopy::before { content:""; position:absolute; z-index:-1; inset:-35% -10%; background:radial-gradient(ellipse,var(--veil) 0%,var(--veil) 40%,transparent 72%); }
-.feedbackCopy h2 { max-width:100%; font-family:var(--font-yatra),serif; font-size:clamp(28px,8cqw,65px); line-height:1.12; letter-spacing:-.02em; text-wrap:balance; text-shadow:0 2px 0 #091e2580; }
-.feedbackCopy p { max-width:90%; color:#fff0d7; font-size:clamp(11px,2.2cqw,16px); line-height:1.4; text-wrap:balance; }
-.feedbackIcon { display:grid; place-items:center; width:clamp(28px,7cqw,52px); height:clamp(28px,7cqw,52px); margin-bottom:2px; }
-.feedbackIcon svg { width:100%; height:100%; stroke-width:1.35; }
-.feedbackRings { position:absolute; inset:18%; display:grid; place-items:center; }
-.feedbackRings i { position:absolute; width:100%; aspect-ratio:1; border:1px solid var(--accent); border-radius:50%; opacity:0; animation:royalRing 1050ms ease-out both; }
-.feedbackRings i:nth-child(2) { animation-delay:120ms; }
-.feedbackRings i:nth-child(3) { animation-delay:240ms; }
+.feedbackCopy { position:relative; isolation:isolate; display:flex; flex-direction:column; align-items:center; gap:7px; width:min(79%,410px); padding:22px 16px 25px; border:1px solid #f8dfaa55; border-radius:20px; background:linear-gradient(150deg,color-mix(in srgb,var(--veil),#fff 5%),var(--veil)); box-shadow:0 15px 45px #102b3740,inset 0 0 0 5px #ffedc206; color:var(--accent); text-align:center; animation:pocketPop 500ms cubic-bezier(.16,1,.3,1) both; }
+.feedbackCopy::after { content:"✦"; position:absolute; bottom:-9px; left:calc(50% - 12px); width:24px; background:var(--veil); font-size:13px; color:var(--accent); }
+.feedbackCopy h2 { max-width:100%; margin:0; font-family:var(--font-yatra),serif; font-size:clamp(26px,6.6cqw,45px); font-weight:400; line-height:1.15; letter-spacing:-.025em; text-wrap:balance; }
+.feedbackCopy p { max-width:95%; margin:0; color:#ede5d3; font-size:clamp(11px,2.15cqw,14px); line-height:1.45; text-wrap:balance; }
+.feedbackLabel { color:#d6c6a1; font-size:clamp(8px,1.6cqw,10px); line-height:1.4; letter-spacing:.15em; text-transform:uppercase; }
+.feedbackIcon { display:grid; place-items:center; width:clamp(34px,8cqw,52px); height:clamp(34px,8cqw,52px); margin-bottom:3px; }
+.feedbackIcon svg { width:100%; height:100%; stroke-width:1.7; }
+.jalebi { stroke-dasharray:260; animation:jalebiDraw 950ms ease-out both; }
+.chaiSteam { animation:chaiSteam 1100ms ease-in-out infinite; }
+.feedbackRings { position:absolute; inset:16%; display:grid; place-items:center; }
+.feedbackRings i { position:absolute; width:100%; aspect-ratio:1; border:1px solid var(--accent); border-radius:50%; opacity:0; animation:royalRing 1500ms ease-out both; }
+.feedbackRings i:nth-child(2) { animation-delay:140ms; border-style:dashed; }
+.feedbackRings i:nth-child(3) { animation-delay:280ms; }
 .feedbackSparks { position:absolute; inset:0; }
-.feedbackSparks i { position:absolute; top:50%; left:50%; width:5px; height:12px; border-radius:2px; background:var(--accent); opacity:0; animation:pocketSpark 1000ms var(--delay) ease-out both; }
-.feedbackSparks i:nth-child(3n) { width:7px; height:7px; border-radius:50%; background:#a9c095; }
-.feedbackSparks i:nth-child(3n + 1) { width:3px; height:15px; }
+.feedbackSparks i { position:absolute; top:50%; left:50%; width:4px; height:9px; border-radius:2px; background:var(--accent); opacity:0; animation:pocketSpark 1250ms var(--delay) ease-out both; }
+.feedbackSparks i:nth-child(3n) { width:5px; height:5px; border-radius:50%; background:#dc9778; }
 .feedbackLayer[data-kind="pocket"] .feedbackRings { display:none; }
-.feedbackLayer[data-kind="combo"] .feedbackCopy { animation:comboPop 700ms cubic-bezier(.17,.75,.3,1.2) both; }
-.feedbackLayer[data-kind="combo"] .feedbackSparks i { animation-duration:1300ms; }
-.feedbackLayer[data-kind="foul"] { --accent:#ffc2aa; --veil:#5a2924f2; }
-.feedbackLayer[data-kind="foul"] .feedbackCopy { animation:foulShake 520ms ease-out both; }
-.feedbackLayer[data-kind="foul"] .feedbackRings i { border-width:3px; animation:foulRing 650ms ease-out both; }
-.feedbackLayer[data-kind="foul"] .feedbackRings i:not(:first-child),.feedbackLayer[data-kind="foul"] .feedbackSparks { display:none; }
-.feedbackLayer:is([data-kind="queen"],[data-kind="cover"]) { --accent:#ffd4db; --veil:#512d3ff2; }
-.feedbackLayer:is([data-kind="queen"],[data-kind="cover"]) .feedbackCopy { animation:royalRise 850ms cubic-bezier(.16,1,.3,1) both; }
-.feedbackLayer:is([data-kind="queen"],[data-kind="cover"]) .feedbackIcon { color:#f7d18b; animation:crownFloat 1000ms ease-in-out both; }
+.feedbackLayer[data-kind="combo"] .feedbackCopy { animation:comboPop 650ms cubic-bezier(.17,.75,.3,1.1) both; }
+.feedbackLayer[data-kind="combo"] .feedbackSparks i { animation-duration:1600ms; }
+.feedbackLayer[data-kind="foul"] { --accent:#ffbe9f; --veil:#55332d; }
+.feedbackLayer[data-kind="foul"] .feedbackCopy { animation:foulShake 450ms ease-out both; }
+.feedbackLayer[data-kind="foul"] :is(.feedbackRings,.feedbackSparks) { display:none; }
+.feedbackLayer:is([data-kind="queen"],[data-kind="cover"]) { --accent:#f8d697; --veil:#552e42; }
+.feedbackLayer:is([data-kind="queen"],[data-kind="cover"]) .feedbackCopy { animation:royalRise 700ms cubic-bezier(.16,1,.3,1) both; transform:translateY(26%); }
+.feedbackLayer:is([data-kind="queen"],[data-kind="cover"]) .feedbackIcon { animation:crownFloat 850ms ease-out both; }
 .feedbackLayer[data-kind="queen"] .feedbackSparks { display:none; }
-.feedbackLayer[data-kind="cover"] .feedbackRings i:nth-child(2) { border-style:dashed; }
 .feedbackLayer:is([data-kind="return"],[data-kind="gift"],[data-kind="debt"]) { --accent:#d4e0c2; }
-.feedbackLayer:is([data-kind="return"],[data-kind="gift"],[data-kind="debt"]) .feedbackCopy { animation:gentleReturn 550ms ease-out both; }
+.feedbackLayer:is([data-kind="return"],[data-kind="gift"],[data-kind="debt"]) .feedbackCopy { animation:gentleReturn 500ms ease-out both; }
 .feedbackLayer:is([data-kind="return"],[data-kind="gift"],[data-kind="debt"]) :is(.feedbackRings,.feedbackSparks) { display:none; }
-.feedbackLayer[data-permanent="true"] { background:#082c32a6; animation:readoutIn 350ms ease-out both; }
-.feedbackLayer[data-permanent="true"] .feedbackCopy::before { background:none; }
-.feedbackLayer[data-permanent="true"] .feedbackIcon { width:clamp(42px,12cqw,92px); height:clamp(42px,12cqw,92px); margin-bottom:10px; animation:trophyRise 900ms cubic-bezier(.17,.8,.25,1.2) both; }
-.feedbackLayer[data-kind="win"] .feedbackSparks i { animation:winSpark 1700ms var(--delay) ease-out both; }
+.feedbackLayer[data-permanent="true"] { background:#12353066; backdrop-filter:blur(3px); animation:readoutIn 350ms ease-out both; }
+.feedbackLayer[data-permanent="true"] .feedbackCopy { padding-block:30px; }
+.feedbackLayer[data-permanent="true"] .feedbackIcon { width:clamp(42px,12cqw,75px); height:clamp(42px,12cqw,75px); margin-bottom:8px; animation:trophyRise 900ms cubic-bezier(.17,.8,.25,1.2) both; }
+.feedbackLayer[data-kind="win"] .feedbackSparks i { animation:winSpark 1900ms var(--delay) ease-out both; }
 .feedbackLayer[data-kind="loss"] { --accent:#dce6c8; }
 .feedbackLayer[data-kind="loss"] .feedbackSparks { display:none; }
 .feedbackLayer[data-paused="true"],.feedbackLayer[data-paused="true"] * { animation-play-state:paused; }
@@ -96,18 +102,19 @@
 
 @keyframes readoutIn { from { opacity:0; } to { opacity:1; } }
 @keyframes queenSignal { from { filter:drop-shadow(0 0 0 #e8a1a000); } to { filter:drop-shadow(0 0 5px #e8a1a080); } }
-@keyframes feedbackLife { 0% { opacity:0; } 12%,77% { opacity:1; } 100% { opacity:0; } }
-@keyframes pocketPop { 0% { transform:scale(.65) rotate(-7deg); } 65% { transform:scale(1.08) rotate(2deg); } 100% { transform:scale(1) rotate(-2deg); } }
-@keyframes comboPop { 0% { transform:scale(.45); } 45% { transform:scale(1.12) rotate(-3deg); } 70% { transform:scale(.95) rotate(2deg); } 100% { transform:scale(1); } }
-@keyframes foulShake { 0% { transform:scale(1.25); } 20%,60% { transform:translateX(-10px) rotate(-3deg); } 40%,80% { transform:translateX(8px) rotate(2deg); } 100% { transform:none; } }
-@keyframes royalRise { from { transform:translateY(26px) scale(.8); opacity:0; } to { transform:none; opacity:1; } }
-@keyframes crownFloat { 0% { transform:translateY(-24px) rotate(-12deg); } 60% { transform:translateY(3px) rotate(3deg); } 100% { transform:none; } }
-@keyframes gentleReturn { from { transform:translateY(-15px); opacity:0; } to { transform:none; opacity:1; } }
-@keyframes royalRing { from { transform:scale(.35); opacity:.7; } to { transform:scale(1.35); opacity:0; } }
-@keyframes foulRing { from { transform:scale(.65); opacity:.8; } to { transform:scale(1.15); opacity:0; } }
-@keyframes pocketSpark { 0% { opacity:1; transform:rotate(var(--angle)) translateY(20px) scale(1); } 100% { opacity:0; transform:rotate(var(--angle)) translateY(calc(18cqw + var(--distance))) scale(.3); } }
-@keyframes winSpark { 0% { opacity:0; transform:rotate(var(--angle)) translateY(20px); } 10% { opacity:1; } 100% { opacity:0; transform:rotate(var(--angle)) translateY(calc(29cqw + var(--distance))) rotate(170deg); } }
-@keyframes trophyRise { from { transform:translateY(20px) scale(.5) rotate(-15deg); } 60% { transform:translateY(-5px) scale(1.08) rotate(3deg); } to { transform:none; } }
+@keyframes feedbackLife { 0% { opacity:0; } 8%,83% { opacity:1; } 100% { opacity:0; } }
+@keyframes pocketPop { from { transform:translateY(12px) scale(.91); opacity:0; } to { transform:none; opacity:1; } }
+@keyframes comboPop { 0% { transform:scale(.78); } 55% { transform:scale(1.04); } 100% { transform:scale(1); } }
+@keyframes foulShake { 0% { transform:translateX(0); } 25% { transform:translateX(-7px); } 50% { transform:translateX(6px); } 75% { transform:translateX(-3px); } 100% { transform:none; } }
+@keyframes royalRise { from { transform:translateY(36%) scale(.95); opacity:0; } to { transform:translateY(26%); opacity:1; } }
+@keyframes crownFloat { from { transform:translateY(-12px); opacity:0; } to { transform:none; opacity:1; } }
+@keyframes gentleReturn { from { transform:translateY(-10px); opacity:0; } to { transform:none; opacity:1; } }
+@keyframes royalRing { from { transform:scale(.5); opacity:.5; } to { transform:scale(1.4); opacity:0; } }
+@keyframes pocketSpark { 0% { opacity:0; transform:rotate(var(--angle)) translateY(12cqw) scale(.6); } 20% { opacity:.9; } 100% { opacity:0; transform:rotate(var(--angle)) translateY(calc(28cqw + var(--distance))) scale(.3); } }
+@keyframes winSpark { 0% { opacity:0; transform:rotate(var(--angle)) translateY(12cqw); } 10% { opacity:1; } 100% { opacity:0; transform:rotate(var(--angle)) translateY(calc(43cqw + var(--distance))) rotate(170deg); } }
+@keyframes trophyRise { from { transform:translateY(12px) scale(.7); } 60% { transform:translateY(-3px) scale(1.04); } to { transform:none; } }
+@keyframes jalebiDraw { from { stroke-dashoffset:260; transform:rotate(-20deg); transform-origin:center; } to { stroke-dashoffset:0; transform:rotate(0); transform-origin:center; } }
+@keyframes chaiSteam { 0%,100% { opacity:.4; transform:translateY(2px); } 50% { opacity:1; transform:translateY(-2px); } }
 
 @media (max-width:500px) {
   .scoreboard { gap:7px; }.player { gap:6px; }.avatar { width:27px; height:29px; }.playerName { font-size:12px; }.score { font-size:16px; }.playerName small { font-size:7px; }
@@ -121,3 +128,4 @@
   .arena *,.arena *::before,.arena *::after { animation:none !important; transition:none !important; }
   .feedbackRings,.feedbackSparks { display:none; }
 }
+@media (min-aspect-ratio: 7/5) { .arena { padding-block:44px; } }

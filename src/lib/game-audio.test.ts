@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { audioSettingsKey, createGameAudio, loadAudioPreferences, type AudioGame } from "./game-audio.ts";
+import type { AudioCue } from "./game-audio.ts";
 import { loadAudioSettings as loadSudokuAudio } from "../games/sudoku/persistence.ts";
 import { loadSettings as loadPaperwing, SETTINGS_KEY as PAPERWING_KEY } from "../games/paperwing/persistence.ts";
 import { loadSettings as loadDuneDash, SETTINGS_KEY as DUNE_KEY } from "../games/dune-dash/persistence.ts";
@@ -11,7 +12,7 @@ function environment(state = "running") {
   const contexts: Context[] = [], timers = new Map<number, () => void>();
   let timerId = 0;
   class Source {
-    frequency = { setValueAtTime() {} }; type = "sine"; onended: (() => void) | null = null;
+    frequency = { setValueAtTime() {}, exponentialRampToValueAtTime() {} }; type = "sine"; onended: (() => void) | null = null;
     active = false; disconnected = false; startAt = 0;
     connect(target: unknown) { return target; }
     disconnect() { this.disconnected = true; }
@@ -32,6 +33,24 @@ function environment(state = "running") {
   return { contexts, timers, restore() { Object.assign(globalThis, originals); } };
 }
 const games: AudioGame[] = ["chess", "carrom", "tic-tac-toe"];
+test("carrom impacts and celebrations release on mute without stopping the music", () => {
+  const env = environment(), player = createGameAudio("carrom", () => assert.fail("Audio should be available"));
+  try {
+    player.enable(true); player.enableMusic(true); player.setPlaying(true); player.unlock();
+    const ctx = env.contexts[0], music = [...ctx.sources];
+    const events: AudioCue[] = ["strike", "collision", "cushion", "drop", "pocket", "combo", "foul", "queen", "cover", "return", "complete", "loss"];
+    for (const event of events) {
+      const count = ctx.sources.length; player.cue(event, .6);
+      assert.ok(ctx.sources.length > count, event);
+    }
+    player.enable(false);
+    assert.ok(ctx.sources.slice(music.length).every(source => !source.active && source.disconnected));
+    assert.ok(music.every(source => source.active));
+    assert.equal(env.timers.size, 1);
+    player.stop(); assert.equal(env.timers.size, 0);
+    assert.ok(ctx.sources.every(source => !source.active));
+  } finally { player.dispose(); env.restore(); }
+});
 for (const game of games) test(`${game}: saved audio waits for a gesture; pause and disposal release sources and timers`, () => {
   const env = environment(), player = createGameAudio(game, () => assert.fail("Audio should be available"));
   try {

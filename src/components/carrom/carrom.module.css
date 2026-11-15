@@ -338,10 +338,15 @@
   .resultCard .primary { grid-column:1/-1; min-height:36px; padding:8px; margin:0; font-size:12px; }
 }
 
-/* The live table keeps only a quiet brand and its two menu actions. */
-.previewPage { padding-inline:clamp(10px,2vw,24px); }
+/* The live table keeps a quiet brand and compact game controls. */
+.previewPage { padding-inline:clamp(5px,1vw,14px); }
 .nav.compactNav { min-height:48px; border-color:transparent; }
 .compactNav .brandMark { width:27px; height:27px; font-size:21px; outline-offset:3px; }
 .compactNav .brand { gap:9px; }.compactNav .brand > span:last-child { font-size:18px; }.compactNav .brand small { display:none; }
-.compactNav .navActions > div button { min-height:36px; padding:7px; border-color:transparent; border-radius:50%; background:transparent; }
+.compactNav .navActions > div > button,.compactNav button[aria-label="Audio settings"] { min-height:36px; padding:7px; border-color:transparent; border-radius:50%; background:transparent; }
 @media (max-height:460px) and (orientation:landscape) { .nav.compactNav { min-height:40px; } }
+@media (min-aspect-ratio: 7/5) {
+  .previewPage { position:relative; grid-template-rows:minmax(0,1fr); }
+  .previewPage .compactNav { position:absolute; inset:0 clamp(10px,1vw,14px) auto; z-index:8; pointer-events:none; }
+  .previewPage .compactNav :is(a,button) { pointer-events:auto; }
+}

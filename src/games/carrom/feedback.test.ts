@@ -13,11 +13,11 @@ function take(before: Match, ids: string[] = [], strikerPocketed = false, practi
 test("accepted own pockets earn varied praise and multiple coins earn a combo", () => {
   const first = take(createMatch(), ["c0"]);
   assert.equal(first.feedback?.kind, "pocket");
-  assert.equal(first.feedback?.title, "Nice shot!");
+  assert.equal(first.feedback?.title, "Jalebi sweet!");
   const second = take(first.after, ["c1"]);
-  assert.equal(second.feedback?.title, "Great shot!");
-  assert.equal(take(second.after, ["c2", "c3"]).feedback?.title, "Double delight!");
-  assert.equal(take(second.after, ["c2", "c3", "c4"]).feedback?.title, "Three’s a charm!");
+  assert.equal(second.feedback?.title, "Makkhan shot!");
+  assert.equal(take(second.after, ["c2", "c3"]).feedback?.title, "Double dhamaka!");
+  assert.equal(take(second.after, ["c2", "c3", "c4"]).feedback?.title, "Teen ka tadka!");
 });
 
 test("fouls take precedence over pocket and queen celebrations on either side", () => {
@@ -39,7 +39,7 @@ test("queen pickup, successful cover and missed cover are distinct accepted even
     assert.equal(pickup.feedback?.kind, "queen");
     assert.equal(take(pickup.after, [prefix + "1"]).feedback?.kind, "cover");
     assert.equal(take(pickup.after).feedback?.kind, "return");
-    assert.equal(take(eligible, ["q", prefix + "1"]).feedback?.title, "Queen covered!");
+    assert.equal(take(eligible, ["q", prefix + "1"]).feedback?.title, "Rani secured!");
   }
 });
 
@@ -48,7 +48,7 @@ test("an early queen and an uncovered last coin are never celebrated as legal po
   const before = createMatch();
   before.pocketed.cream = Array.from({ length:8 }, (_, i) => `c${i}`);
   before.pieces = before.pieces.filter(p => !before.pocketed.cream.includes(p.id));
-  assert.equal(take(before, ["c8"]).feedback?.title, "One step early.");
+  assert.equal(take(before, ["c8"]).feedback?.title, "Arre, thoda sabr!");
 });
 
 test("opponent coins and debt repayment do not produce own-pocket praise", () => {
@@ -62,7 +62,7 @@ test("opponent coins and debt repayment do not produce own-pocket praise", () =>
 
 test("practice celebrates both colors without inventing penalties or cover requirements", () => {
   assert.equal(take(createMatch(), ["c0", "d0"], false, true).feedback?.kind, "combo");
-  assert.equal(take(createMatch(), ["q"], false, true).feedback?.title, "Queen pocketed!");
+  assert.equal(take(createMatch(), ["q"], false, true).feedback?.title, "Rani secured!");
   assert.match(take(createMatch(), [], true, true).feedback!.note, /No penalty/);
 });
 
@@ -88,5 +88,5 @@ test("a legal finish replaces shot feedback and identifies the winner for either
 test("resignation and a completed practice board have appropriate persistent results", () => {
   assert.equal(resultFeedback(resign(createMatch()), context)?.title, "Ravi wins.");
   const complete = createMatch(); complete.pieces = [];
-  assert.equal(resultFeedback(complete, { mode:"practice", humanSide:"cream" })?.title, "A clean sweep!");
+  assert.equal(resultFeedback(complete, { mode:"practice", humanSide:"cream" })?.title, "Full paisa vasool!");
 });

@@ -9,7 +9,7 @@ import styles from "./carrom.module.css";
 
 export const snapPosition = (position: number) => Math.abs(position) > 80 ? Math.sign(position) * 100 : Math.round(position);
 
-export function Board({ match, shot, frame, orientation, locked, onAim, onShoot, onPull }: { match: Match; shot: Shot; frame: Frame | null; orientation: Side; locked: boolean; onAim: (shot: Shot) => void; onShoot: (shot: Shot) => void; onPull: (pulling: boolean) => void }) {
+export function Board({ match, shot, frame, orientation, locked, returningQueen = false, onAim, onShoot, onPull }: { match: Match; shot: Shot; frame: Frame | null; orientation: Side; locked: boolean; returningQueen?: boolean; onAim: (shot: Shot) => void; onShoot: (shot: Shot) => void; onPull: (pulling: boolean) => void }) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const gesture = useRef<{ shot: Shot; pulling: boolean; x: number; y: number; pointerId: number } | null>(null);
   const previousFrame = useRef<Frame | null>(null);
@@ -63,6 +63,7 @@ export function Board({ match, shot, frame, orientation, locked, onAim, onShoot,
       }
     }
     for (const body of bodies) {
+      if (returningQueen && !frame && body.id === "q") continue;
       const kind = body.id === "striker" ? "striker" : body.id === "q" ? "queen" : body.id.startsWith("c") ? "cream" : "ink";
       const r = kind === "striker" ? strikerRadius : coinRadius;
       ctx.fillStyle = { striker: "#dfb36d", queen: "#a83538", cream: "#fff5df", ink: "#293d35" }[kind];
@@ -74,7 +75,7 @@ export function Board({ match, shot, frame, orientation, locked, onAim, onShoot,
         ctx.beginPath(); ctx.moveTo(body.x, body.y - r * .6); ctx.lineTo(body.x + r * .22, body.y - r * .22); ctx.lineTo(body.x + r * .6, body.y); ctx.lineTo(body.x + r * .22, body.y + r * .22); ctx.lineTo(body.x, body.y + r * .6); ctx.lineTo(body.x - r * .22, body.y + r * .22); ctx.lineTo(body.x - r * .6, body.y); ctx.lineTo(body.x - r * .22, body.y - r * .22); ctx.closePath(); ctx.fill();
       } else { ctx.beginPath(); ctx.arc(body.x, body.y, 1.5, 0, Math.PI * 2); ctx.fill(); }
     }
-  }, [match, shot, frame, locked]);
+  }, [match, shot, frame, locked, returningQueen]);
 
   function point(event: React.PointerEvent<HTMLCanvasElement>) {
     const rect = event.currentTarget.getBoundingClientRect();

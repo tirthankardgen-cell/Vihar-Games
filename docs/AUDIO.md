@@ -2,7 +2,11 @@
 
 All eight playable games default to sound and music on. Saved mute choices are preserved. Playback begins after a player interacts, following browser autoplay rules. Missing, damaged, or blocked settings recover to the enabled defaults without preventing play.
 
-Chess, Carrom, and Tic Tac Toe use the shared local Web Audio player in `src/lib/game-audio.ts`. Their original loops are Neem Shade, Veranda Evening, and Notebook Waltz. The speaker button opens independent Sound and Music switches. Chess cues accepted moves, captures, checks, undo and results; Carrom cues the animated strike, pockets and results; Tic Tac Toe cues marks, new rounds and results. Restored positions do not replay old effects.
+Chess, Carrom, and Tic Tac Toe use the shared local Web Audio player in `src/lib/game-audio.ts`. Their original loops are Neem Shade, Veranda Evening, and Notebook Waltz. The speaker button opens independent Sound and Music switches. Chess cues accepted moves, captures, checks, undo and results; Tic Tac Toe cues marks, new rounds and results. Restored positions do not replay old effects.
+
+Carrom's Veranda Evening combines pentatonic plucks, a soft Sa/Pa bass and tabla-style taps. Recorded physics contacts trigger strength-sensitive striker, coin, cushion and pocket sounds during animation; overdue contacts are skipped after delayed frames. Accepted pockets, combos, fouls, queen pickup, cover, return and results have distinct musical cues. Sound events do not change physics or the computer's search. Both switches default to on and retain deliberate saved mutes.
+
+Carrom's centred board uses short Indian-flavoured callouts with explicit rule labels. A queen travels from the centre to the correct player's score area, awaits cover there, and returns to its actual free board position after a missed cover or foul. Ownership comes from the resolved match, including practice and same-shot covers. Queen travel and callouts pause together, and reduced-motion preferences remove travel. Browser verification covers both colours, 320/390px portrait, landscape, muted audio persistence, actual audio output and pause/resume.
 
 Sudoku uses its own soft bell cues and slow journal loop, with separate switches, volume and Mute all. Paperwing retains its combined speaker control, airmail waltz and paper effects. Dune Dash and Monsoon Blocks retain independent switches and their original desert/glass soundtracks.
 
