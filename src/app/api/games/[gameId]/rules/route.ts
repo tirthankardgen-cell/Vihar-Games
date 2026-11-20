@@ -10,6 +10,7 @@ import { MONSOON_RULES_VERSION, monsoonModes, monsoonRules } from "@/games/monso
 import { DUNE_DASH_RULES_VERSION, duneDashModes, duneDashRules } from "@/games/dune-dash/rules";
 import { SILK_RULES_VERSION, silkModes, silkRules } from "@/games/silk-trail/rules";
 import { LANTERN_RULES_VERSION, lanternModes, lanternRules } from "@/games/lantern-logic/rules";
+import { MOSAIC_RULES_VERSION, mosaicModes, mosaicRules } from "@/games/mosaic-shift/rules";
 
 export const runtime = "nodejs";
 
@@ -17,6 +18,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ gam
   const game = getGame((await params).gameId);
   if (!game) return unknownGameResponse();
   if (game.id === "lantern-logic") return NextResponse.json({ gameId: game.id, rulesVersion: LANTERN_RULES_VERSION, rules: lanternRules, availableModes: lanternModes, plannedModes: [], presets: ["small", "workshop", "festival"] });
+  if (game.id === "mosaic-shift") return NextResponse.json({ gameId: game.id, rulesVersion: MOSAIC_RULES_VERSION, rules: mosaicRules, availableModes: mosaicModes, plannedModes: [], presets: ["miniature", "studio", "wall-panel"], boardSizes: [3, 4, 5] });
   if (game.id === "silk-trail") return NextResponse.json({ gameId: game.id, rulesVersion: SILK_RULES_VERSION, rules: silkRules, availableModes: silkModes, plannedModes: [], presets: ["calm", "flow", "swift"] });
   if (game.id === "monsoon-blocks") return NextResponse.json({ gameId: game.id, rulesVersion: MONSOON_RULES_VERSION, rules: monsoonRules, availableModes: monsoonModes, plannedModes: [], presets: ["standard", "practice"] });
   if (game.id === "dune-dash") return NextResponse.json({ gameId: game.id, rulesVersion: DUNE_DASH_RULES_VERSION, rules: duneDashRules, availableModes: duneDashModes, plannedModes: [], presets: ["endless", "practice"] });

@@ -32,7 +32,7 @@ function environment(state = "running") {
   globalThis.clearInterval = ((id: number) => { timers.delete(id); }) as unknown as typeof clearInterval;
   return { contexts, timers, restore() { Object.assign(globalThis, originals); } };
 }
-const games: AudioGame[] = ["chess", "carrom", "tic-tac-toe"];
+const games: AudioGame[] = ["chess", "carrom", "tic-tac-toe", "mosaic-shift"];
 test("carrom impacts and celebrations release on mute without stopping the music", () => {
   const env = environment(), player = createGameAudio("carrom", () => assert.fail("Audio should be available"));
   try {

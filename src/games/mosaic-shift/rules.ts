@@ -1,0 +1,15 @@
+export { RULES_VERSION as MOSAIC_RULES_VERSION } from "./engine.ts";
+export const mosaicModes = ["solo"] as const;
+export const mosaicRules = [
+  { title: "A little room to move", items: ["Slide a numbered tile into the empty cell beside it. Only horizontal and vertical neighbours can move. Diagonals, jumps, row moves, and arbitrary swaps are not allowed."] },
+  { title: "Put every tile in its place", items: ["Arrange the numbers in ascending order from left to right, top to bottom. Leave the empty cell in the bottom-right corner. The numbers determine completion, even when the picture looks right."] },
+  { title: "Choose a ceramic study", items: ["Miniature has 3 × 3 cells, Studio 4 × 4, and Wall panel 5 × 5. Each size has its own original motif and two authored puzzles. Every starting arrangement is verified by legal slides from the target."] },
+  { title: "One slide, one move", items: ["Each accepted new slide adds one move. Selecting a distant tile changes nothing. Undo and Redo restore positions without reducing moves or active time; replaying a redo adds no scored move. A new slide after Undo replaces the redo branch."] },
+  { title: "A helpful nudge", items: ["Hint highlights a legal tile on a verified route to the target. The route can retrace your earlier moves; it is not an optimal-move estimate. Each hint marks the run assisted. Assisted and unassisted personal records stay separate."] },
+  { title: "Keep the picture in sight", items: ["Reference shows the complete target with live numbers. Viewing it does not count as a hint or mark assistance. All three motif families keep tile numbers visible. Zoom gives smaller cells more room inside the fixed board area."] },
+  { title: "Make it your own", items: ["Tap or click a tile to slide it. On the board, arrow keys move focus and Enter or Space selects the focused tile. Each cell names its number, row, column, and whether it can slide. Escape pauses play."] },
+  { title: "Let the clay rest", items: ["Pause freezes active time and music. Hidden tabs, lost focus, navigation, and a Vihar host pause also stop play. Return with Resume. Restart asks before replacing progress and restores the same authored puzzle with zero counters."] },
+  { title: "A maker’s personal best", items: ["Results show puzzle, size, moves, active time, hints, and assistance. Records stay on this device for the same puzzle and version. Fewer moves rank first; active time breaks ties. There are no time limits or rivals."] },
+  { title: "Pick up where you left off", items: ["Unfinished puzzles save locally with their arrangement and undo/redo history, and return paused. Damaged or outdated saves can be replaced with a fresh puzzle. Resizing and zooming preserve the arrangement and focus."] },
+  { title: "The sound of the studio", items: ["A dry ceramic click accompanies each accepted slide; a short chime celebrates completion. Original Kiln Light music and sound default to on after interaction. Use Audio settings to mute either; your choices stay on this device."] },
+] as const;

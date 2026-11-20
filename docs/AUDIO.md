@@ -1,6 +1,8 @@
 # Game sound and music
 
-All nine playable games default to sound and music on. Saved mute choices are preserved. Playback begins after a player interacts, following browser autoplay rules. Missing, damaged, or blocked settings recover to the enabled defaults without preventing play.
+Mosaic Shift adds original **Kiln Light** music, dry ceramic slide clicks, and a short completion chime through the existing local Web Audio player. Sound and Music default to on after interaction and independently retain saved mutes under `vihar-games:mosaic-shift:audio:v1`. Rejected selections and restored arrangements stay quiet. Pause, hiding, focus loss, Exit, and navigation stop playback; unmount releases all audio resources. Audio scheduling never drives puzzle moves or active time.
+
+All ten playable games default to sound and music on. Saved mute choices are preserved. Playback begins after a player interacts, following browser autoplay rules. Missing, damaged, or blocked settings recover to the enabled defaults without preventing play.
 
 Chess, Carrom, and Tic Tac Toe use the shared local Web Audio player in `src/lib/game-audio.ts`. Their original loops are Neem Shade, Veranda Evening, and Notebook Waltz. The speaker button opens independent Sound and Music switches. Chess cues accepted moves, captures, checks, undo and results; Tic Tac Toe cues marks, new rounds and results. Restored positions do not replay old effects.
 

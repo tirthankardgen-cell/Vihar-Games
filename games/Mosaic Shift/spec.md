@@ -1,7 +1,7 @@
 # Mosaic Shift
 
-**Status:** Planned; catalog and specification only.  
-**Updated:** 14 November 2026  
+**Status:** Playable local solo release, rules `1.0.0`.\
+**Updated:** 20 November 2026\
 **Game ID:** `mosaic-shift` · **Category:** Puzzle · **Players:** One  
 **Page:** `/mosaic-shift` · **API base:** `/api/games/mosaic-shift`  
 **Style:** Ceramic Studio · **Inspiration:** Sliding numbered tiles
@@ -51,15 +51,19 @@ Show moves and optional active time. Results record puzzle ID, size, moves, time
 - Overview is a small complete mosaic with one offset tile. Setup resembles three catalogue cards. Play centres the tile panel with move/time controls above and reference access below. Results show a flat ceramic maker's stamp.
 - Slide accepted tiles in the x/y plane over roughly 120 ms; reduced motion updates immediately. The authoritative permutation changes before decorative motion.
 - Phone panels fill available width with optional zoom for 5×5. Desktop adds whitespace and a side reference card without changing the board.
-- Optional sound: one dry ceramic click per accepted slide and a short completion chime.
+- Optional sound: one dry ceramic click per accepted slide and a short completion chime. Original **Kiln Light** music and effects default to enabled after player interaction; saved independent mute choices persist.
 
 ## 6. State and shared requirements
 
 Follow [solo game standards](../../docs/SOLO_GAME_STANDARDS.md). Save puzzle ID/version, size, tile permutation/empty index, undo/redo, cumulative moves, hint count, active time, and assistance. Validate each ID occurs exactly once, the empty cell is unique, and the state is reachable for that puzzle. Restore without replaying animation or counting a move.
 
-## 7. Future asset handoff
+## 7. Shipped collection and assets
 
-Three original mosaic families, flat tile borders, empty marker, reference cards, maker's stamp, authored scramble witnesses, and optional sounds. Custom tiles, screens, and engine are future work.
+The local release supplies original Blue Blossom/Petal Study floral ceramics (3×3), Cobalt Compass/Star Study geometric ceramics (4×4), and Trailing Vine/Leaf Study botanical ceramics (5×5). SVG fragments retain live numbered labels. Six authored legal scramble witnesses, flat borders, dashed empty cells, reference panels, maker's stamp, ceramic clicks, completion chimes, and Kiln Light music are included.
+
+Pure rules and validated saves live in `src/games/mosaic-shift/`; UI and original SVG artwork live in `src/components/mosaic-shift/`. Local sessions retain the exact undo/redo branch and restore paused. Hints reverse a verified route made from the authored witness plus current move history, cancelling immediate backtracks; they can retrace moves and do not claim optimality. Records separate assistance and compare only matching puzzle/version. Audio is optional under `vihar-games:mosaic-shift:audio:v1`; study choice uses `settings:v1`, with the shared session/records namespaces.
+
+The overview, three-card setup, gameplay, pause, results, paged rules, reference, restart, and fresh-study confirmations use one dynamic viewport. Board zoom/pan stays inside the fixed board area. An accepted move commits before its 120 ms decorative translation, and reduced motion updates immediately. No gameplay API, account, room, or worker is required. Vihar v1 embed, explicit Exit, interruption, and visible-play activity use the existing SDK.
 
 ## 8. Acceptance when implemented
 

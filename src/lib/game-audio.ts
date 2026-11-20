@@ -1,5 +1,5 @@
 // Original synthesized music and effects. No downloads or game-clock work.
-export type AudioGame = "chess" | "carrom" | "tic-tac-toe";
+export type AudioGame = "chess" | "carrom" | "tic-tac-toe" | "mosaic-shift";
 export type AudioCue = "start" | "move" | "undo" | "check" | "capture" | "strike" | "pocket" | "complete" | "draw" | "collision" | "cushion" | "drop" | "combo" | "foul" | "queen" | "cover" | "return" | "loss";
 export type AudioPreferences = { sound: boolean; music: boolean };
 export const audioSettingsKey = (game: AudioGame) => `vihar-games:${game}:audio:v1`;
@@ -15,6 +15,7 @@ const scores = {
   chess: { beat: 1, type: "triangle", melody: [62, 65, 69, 0, 72, 69, 65, 0, 67, 70, 74, 0, 70, 67, 62, 0, 65, 69, 72, 0, 74, 72, 69, 0, 64, 67, 71, 0, 69, 65, 62, 0], bass: [38, 43, 41, 45] },
   carrom: { beat: .42, type: "triangle", melody: [60, 0, 62, 64, 67, 0, 64, 62, 60, 0, 64, 0, 62, 0, 0, 0, 67, 0, 69, 72, 69, 0, 67, 64, 62, 0, 64, 62, 60, 0, 0, 0], bass: [36, 43, 36, 43] },
   "tic-tac-toe": { beat: .65, type: "sine", melody: [72, 76, 79, 76, 74, 0, 69, 72, 76, 72, 71, 0, 77, 76, 72, 69, 72, 0, 74, 71, 67, 71, 72, 0], bass: [48, 45, 53, 43] },
+  "mosaic-shift": { beat: .72, type: "sine", melody: [74, 0, 69, 72, 0, 65, 69, 0, 77, 74, 0, 72, 69, 0, 65, 0, 72, 0, 74, 77, 0, 69, 65, 0, 67, 72, 0, 69, 65, 0, 62, 0], bass: [38, 43, 41, 38] },
 } satisfies Record<AudioGame, { beat: number; type: OscillatorType; melody: number[]; bass: number[] }>;
 const frequency = (note: number) => 440 * 2 ** ((note - 69) / 12);
 const cues: Record<AudioCue, number[]> = {
@@ -95,6 +96,11 @@ export function createGameAudio(game: AudioGame, onUnavailable: () => void) {
     cue(cue: AudioCue, strength = 1) {
       const ctx = context; if (!sound || disposed || !ctx || ctx.state !== "running") return;
       try {
+        if (game === "mosaic-shift") {
+          if (cue === "move") { tone(ctx, 88, ctx.currentTime, .038, .04, effects, "sine", -9); tone(ctx, 100, ctx.currentTime, .025, .009, effects); }
+          else cues[cue].forEach((note, i) => tone(ctx, note, ctx.currentTime + i * .08, .28, .028, effects));
+          return;
+        }
         if (game === "carrom") {
           const impact = ["strike", "collision", "cushion", "drop"].includes(cue);
           const loudness = Math.max(.1, Math.min(1, Number.isFinite(strength) ? strength : 1));
