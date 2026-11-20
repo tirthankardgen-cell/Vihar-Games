@@ -1,0 +1,7 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { WorkshopArt } from "@/components/lantern-logic/art";
+import { WorkshopFooter, WorkshopNav } from "@/components/lantern-logic/shared";
+import styles from "@/components/lantern-logic/lantern.module.css";
+export const metadata: Metadata = { title: "Lantern Logic · The Lantern Workshop", description: "Read the clues. Light a hidden picture. Original 5×5, 10×10 and 15×15 nonogram puzzles with local saves, hints, and quiet music.", alternates: { canonical: "/lantern-logic" }, openGraph: { title: "Lantern Logic | Vihar Games", description: "A small ritual. A little light.", url: "/lantern-logic" } };
+export default function LanternPage() { return <main id="main-content" className={styles.page}><WorkshopNav /><section className={styles.hero} aria-labelledby="lantern-title"><div className={styles.heroCopy}><p className={styles.eyebrow}><span className={styles.inkDot} /> A QUIET PICTURE PUZZLE</p><h1 id="lantern-title">Lantern Logic<span>Small squares.<br />Hidden wonders.</span></h1><p className={styles.description}>Read the clues. Follow a thought.<br />Bring a little picture to light, one square at a time.</p><div className={styles.actions}><Link className={styles.primary} href="/lantern-logic/play">Enter the workshop →</Link><Link className={styles.textButton} href="/lantern-logic/how-to-play">How to play ↗</Link></div><p className={styles.heroNote}>5 × 5 · 10 × 10 · 15 × 15 <span /> ONE PLAYER. NO HURRY.</p></div><WorkshopArt /></section><WorkshopFooter /></main>; }

@@ -6,6 +6,7 @@ import { SUDOKU_RULES_VERSION, sudokuModes } from "@/games/sudoku/rules";
 import { MONSOON_RULES_VERSION, monsoonModes } from "@/games/monsoon-blocks/rules";
 import { DUNE_DASH_RULES_VERSION, duneDashModes } from "@/games/dune-dash/rules";
 import { SILK_RULES_VERSION, silkModes } from "@/games/silk-trail/rules";
+import { LANTERN_RULES_VERSION, lanternModes } from "@/games/lantern-logic/rules";
 
 export type PlayMode =
   | "computer"
@@ -261,6 +262,8 @@ export const games: readonly Game[] = [
     description: "Read the row and column clues. Light a hidden picture, one square at a time.",
     symbol: "▤",
     playersLabel: "Solo nonogram",
+    availability: "playable",
+    plannedModes: [],
   },
   {
     ...plannedSolo,
@@ -344,9 +347,10 @@ export function getGameInfo(game: Game) {
     availability: game.availability,
     presentation: game.presentation,
     plannedModes: game.plannedModes,
-    availableModes: game.id === "silk-trail" ? silkModes : game.id === "chess" ? chessModes : game.id === "tic-tac-toe" ? ticTacToeModes : game.id === "carrom" ? carromModes : game.id === "paperwing" ? paperwingModes : game.id === "sudoku" ? sudokuModes : game.id === "dune-dash" ? duneDashModes : game.id === "monsoon-blocks" ? monsoonModes : [],
+    availableModes: game.id === "lantern-logic" ? lanternModes : game.id === "silk-trail" ? silkModes : game.id === "chess" ? chessModes : game.id === "tic-tac-toe" ? ticTacToeModes : game.id === "carrom" ? carromModes : game.id === "paperwing" ? paperwingModes : game.id === "sudoku" ? sudokuModes : game.id === "dune-dash" ? duneDashModes : game.id === "monsoon-blocks" ? monsoonModes : [],
     playerLimits: game.playerLimits,
-    rulesVersion: game.id === "silk-trail" ? SILK_RULES_VERSION : game.id === "chess" ? CHESS_RULES_VERSION : game.id === "tic-tac-toe" ? RULES_VERSION : game.id === "carrom" ? CARROM_RULES_VERSION : game.id === "paperwing" ? PAPERWING_RULES_VERSION : game.id === "sudoku" ? SUDOKU_RULES_VERSION : game.id === "dune-dash" ? DUNE_DASH_RULES_VERSION : game.id === "monsoon-blocks" ? MONSOON_RULES_VERSION : null,
+    rulesVersion: game.id === "lantern-logic" ? LANTERN_RULES_VERSION : game.id === "silk-trail" ? SILK_RULES_VERSION : game.id === "chess" ? CHESS_RULES_VERSION : game.id === "tic-tac-toe" ? RULES_VERSION : game.id === "carrom" ? CARROM_RULES_VERSION : game.id === "paperwing" ? PAPERWING_RULES_VERSION : game.id === "sudoku" ? SUDOKU_RULES_VERSION : game.id === "dune-dash" ? DUNE_DASH_RULES_VERSION : game.id === "monsoon-blocks" ? MONSOON_RULES_VERSION : null,
+    ...(game.id === "lantern-logic" ? { soloPresets: ["small", "workshop", "festival"], boardSizes: [5, 10, 15] } : {}),
     ...(game.id === "silk-trail" ? { soloPresets: ["calm", "flow", "swift"] } : {}),
     ...(game.id === "dune-dash" ? { soloPresets: ["endless", "practice"] } : {}),
     ...(["paperwing", "monsoon-blocks"].includes(game.id) ? { soloPresets: ["standard", "practice"] } : {}),

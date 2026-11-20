@@ -1,7 +1,7 @@
 # Lantern Logic
 
-**Status:** Planned; catalog and specification only.  
-**Updated:** 14 November 2026  
+**Status:** Playable locally; all three presets, validated saves, published rules, original 2D art, and enabled-by-default audio.\
+**Updated:** 20 November 2026\
 **Game ID:** `lantern-logic` · **Category:** Puzzle · **Players:** One  
 **Page:** `/lantern-logic` · **API base:** `/api/games/lantern-logic`  
 **Style:** Lantern Workshop · **Inspiration:** Nonogram picture logic
@@ -57,16 +57,18 @@ Progress shows classified cells/total, active time if enabled, and hints. Comple
 
 Follow [solo game standards](../../docs/SOLO_GAME_STANDARDS.md). Store puzzle ID/version, grid marks, undo/redo transactions, active time, hint count, and assisted flag. Validate dimensions, mark states, immutable clues, and puzzle version. Never expose the hidden picture in accessible cell labels before legitimate completion/reveal.
 
-## 7. Future asset handoff
+## 7. Shipped assets and content
 
-Original lantern outlines, three size motifs, tassel frame, initial abstract stencil, authored unique picture puzzles, completion illustration, and optional sounds. The game engine and assets remain planned.
+Original native SVG paper lanterns, size motifs, tassels, an abstract overview stencil, and completed stencil illustrations are shipped. Three authored puzzles (`ll-s01`, `ll-w01`, `ll-f01`) supply one original picture per preset. Exhaustive line-candidate search independently verifies exactly one solution for each. The release includes original Paper Lantern music, a synthesized graphite mark, and one warm completion bell. Sound and music default to on after interaction; saved mute choices persist.
 
-## 8. Acceptance when implemented
+## 8. Acceptance and release verification
 
 - Ordered clue runs, separators, zero lines, contradictory lines, and exact completion follow the published rules.
 - Every shipped puzzle has derived clues and one verified solution.
 - Mark tools, drag undo, keyboard labels, clue alignment, and zoom preserve grid state.
 - Hints mark assistance; reload/pause preserves progress without exposing the answer.
+
+Pure engine, persistence, uniqueness, and audio lifecycle checks are included in `npm test`. The overview, setup, active puzzle, pause, results, twelve short paged rules notes, records, settings, and restart/new-puzzle confirmations use one dynamic viewport. Larger cells and Select / pan keep clue headers pinned inside the fixed board area. Browser release evidence is recorded in `docs/LANTERN_LOGIC_VERIFICATION.md`.
 
 ## Mandatory single-viewport presentation
 

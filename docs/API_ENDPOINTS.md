@@ -2,7 +2,7 @@
 
 # Vihar Games — Page and API contract
 
-**Status:** Catalog, launch, info and Chess/Tic Tac Toe/Carrom/Sudoku/Paperwing/Dune Dash/Monsoon Blocks/Silk Trail rules handlers are implemented. All eight playable games advertise Vihar embed protocol v1. Game-host Firebase authentication and online room endpoints remain deferred.
+**Status:** Catalog, launch, info and Chess/Tic Tac Toe/Carrom/Sudoku/Paperwing/Dune Dash/Monsoon Blocks/Silk Trail/Lantern Logic rules handlers are implemented. All nine playable games advertise Vihar embed protocol v1. Game-host Firebase authentication and online room endpoints remain deferred.
 
 **Application:** One Vihar Games website and one Vercel project.  
 **API origin:** `https://games.vihar.online`  
@@ -19,7 +19,7 @@
 - Unknown IDs on these endpoints return `404 UNKNOWN_GAME` with a request ID.
 - Chess and Tic Tac Toe report `availability: "playable"`, `availableModes: ["computer", "pass-and-play"]`, `rulesVersion: "1.0.0"`, and `embedVersion: 1`. Chess also declares its Acharya Dev computer persona. Carrom reports the same version/availability fields with `availableModes: ["computer", "practice", "pass-and-play"]`; Paperwing uses `["solo"]` and declares `soloPresets: ["standard", "practice"]`. Other entries report `planned`, empty available modes, and a null rules version. All `roomActions` remain empty.
 - Chess, Tic Tac Toe, Carrom, Sudoku, Paperwing, Dune Dash, Monsoon Blocks, and Silk Trail `/rules` endpoints return their published rules. Sudoku also publishes its rules and Easy/Medium/Hard presets; Dune Dash declares solo Endless/Practice, rules `1.0.0`, and embed v1. Monsoon Blocks declares solo Standard/Practice, rules `1.0.0`, and embed v1. Other registered games return `404 RULES_NOT_AVAILABLE`; unknown games return `404 UNKNOWN_GAME`. Sudoku and Monsoon Blocks room requests return `422 MODE_NOT_SUPPORTED`; other room/action paths and internal cleanup remain unimplemented. Their contracts below apply to the later backend phase.
-- The eight unimplemented solo entries declare `plannedModes: ["solo"]`, null pass-and-play/online limits, `availableModes: []`, and `rulesVersion: null`. Their Markdown design rules do not enable a published rules API or a playable mode.
+- The seven unimplemented solo entries declare `plannedModes: ["solo"]`, null pass-and-play/online limits, `availableModes: []`, and `rulesVersion: null`. Their Markdown design rules do not enable a published rules API or a playable mode.
 
 These routes run within the same Next.js application and require no Firebase configuration in this phase.
 
@@ -199,3 +199,7 @@ Dune Dash reports `availability: "playable"`, `availableModes: ["solo"]`, `soloP
 ## Silk Trail local release
 
 GET /api/games/silk-trail redirects to /silk-trail. Its /info manifest declares playable solo mode, soloPresets calm/flow/swift, rulesVersion 1.0.0, presentation 2d, embedVersion 1, and null multiplayer limits. Its /rules handler publishes the same 12 rule sections used by the paged guide. Simulation, settings, saves, and records remain local; no gameplay or room service is required.
+
+## Lantern Logic local release contract
+
+`/api/games/lantern-logic/info` reports `availability: "playable"`, `availableModes: ["solo"]`, `plannedModes: []`, rules version `2026-11-20`, `soloPresets: ["small", "workshop", "festival"]`, `boardSizes: [5, 10, 15]`, and `embedVersion: 1`. Multiplayer limits remain null and room actions remain empty. `/rules` publishes six rule sections displayed as twelve short Workshop notes. The launch endpoint redirects to `/lantern-logic`. Puzzle marks, hints, checks, clocks, and records remain local and make no gameplay API requests.

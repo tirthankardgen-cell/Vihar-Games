@@ -7,7 +7,7 @@
 **Scope:** Shared deployment scaffold and consolidated plans for twenty-four 2D games, including an approved detailed visual direction for every game.
 
 **Deployment target:** One Next.js application, one Vercel project, one domain.  
-**Implementation status:** Chess, Tic Tac Toe, Carrom, Sudoku, Paperwing, Dune Dash, Monsoon Blocks, and Silk Trail local gameplay, local saves, rules and Vihar embedding are implemented. The other 16 engines and all online rooms remain planned.
+**Implementation status:** Chess, Tic Tac Toe, Carrom, Sudoku, Paperwing, Dune Dash, Monsoon Blocks, Silk Trail, and Lantern Logic local gameplay, local saves, rules and Vihar embedding are implemented. The other 15 engines and all online rooms remain planned.
 
 ## 1. Project boundary
 
@@ -19,7 +19,7 @@ The rule specifications remain the source of truth for gameplay. This consolidat
 
 ### Current scaffold
 
-The shared homepage, twenty-four overviews, public catalog API, launch redirects, and metadata APIs are implemented. Chess and Tic Tac Toe have computer/pass-and-play setup, local persistence, computer workers and published rules/JSON. Chess includes legal-move selection, promotion, draw claims/offers, resignation and practice undo; its computer opponent is Acharya Dev. Tic Tac Toe keeps its full-screen notebook and session scores. Carrom adds practice, drag shots, deterministic worker physics, contact guides and settled-state saves. All eight use the existing Vihar v1 embed and activity SDKs; only visible active rounds report gameplay, and pausing/hiding stops computer workers. The other 16 entries remain planned. Local play needs no Firebase configuration. Private rooms and game-host authentication remain deferred.
+The shared homepage, twenty-four overviews, public catalog API, launch redirects, and metadata APIs are implemented. Chess and Tic Tac Toe have computer/pass-and-play setup, local persistence, computer workers and published rules/JSON. Chess includes legal-move selection, promotion, draw claims/offers, resignation and practice undo; its computer opponent is Acharya Dev. Tic Tac Toe keeps its full-screen notebook and session scores. Carrom adds practice, drag shots, deterministic worker physics, contact guides and settled-state saves. All nine use the existing Vihar v1 embed and activity SDKs; only visible active rounds report gameplay, and pausing/hiding stops computer workers. The other 16 entries remain planned. Local play needs no Firebase configuration. Private rooms and game-host authentication remain deferred.
 
 ## 2. Shared page contract
 
@@ -62,7 +62,7 @@ The source structure uses these boundaries:
 - `src/lib/rooms/` for shared API validation, room lifecycle, membership, idempotency, state serialization, and database operations.
 - `src/lib/storage/` for game-scoped local save helpers, and workers for bounded computer searches or physics simulations.
 
-The shared application contains App Router pages, catalog/launch/info handlers, and `src/lib/catalog/registry.ts`. Chess, Tic Tac Toe, Carrom, Sudoku, Paperwing, Dune Dash, Monsoon Blocks, and Silk Trail also have engines, local storage helpers, and rules handlers. Chess, Tic Tac Toe, and Carrom use computer workers; Paperwing's bounded fixed-step flight runs locally without one. Online rooms and the remaining 16 engines are future work. Next.js 16 dynamic route parameters use promises and are awaited by the implemented pages and route handlers.
+The shared application contains App Router pages, catalog/launch/info handlers, and `src/lib/catalog/registry.ts`. Chess, Tic Tac Toe, Carrom, Sudoku, Paperwing, Dune Dash, Monsoon Blocks, and Silk Trail also have engines, local storage helpers, and rules handlers. Chess, Tic Tac Toe, and Carrom use computer workers; Paperwing's bounded fixed-step flight runs locally without one. Online rooms and the remaining 15 engines are future work. Next.js 16 dynamic route parameters use promises and are awaited by the implemented pages and route handlers.
 
 The registry maps public IDs such as `tic-tac-toe` to explicit modules and declares `presentation: "2d"` for every entry. Lazy-load the selected game's browser bundle; opening Chess must not load every game's engine or physics dependencies. Share infrastructure without sharing mutable match state.
 
@@ -113,7 +113,7 @@ Deploy only the `Vihar Games` directory as the root of one Vercel project. Attac
 
 Acceptance requires all catalog paths and launch endpoints to resolve, unsupported modes to be rejected, and every game to complete its defined flows inside the same build. Validate same-origin save isolation, cross-game room isolation, concurrent commands, reconnects, and hidden-state permissions in addition to each game's rules.
 
-The current application includes pinned dependencies, local fonts, lint/type/test/build scripts, metadata, Vercel configuration, and Chess/Tic Tac Toe's local modules. Its sitemap contains the homepage, twenty-four overviews, and all eight published rules pages; other rules placeholders remain `noindex`. Gameplay acceptance checks apply as modules are implemented. Remote backend resources are not provisioned by this work.
+The current application includes pinned dependencies, local fonts, lint/type/test/build scripts, metadata, Vercel configuration, and Chess/Tic Tac Toe's local modules. Its sitemap contains the homepage, twenty-four overviews, and all nine published rules pages; other rules placeholders remain `noindex`. Gameplay acceptance checks apply as modules are implemented. Remote backend resources are not provisioned by this work.
 
 ## 9. Mandatory 2D presentation and approved visual styles
 
@@ -155,7 +155,7 @@ Shared style tokens and local Hind/Yatra One fonts live inside Vihar Games. Tic 
 
 ## 10. Solo puzzle and arcade expansion
 
-The twelve new designs and styles are indexed in the [catalog](../GAME_CATALOG.md#new-solo-games-and-original-styles). Each has an individual `games/<name>/spec.md` and follows [shared solo standards](./SOLO_GAME_STANDARDS.md). Five additions are arcade games and seven are logic/spatial puzzles. All twelve are local one-player designs; Paperwing, Dune Dash, Monsoon Blocks, and Silk Trail are now implemented with null multiplayer limits. The original catalog phase registered overview/placeholder/metadata paths and documented rules. These four now supply playable local engines and original artwork; the other eight additions remain planned, and no online rooms are introduced. Existing original-game specifications and multiplayer contracts remain authoritative.
+The twelve new designs and styles are indexed in the [catalog](../GAME_CATALOG.md#new-solo-games-and-original-styles). Each has an individual `games/<name>/spec.md` and follows [shared solo standards](./SOLO_GAME_STANDARDS.md). Five additions are arcade games and seven are logic/spatial puzzles. All twelve are local one-player designs; Paperwing, Dune Dash, Monsoon Blocks, and Silk Trail are now implemented with null multiplayer limits. The original catalog phase registered overview/placeholder/metadata paths and documented rules. These four now supply playable local engines and original artwork; the other seven additions remain planned, and no online rooms are introduced. Existing original-game specifications and multiplayer contracts remain authoritative.
 
 ## Mandatory single-viewport presentation
 
@@ -171,3 +171,7 @@ Monsoon Blocks follows its Rain Window specification in isolated engine and comp
 ## Silk Trail local release
 
 Silk Trail owns a pure deterministic snake engine, validated local state, and Silk Garden components. A seeded generator uniformly chooses empty leaf cells. Movement uses fixed preset intervals and a bounded frame accumulator; pause clears turns while retaining its remainder. Original audio scheduling is independent of simulation. Vihar activity is active only during visible local play, and host interruption requires deliberate resume.
+
+## Lantern Logic local release
+
+Lantern Logic joins the implemented local games with an isolated pure nonogram engine, three original uniquely solvable stencils, validated local progress/history/records, published rules, and original 2D Lantern Workshop screens. Every screen fits one dynamic viewport. Audio starts enabled after interaction, stops on interruption, and preserves independent saved mute choices. The existing Vihar v1 activity, pause, and Exit conventions apply only to visible active puzzle play. No gameplay backend or account is needed.

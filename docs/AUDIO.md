@@ -1,6 +1,6 @@
 # Game sound and music
 
-All eight playable games default to sound and music on. Saved mute choices are preserved. Playback begins after a player interacts, following browser autoplay rules. Missing, damaged, or blocked settings recover to the enabled defaults without preventing play.
+All nine playable games default to sound and music on. Saved mute choices are preserved. Playback begins after a player interacts, following browser autoplay rules. Missing, damaged, or blocked settings recover to the enabled defaults without preventing play.
 
 Chess, Carrom, and Tic Tac Toe use the shared local Web Audio player in `src/lib/game-audio.ts`. Their original loops are Neem Shade, Veranda Evening, and Notebook Waltz. The speaker button opens independent Sound and Music switches. Chess cues accepted moves, captures, checks, undo and results; Tic Tac Toe cues marks, new rounds and results. Restored positions do not replay old effects.
 
@@ -15,3 +15,7 @@ Silk Trail uses original **Mulberry Thread** plucked music, a synthesized mulber
 Each game's preferences stay on this device under its own storage key. Chess, Carrom, Tic Tac Toe and Sudoku use `vihar-games:<game>:audio:v1`; the arcade games keep their existing settings keys. Audio stops on pause, hidden tabs, focus loss, Exit or navigation. Unmounting releases sources, listeners, scheduling timers and the audio context. Audio scheduling never drives game simulation or active-time accounting.
 
 `npm run check` covers preference defaults and saved mutes, independent switches, cleanup, delayed clocks, suspended-context races, device failure, all game engine tests, lint, types and the production build. Browser checks also cover gameplay controls and narrow-screen navigation.
+
+## Lantern Logic audio
+
+Lantern Logic supplies original **Paper Lantern** slow pentatonic plucks, a short synthesized graphite brush for edits, and one warm bell on completion. Sound and Music default to on after interaction; independent mute choices persist in `vihar-games:lantern-logic:settings:v1`. Pause, hidden tabs, lost focus, host interruption, Exit, and navigation stop all scheduled sources. Unmount releases the context and scheduling timer. Audio never drives marks or active time. Preference defaults, independent mute switches, device failures, delayed clocks, and cleanup are covered by Lantern Logic's tests.
